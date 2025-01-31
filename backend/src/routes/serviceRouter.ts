@@ -1,8 +1,8 @@
+import { createService } from "controllers/service.controller";
 import { Router } from "express";
-import { createService } from "../controllers/service.controller";
 
-const router = Router();
+const serviceRouter = Router();
 
-router.post("/createService", createService);
+serviceRouter.post("/createService", createService);
 
-export default router;
+export default serviceRouter;

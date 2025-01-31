@@ -7,7 +7,7 @@ export enum MachineStatus {
 }
 
 //  Drinks should be an array (Fix)
-export interface Drinks {
+export interface Drink {
   type: string; // Changed from "name" to "type" for consistency
   price: number;
 }
@@ -17,8 +17,8 @@ export interface IMachine {
   name: string;
   location: string;
   status: MachineStatus;
-  alcoholValues: Drinks[]; // Array of drinks
-  bibValues: Drinks[]; // Array of drinks
+  alcoholValues: Drink[]; // Array of drinks
+  bibValues: Drink[]; // Array of drinks
 }
 
 export interface IMachineDocument extends IMachine, Document {}

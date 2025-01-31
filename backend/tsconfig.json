@@ -5,8 +5,8 @@
       "@routes/*": ["routes/*"]
     },
     "moduleResolution": "node",
-    "target": "es2022",
-    "module": "ES2022",
+    "module": "ESNext",
+    "target": "ESNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
