@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { IMachine } from "interfaces/machine.interface";
 import { IService } from "interfaces/service.interface";
-import Machine from "models/machine.model";
 import Service from "models/service.model";
 
 /*

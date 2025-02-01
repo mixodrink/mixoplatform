@@ -20,7 +20,7 @@ const ServiceSchema = new Schema<IServiceDocument>(
     cardNumber: { type: String, required: true },
     date: { type: Date, required: true },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false } //  Removes __v field
 );
 
 ServiceSchema.statics.buildMachine = function (service: IService) {
