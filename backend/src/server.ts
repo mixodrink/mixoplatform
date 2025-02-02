@@ -4,11 +4,12 @@ import machineRouter from "@routes/machineRouter";
 import serviceRouter from "@routes/serviceRouter";
 import mongoose from "mongoose";
 import { errorHandler } from "middlewares/errorMiddleware";
-
+import dotenv from "dotenv";
 // Load environment variables
+dotenv.config();
 
 // Initialize app and constants
-const app = express();
+export const app = express();
 const { PORT, MONGO_URI } = process.env;
 
 // CORS configuration

@@ -1,4 +1,4 @@
-import Machine from "models/machine.model";
+import Machine from "../models/machine.model";
 import { IMachine } from "interfaces/machine.interface";
 
 /**

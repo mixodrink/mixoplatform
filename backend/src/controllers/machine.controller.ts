@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { IMachine } from "interfaces/machine.interface";
-import Machine from "models/machine.model";
 import { createMachineDB } from "services/machine.service";
 
 /*Example machine req.body

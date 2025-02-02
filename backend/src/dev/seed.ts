@@ -1,7 +1,9 @@
 import Service from "models/service.model";
 import Machine from "../models/machine.model";
 import mongoose from "mongoose";
-
+import dotenv from "dotenv";
+// Load environment variables
+dotenv.config();
 // Load environment variables from .env file
 const { MONGO_URI } = process.env;
 
