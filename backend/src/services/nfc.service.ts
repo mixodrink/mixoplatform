@@ -1,7 +1,12 @@
 import Nfc from "../models/nfc.model";
 import { INfc } from "../interfaces/nfc.interface";
 
-export const createNfc = async (nfcData: INfc) => {
+/**
+ * Creates a new nfc entry in the database.
+ * @param nfcData - The nfc details from the request.
+ * @returns The saved nfc document and if exists.
+ */
+export const createNfcDB = async (nfcData: INfc) => {
   if (!nfcData.cardId) throw new Error("cardId is required");
 
   const existingNfc = await Nfc.findOne({ cardId: nfcData.cardId });
@@ -15,6 +20,6 @@ export const createNfc = async (nfcData: INfc) => {
   return { existed: false, data: savedNfc };
 };
 
-export const getNfc = async (cardId: string) => {
+export const getNfcDB = async (cardId: string) => {
   return await Nfc.findOne({ cardId });
 };

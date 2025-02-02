@@ -8,7 +8,7 @@ import {
 
 const MachineSchema = new Schema<IMachineDocument>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     location: { type: String, required: true },
     status: { type: Number, enum: MachineStatus, required: true },
 

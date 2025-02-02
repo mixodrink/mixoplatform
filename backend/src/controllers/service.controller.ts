@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { IService } from "interfaces/service.interface";
 import Service from "models/service.model";
+import { createServiceDB } from "services/service.service";
 
-/*
-  Example body.req
+/*Example service body.req
 
   {
   "machineId": "60d6f7e2b4414c2d88a3c1f1",
@@ -21,23 +21,14 @@ import Service from "models/service.model";
 
 export const createService = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const service: IService = req.body;
-
-    const newService = new Service(service);
-
-    const savedService = await newService.save();
-
+    const savedService = await createServiceDB(service);
     res.status(201).json(savedService);
   } catch (err: any) {
-    //  Log the error
-    console.error(`Error creating new Machine: ${err.message}`);
-
-    // Send a response without crashing the server
-    res
-      .status(500)
-      .json({ message: `Error creating new Machine: ${err.message}` });
+    next(err);
   }
 };

@@ -3,6 +3,7 @@ import cors from "cors";
 import machineRouter from "@routes/machineRouter";
 import serviceRouter from "@routes/serviceRouter";
 import mongoose from "mongoose";
+import { errorHandler } from "middlewares/errorMiddleware";
 
 // Load environment variables
 
@@ -29,6 +30,9 @@ app.use(express.json()); // Middleware for parsing request bodies as JSON
 // Define route handlers
 app.use("/machine", machineRouter);
 app.use("/service", serviceRouter);
+
+// ❗ Error handling middleware (should be the LAST middleware)
+app.use(errorHandler);
 
 // Start server
 app.get("/", (_req, res) => {

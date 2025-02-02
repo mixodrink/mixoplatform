@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { IMachine } from "interfaces/machine.interface";
 import Machine from "models/machine.model";
+import { createMachineDB } from "services/machine.service";
 
-/*
-Example machine 
+/*Example machine req.body
 
 {
   "name": "Machine A",
@@ -34,23 +34,14 @@ Example machine
 
 export const createMachine = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const machine: IMachine = req.body;
-
-    const newMachine = new Machine(machine);
-
-    const savedMachine = await newMachine.save();
-
+    const savedMachine = await createMachineDB(machine);
     res.status(201).json(savedMachine);
   } catch (err: any) {
-    //  Log the error
-    console.error(`Error creating new Machine: ${err.message}`);
-
-    // Send a response without crashing the server
-    res
-      .status(500)
-      .json({ message: `Error creating new Machine: ${err.message}` });
+    next(err);
   }
 };
