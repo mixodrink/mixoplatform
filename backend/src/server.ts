@@ -5,12 +5,15 @@ import serviceRouter from "@routes/serviceRouter";
 import mongoose from "mongoose";
 import { errorHandler } from "middlewares/errorMiddleware";
 import dotenv from "dotenv";
+import { WebSocketServer } from "ws";
+import http from "http";
+
 // Load environment variables
 dotenv.config();
 
 // Initialize app and constants
 export const app = express();
-const { PORT, MONGO_URI } = process.env;
+const { PORT, MONGO_URI } = process.env || { PORT: 5000 };
 
 // CORS configuration
 const allowOrigins = [
@@ -26,7 +29,7 @@ const corsOptions: cors.CorsOptions = {
 
 // Middleware setup
 app.use(cors(corsOptions));
-app.use(express.json()); // Middleware for parsing request bodies as JSON
+app.use(express.json());
 
 // Define route handlers
 app.use("/machine", machineRouter);
@@ -35,44 +38,63 @@ app.use("/service", serviceRouter);
 // ❗ Error handling middleware (should be the LAST middleware)
 app.use(errorHandler);
 
-// Start server
-app.get("/", (_req, res) => {
-  res.send("Server is running and able to GET");
+// Create HTTP server
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+// WebSocket event handling
+wss.on("connection", (ws) => {
+  console.log("🔌[WebSocket]:New WebSocket connection");
+
+  ws.on("message", (message) => {
+    console.log(`📩 Received: ${message}`);
+    ws.send(`Echo: ${message}`);
+  });
+
+  ws.on("close", () => console.log("❌ WebSocket connection closed"));
+  ws.on("error", (err) =>
+    console.error("🔌[WebSocket]: ⚠️ WebSocket error:", err)
+  );
 });
-app.listen(PORT, () => {
+
+// Broadcast function for WebSocket messages
+export const broadcastMessage = (data: string) => {
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1) {
+      client.send(data);
+    }
+  });
+};
+
+// Start the server
+server.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`);
 });
 
-// MongoDB connection with error handling
-
+// MongoDB connection
 const connectDB = async () => {
   if (!MONGO_URI) {
     console.error(
       "⚡️[server]: MONGO_URI is missing from environment variables"
     );
-    process.exit(1); // Exit if no Mongo URI
+    process.exit(1);
   }
 
   try {
-    // Connect to MongoDB using Mongoose
     const db = await mongoose.connect(MONGO_URI);
-
-    // Ensure that mongoose.connection.db is available
     if (mongoose.connection.db) {
-      // Ping the database to confirm connection
       await mongoose.connection.db.admin().command({ ping: 1 });
       console.log(`⚡️[server]: Database connected to: ${db.connection.name}`);
     } else {
       console.error(
         "❌[server]: Mongoose connection db object is not available"
       );
-      process.exit(1); // Exit if db object is unavailable
+      process.exit(1);
     }
   } catch (error) {
     console.error("❌[server]: Failed to connect to database:", error);
-    process.exit(1); // Exit if DB connection fails
+    process.exit(1);
   }
 };
 
-// Connect to database
 connectDB();
