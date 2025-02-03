@@ -12,7 +12,9 @@ export const errorHandler = (
   console.error("❌ Error:", err);
 
   const statusCode = err.status || 500;
-  const message = err.message || "Internal Server Error";
+  const message =
+    "[ErrorMiddleware]: " + err.message ||
+    "[ErrorMiddleware]: Internal Server Error";
 
   res.status(statusCode).json({
     success: false,

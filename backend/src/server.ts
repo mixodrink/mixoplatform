@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import { errorHandler } from "./middlewares/errorMiddleware";
+import { errorHandler } from "./middlewares/errorHandler";
 import dotenv from "dotenv";
 import { WebSocketServer } from "ws";
 import http from "http";
