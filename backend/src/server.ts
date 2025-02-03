@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
-import machineRouter from "@routes/machineRouter";
-import serviceRouter from "@routes/serviceRouter";
 import mongoose from "mongoose";
-import { errorHandler } from "middlewares/errorMiddleware";
+import { errorHandler } from "./middlewares/errorMiddleware";
 import dotenv from "dotenv";
 import { WebSocketServer } from "ws";
 import http from "http";
+import machineRouter from "./routes/machineRouter";
+import serviceRouter from "./routes/serviceRouter";
 
 // Load environment variables
 dotenv.config();
@@ -73,6 +73,10 @@ server.listen(PORT, () => {
 
 // MongoDB connection
 const connectDB = async () => {
+  if (process.env.NODE_ENV === "test") {
+    // Skip connecting during tests (since we connect in the test setup)
+    return;
+  }
   if (!MONGO_URI) {
     console.error(
       "⚡️[server]: MONGO_URI is missing from environment variables"

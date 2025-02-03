@@ -17,7 +17,6 @@ export interface IService {
   price: number;
   cardId: string;
   cardNumber: string;
-  date: Date;
 }
 
 export interface IServiceDocument extends IService, Document {}

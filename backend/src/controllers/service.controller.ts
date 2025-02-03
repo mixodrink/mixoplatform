@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IService } from "interfaces/service.interface";
-import Service from "models/service.model";
-import { createServiceDB } from "services/service.service";
+import { createServiceDB } from "../services/service.service";
 
 /*Example service body.req
 

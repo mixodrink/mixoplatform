@@ -1,4 +1,4 @@
-import Service from "models/service.model";
+import Service from "../models/service.model";
 import Machine from "../models/machine.model";
 import mongoose from "mongoose";
 import dotenv from "dotenv";

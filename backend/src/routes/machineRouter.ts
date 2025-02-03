@@ -1,4 +1,4 @@
-import { createMachine } from "controllers/machine.controller";
+import { createMachine } from "../controllers/machine.controller";
 import { Router } from "express";
 
 const machineRouter = Router();

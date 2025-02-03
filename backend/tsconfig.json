@@ -1,16 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
-    "paths": {
-      "@controllers/*": ["controllers/*"],
-      "@dev/*": ["dev/*"],
-      "@interfaces/*": ["interfaces/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@models/*": ["models/*"],
-      "@routes/*": ["routes/*"],
-      "@services/*": ["services/*"],
-      "@tests/*": ["tests/*"]
-    },
     "moduleResolution": "node",
     "module": "ESNext",
     "target": "ESNext",

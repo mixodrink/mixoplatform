@@ -17,12 +17,14 @@ const MachineSchema = new Schema<IMachineDocument>(
       {
         type: { type: String, required: true },
         price: { type: Number, required: true },
+        _id: false, // <----- Disable _id in subdocuments
       },
     ],
     bibValues: [
       {
         type: { type: String, required: true },
         price: { type: Number, required: true },
+        _id: false, // <----- Disable _id in subdocuments
       },
     ],
   },

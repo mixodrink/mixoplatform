@@ -1,4 +1,4 @@
-import Service from "models/service.model";
+import Service from "../models/service.model";
 import { IService } from "interfaces/service.interface";
 
 /**

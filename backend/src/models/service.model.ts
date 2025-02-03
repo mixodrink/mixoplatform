@@ -18,7 +18,6 @@ const ServiceSchema = new Schema<IServiceDocument>(
     price: { type: Number, required: true },
     cardId: { type: String, required: true },
     cardNumber: { type: String, required: true },
-    date: { type: Date, required: true },
   },
   { timestamps: true, versionKey: false } //  Removes __v field
 );
