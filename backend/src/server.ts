@@ -44,7 +44,7 @@ const wss = new WebSocketServer({ server });
 
 // WebSocket event handling
 wss.on("connection", (ws) => {
-  console.log("🔌[WebSocket]:New WebSocket connection");
+  console.log("🔌[WebSocket]: WebSocket connection");
 
   ws.on("message", (message) => {
     console.log(`📩 Received: ${message}`);
