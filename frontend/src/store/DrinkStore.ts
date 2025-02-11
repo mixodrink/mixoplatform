@@ -16,7 +16,6 @@ const useDrinkStore = create<DrinkStore>(
         {
           type: 'alcohol',
           alcohol: ['Vodka', 'Gin', 'Rum', 'Tequila'],
-          soda: ['Coke', 'Sprite', 'Fanta', '7Up', 'Pepsi'],
         },
         {
           type: 'soda',
