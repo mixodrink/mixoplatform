@@ -6,6 +6,7 @@ import SoftMenuComponent from 'components/MenuOptionComponents/SoftComponent/Sof
 import WaterMenuComponent from 'components/MenuOptionComponents/WaterComponent/WaterMenuComponent';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
+import { useDrinkSelection } from '../store/DrinkSelectionStore';
 
 type Slide = [
   { id: number; selected: boolean },
@@ -16,6 +17,7 @@ type Slide = [
 const MainPage: React.FC = () => {
   const { options, getSelectedOption, setMenuInitialState } = useMenuOptionSteps();
   const { setInitialState } = useStepProgressStore();
+  const { resetSelection } = useDrinkSelection();
   const [slide, setSlide] = React.useState<Slide>([
     { id: 1, selected: false },
     { id: 2, selected: false },
@@ -63,6 +65,7 @@ const MainPage: React.FC = () => {
     ]);
     setInitialState();
     setMenuInitialState();
+    resetSelection();
   };
 
   return (

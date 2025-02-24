@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
-import OptionListComponent from '../../OptionComponent/OptionListComponent';
+import SoftGridComponent from '../../OptionComponent/SoftOptionComponent/SoftGridComponent';
 
 import cola from 'assets/soft/cola.png';
 import lemon from 'assets/soft//lemon.png';
@@ -20,6 +20,7 @@ const SoftMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) 
   const { setSelectedOption } = useMenuOptionSteps();
   const { goForward } = useStepProgressStore();
   const [selected, setSelected] = React.useState<boolean>(false);
+  const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
 
   const handleStepProgress = () => {
     setSelectedOption('soft');
@@ -31,6 +32,14 @@ const SoftMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) 
     handleSetInitialState();
     setSelected(false);
   };
+
+  const handleOnTransitionEnd = () => {
+    setTransitionEnd(!transitionEnd);
+  };
+
+  useEffect(() => {
+    console.log('transitionEnd', transitionEnd);
+  }, [transitionEnd]);
 
   const obj = {
     cola: {
@@ -61,7 +70,13 @@ const SoftMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) 
   };
 
   return (
-    <SectionWrapper onTouchStart={() => handleStepProgress()} selected={selected} slide={isSlide}>
+    <SectionWrapper
+      onTouchStart={() => handleStepProgress()}
+      selected={selected}
+      slide={isSlide}
+      onTransitionEnd={handleOnTransitionEnd}
+      onTransitionStart={handleOnTransitionEnd}
+    >
       <TitleH1 selected={selected}>Soda</TitleH1>
       <SubTitleH2 selected={selected}>Perfect Refreshment!</SubTitleH2>
 
@@ -72,11 +87,16 @@ const SoftMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) 
             handleSet();
           }}
         >
-          <img src={close} alt="" width={30} />
+          <img src={close} alt="" width={30} style={{ marginTop: 4 }}/>
         </CloseButton>
       )}
 
-      <OptionListComponent type={'soft'} selected={selected} obj={obj} />
+      <SoftGridComponent
+        type={'soft'}
+        selected={selected}
+        obj={obj}
+        transitionEnd={transitionEnd}
+      />
     </SectionWrapper>
   );
 };

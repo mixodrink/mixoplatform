@@ -1,3 +1,8 @@
+* {
+  user-select: none; /* Prevents text selection */
+  -webkit-tap-highlight-color: transparent; /* Removes grey highlight on mobile */
+}
+
 #root {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

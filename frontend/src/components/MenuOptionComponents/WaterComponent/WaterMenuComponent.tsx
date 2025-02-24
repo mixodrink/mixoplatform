@@ -37,7 +37,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
             handleSet();
           }}
         >
-          <img src={close} alt="" width={30} />
+          <img src={close} alt="" width={30} style={{ marginTop: 4 }}/>
         </CloseButton>
       )}
     </SectionWrapper>

@@ -7,7 +7,7 @@ interface OptionItemProps {
   handleDrinkSelection: () => void;
 }
 
-const OptionItemComponent: React.FC<OptionItemProps> = ({ type, drink, handleDrinkSelection }) => {
+const SoftItemComponent: React.FC<OptionItemProps> = ({ type, drink, handleDrinkSelection }) => {
   return (
     <OptionContainer onClick={() => handleDrinkSelection(drink)} mod={type}>
       <BackgroundBox mod={type} />
@@ -17,7 +17,7 @@ const OptionItemComponent: React.FC<OptionItemProps> = ({ type, drink, handleDri
   );
 };
 
-export default OptionItemComponent;
+export default SoftItemComponent;
 
 const OptionContainer = styled.section`
   position: relative;

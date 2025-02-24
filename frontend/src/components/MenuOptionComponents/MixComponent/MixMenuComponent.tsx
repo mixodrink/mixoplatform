@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
-import OptionListComponent from '../../OptionComponent/OptionListComponent';
+import MixGridComponent from '../../OptionComponent/MixOptionComponent/MixGridComponent';
 
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
@@ -63,13 +63,41 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     },
   };
 
+  // const obj2 = {
+  //   cola: {
+  //     title: 'Cola',
+  //     image: { src: cola, alt: 'cola' },
+  //     price: 5,
+  //   },
+  //   lemon: {
+  //     title: 'Lemon',
+  //     image: { src: lemon, alt: 'Lemon' },
+  //     price: 5,
+  //   },
+  //   tonic: {
+  //     title: 'Tonic',
+  //     image: { src: tonic, alt: 'Tonix' },
+  //     price: 5,
+  //   },
+  //   orange: {
+  //     title: 'Lima',
+  //     image: { src: orange, alt: 'Lima' },
+  //     price: 5,
+  //   },
+  //   energy: {
+  //     title: 'Energy',
+  //     image: { src: energy, alt: 'Energy' },
+  //     price: 5,
+  //   },
+  // };
+
   return (
     <SectionWrapper
       onTouchStart={transitionEnd ? () => {} : () => handleStepProgress()}
-      onTransitionEnd={handleOnTransitionEnd}
-      onTransitionStart={handleOnTransitionEnd}
       selected={selected}
       slide={isSlide}
+      onTransitionEnd={handleOnTransitionEnd}
+      onTransitionStart={handleOnTransitionEnd}
     >
       <TitleH1 selected={selected}>Cocktail</TitleH1>
       <SubTitleH2>Create your Drink!</SubTitleH2>
@@ -86,9 +114,15 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
                   }
             }
           >
-            <img src={close} alt="" width={30} />
+            <img src={close} alt="" width={30} style={{ marginTop: 4 }} />
           </CloseButton>
-          <OptionListComponent type={'mix'} selected={selected} obj={obj} />
+          <MixGridComponent
+            type={'mix'}
+            selected={selected}
+            obj={obj}
+            transitionEnd={transitionEnd}
+            slide={false}
+          />
         </>
       )}
     </SectionWrapper>
