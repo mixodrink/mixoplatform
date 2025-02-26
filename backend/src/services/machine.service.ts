@@ -11,6 +11,7 @@ export const createMachineDB = async (machineData: IMachine) => {
     const newMachine = new Machine(machineData);
     return await newMachine.save();
   } catch (error: any) {
+    console.log(error);
     throw new Error(`Error creating machine: ${error.message}`);
   }
 };

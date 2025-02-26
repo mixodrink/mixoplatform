@@ -14,11 +14,12 @@ export const errorHandler = (
   const statusCode = err.status || 500;
   const message =
     "[ErrorMiddleware]: " + err.message ||
+    "[ErrorMiddleware]: " + err.data.message ||
     "[ErrorMiddleware]: Internal Server Error";
 
   res.status(statusCode).json({
     success: false,
+    statusCode,
     message,
-    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
   });
 };

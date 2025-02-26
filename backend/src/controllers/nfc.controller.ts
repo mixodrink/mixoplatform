@@ -1,5 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import * as nfcService from "../services/nfc.service";
+import { INfc } from "interfaces/nfc.interface";
+
+/*Example nfc
+
+{
+ "cardId": "1234-5678-9012";
+  "drinks": 5;
+}
+
+*/
 
 export const createNfc = async (
   req: Request,
@@ -7,7 +17,7 @@ export const createNfc = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const nfc = await nfcService.createNfcDB(req.body);
+    const nfc = await nfcService.createNfcDB(req.body as INfc);
     res.status(nfc.existed ? 200 : 201).json(nfc.data);
   } catch (err: any) {
     next(err);
