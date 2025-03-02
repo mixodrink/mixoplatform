@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
-import close from 'assets/icons/close.png';
+import { useDrinkSelection } from 'store/DrinkSelectionStore';
+
+import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
+import WaterOptionComponent from 'components/OptionComponent/WaterOptionComponent/WaterOptionComponent';
+
+import waterImage from 'assets/soft/water.png';
 
 interface Props {
   isSlide: boolean;
@@ -10,41 +16,68 @@ interface Props {
 }
 
 const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) => {
-  const { setSelectedOption } = useMenuOptionSteps();
+  const { options, setSelectedOption } = useMenuOptionSteps();
   const { goForward } = useStepProgressStore();
+  const { water, WaterIsSelected, setWaterSelection } = useDrinkSelection();
   const [selected, setSelected] = React.useState<boolean>(false);
+  const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
+  const [isTransition, setIsTransition] = useState();
 
   const handleStepProgress = () => {
     setSelectedOption('water');
+    setWaterSelection({ name: 'Water', image: { src: waterImage, alt: 'water' }, price: 5 });
     setSelected(true);
-    goForward(1);
+    goForward(4);
   };
 
-  const handleSet = () => {
+  const handleClose = () => {
     handleSetInitialState();
     setSelected(false);
   };
 
-  return (
-    <SectionWrapper onTouchStart={() => handleStepProgress()} selected={selected} slide={isSlide}>
-      <TitleH1 selected={selected}>Water</TitleH1>
-      <SubTitleH2 selected={selected}>Super Fresh!</SubTitleH2>
+  const handleOnTransitionEnd = () => {
+    setTransitionEnd(!transitionEnd);
+  };
 
-      {selected && (
-        <CloseButton
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSet();
-          }}
-        >
-          <img src={close} alt="" width={30} style={{ marginTop: 4 }}/>
-        </CloseButton>
-      )}
-    </SectionWrapper>
+  useEffect(() => {
+    const res = WaterIsSelected();
+    if (options[0].selected || options[1].selected) {
+      setIsTransition(true);
+    } else {
+      setIsTransition(res);
+    }
+  }, [options, water, WaterIsSelected]);
+
+  return (
+    <>
+      <SectionWrapper
+        onTouchStart={transitionEnd ? () => {} : () => handleStepProgress()}
+        selected={selected}
+        slide={isSlide}
+        onTransitionEnd={handleOnTransitionEnd}
+        onTransitionStart={handleOnTransitionEnd}
+      >
+        <TitleH1 selected={selected}>Water</TitleH1>
+        <SubTitleH2 selected={selected}>Super Fresh!</SubTitleH2>
+
+        {selected && (
+          <>
+            <CloseButtonComponent
+              defaultFunction={handleClose}
+              transitionState={transitionEnd}
+              style={{ borderColor: '#c3eeff' }}
+            />
+          </>
+        )}
+      </SectionWrapper>
+      <WaterOptionComponent animationSlideIn={selected} animationSlideOut={isTransition} />
+    </>
   );
 };
 
-const SectionWrapper = styled.section`
+const SectionWrapper = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
+})`
   width: 89%;
   height: ${(state) => (state.selected ? 94 : 29)}%;
   background-color: #40c2f6;
@@ -76,22 +109,6 @@ const SubTitleH2 = styled.h2`
   top: 145px;
   left: 40px;
   overflow: hidden;
-`;
-
-const CloseButton = styled.button`
-  width: 100px;
-  height: 100px;
-  background: #ffffff78; /* White background */
-  border-radius: 20px; /* Rounded corners */
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  border: none;
-  font-size: 1.5rem;
-  border: 6px solid #b3e9ff;
-  font-weight: bold;
-  color: black;
-  cursor: pointer;
 `;
 
 export default WaterMenuComponent;

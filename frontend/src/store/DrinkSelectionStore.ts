@@ -71,6 +71,15 @@ export const useDrinkSelection = create(
         return mix.alcohol.name !== null;
       },
 
+      // ✅ Check if a soft drink is selected (either in soft or mix)
+      SoftMixIsSelected: () => {
+        const { mix, soft } = get();
+        return (
+          (mix.soft?.name !== null && mix.soft?.name !== undefined) || // Check mix.soft
+          (soft.drink?.name !== null && soft.drink?.name !== undefined) // Check soft.drink
+        );
+      },
+
       // ✅ Check if soft is selected
       SoftIsSelected: () => {
         const { soft } = get();

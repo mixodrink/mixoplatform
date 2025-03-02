@@ -11,7 +11,7 @@ type State = [
 
 const initialState: State = [
   // Menu
-  { id: 1, selected: false },
+  { id: 1, selected: true },
   // Alcohol
   { id: 2, selected: false },
   // Soft
@@ -73,6 +73,10 @@ export const useStepProgressStore = create<StepProgressState>()(
         set(() => ({
           steps: initialState,
         })),
+      getCurrentStep: (state: steps) => {
+        const currentStep = state.filter((step) => step.selected);
+        return currentStep[0].id;
+      },
     }),
     { name: 'step-store', storage: createJSONStorage(() => localStorage) }
   )

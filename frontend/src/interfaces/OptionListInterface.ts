@@ -1,4 +1,4 @@
-export interface OptionListProps {
+export interface OptionListInterface {
   type: string;
   obj: { drink: { title: string; image: { src: string; alt: string }; price: number } };
   selected: boolean;
