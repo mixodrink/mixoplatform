@@ -180,6 +180,10 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               slideIn={isSoftTransition}
               slideOut={isTransition}
             />
+            <HeaderTitle>{mix?.alcohol.name}</HeaderTitle>
+            <HeaderTitle bottom={-3}>
+              {mix?.soft.name}
+            </HeaderTitle>
             <PlantImageWrapper animationFadeIn={imageSelected}>
               <PlantImage src={tropicalTwo} alt="" top={3} right={4} rotate={25} />
               <PlantImage src={tropicalOne} alt="" top={-2} right={2} rotate={2} />
@@ -384,6 +388,14 @@ const BlurredCircle = styled.div`
   filter: blur(100px);
   z-index: -1;
   animation: ${flicker} 2s infinite alternate ease-in-out;
+`;
+
+const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
+  position: absolute;
+  bottom: ${(props) => (props.bottom ? props.bottom : 2)}%;
+  left: ${(props) => (props.left ? props.left : 13.4)}%;
+  font-size: 6rem;
+  color: #fff;
 `;
 
 export default MixMenuComponent;

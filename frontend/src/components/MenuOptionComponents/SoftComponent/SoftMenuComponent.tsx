@@ -121,6 +121,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               slideIn={isTransition}
               slideOut={!isTransition}
             />
+            <HeaderTitle>{soft?.drink.name}</HeaderTitle>
             <PlantImageWrapper animationFadeIn={imageSelected}>
               <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
               <PlantImage src={tropicalOne} alt="" top={-8} right={6} rotate={2} />
@@ -287,6 +288,14 @@ const BlurredCircle = styled.div`
   filter: blur(100px);
   z-index: -1;
   animation: ${flicker} 2s infinite alternate ease-in-out;
+`;
+
+const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
+  position: absolute;
+  bottom: ${(props) => (props.bottom ? props.bottom : 2)}%;
+  left: ${(props) => (props.left ? props.left : 13.4)}%;
+  font-size: 6rem;
+  color: #fff;
 `;
 
 export default SoftMenuComponent;
