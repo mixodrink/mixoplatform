@@ -7,6 +7,7 @@ import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import WaterOptionComponent from 'components/OptionComponent/WaterOptionComponent/WaterOptionComponent';
+import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 
 import waterImage from 'assets/soft/water.png';
 
@@ -22,7 +23,7 @@ interface Props {
 
 const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
-  const { goForward } = useStepProgressStore();
+  const { steps, goForward } = useStepProgressStore();
   const { water, WaterIsSelected, setWaterSelection } = useDrinkSelection();
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
@@ -53,6 +54,11 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
     }
   }, [options, water, WaterIsSelected]);
 
+  useEffect(() => {
+    console.log('Transition End: ' + transitionEnd);
+    console.log('____________ Water ____________');
+  }, [transitionEnd]);
+
   return (
     <>
       <SectionWrapper
@@ -72,7 +78,9 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
               transitionState={transitionEnd}
               style={{ borderColor: '#c3eeff' }}
             />
-            <HeaderTitle>{water.drink.name}</HeaderTitle>
+            <SectionServiceName animatePosition={steps[3].selected}>
+              <HeaderTitle>{water.drink.name}</HeaderTitle>
+            </SectionServiceName>
             <PlantImageWrapper animationFadeIn={4}>
               <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
               <PlantImage src={tropicalOne} alt="" top={-10} right={6} rotate={11} />
@@ -80,6 +88,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
               <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
               <BlurredCircle />
             </PlantImageWrapper>
+            <PaymentComponent animateShow={steps[3].selected} variant={3} />
           </>
         )}
       </SectionWrapper>
@@ -193,12 +202,23 @@ const BlurredCircle = styled.div`
   animation: ${flicker} 2s infinite alternate ease-in-out;
 `;
 
-const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
+const SectionServiceName = styled.section<{ animatePosition: boolean }>`
   position: absolute;
-  bottom: ${(props) => (props.bottom ? props.bottom : 2)}%;
-  left: ${(props) => (props.left ? props.left : 13.4)}%;
+  bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
+  left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
+  width: 21%;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  transition: 1s ease-in-out;
+`;
+
+const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
   font-size: 6rem;
   color: #fff;
+  margin: 0;
 `;
 
 export default WaterMenuComponent;

@@ -7,6 +7,7 @@ import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import MixGridComponent from 'components/OptionComponent/MixOptionComponent/MixGridComponent';
 import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
+import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
@@ -27,13 +28,64 @@ interface Props {
   isSlide: boolean;
   handleSetInitialState: () => void;
 }
+const obj = {
+  gin: {
+    title: 'Gin',
+    image: { src: gin, alt: 'gin' },
+    price: 6,
+  },
+  vodka: {
+    title: 'Vodka',
+    image: { src: vodka, alt: 'vodka' },
+    price: 6,
+  },
+  whiskey: {
+    title: 'Whiskey',
+    image: { src: whiskey, alt: 'whiskey' },
+    price: 6,
+  },
+  rum: {
+    title: 'Rum',
+    image: { src: rum, alt: 'rum' },
+    price: 6,
+  },
+};
+
+const obj2 = {
+  cola: {
+    title: 'Cola',
+    image: { src: cola, alt: 'cola' },
+    price: 5,
+  },
+  lemon: {
+    title: 'Lemon',
+    image: { src: lemon, alt: 'Lemon' },
+    price: 5,
+  },
+  tonic: {
+    title: 'Tonic',
+    image: { src: tonic, alt: 'Tonix' },
+    price: 5,
+  },
+  orange: {
+    title: 'Lima',
+    image: { src: orange, alt: 'Lima' },
+    price: 5,
+  },
+  energy: {
+    title: 'Energy',
+    image: { src: energy, alt: 'Energy' },
+    price: 5,
+  },
+};
 
 const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
-  const { setSelectedOption, getSelectedOption } = useMenuOptionSteps();
+  const { options, setSelectedOption, getSelectedOption } = useMenuOptionSteps();
   const { steps, goForward } = useStepProgressStore();
   const { mix, soft, MixIsSelected, SoftMixIsSelected } = useDrinkSelection();
 
   const [selected, setSelected] = useState<boolean>(false);
+  const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [transitionEnd, setTransitionEnd] = useState<boolean>(false);
   const [isTransition, setIsTransition] = useState();
   const [isSoftTransition, setSoftIsTransition] = useState();
@@ -54,11 +106,14 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   };
 
   const handleOnTransitionEnd = () => {
-    setTransitionEnd(!transitionEnd);
+    setTransitionEnd(true);
+    setTransitionStart(false);
   };
-  useEffect(() => {
-    console.log(transitionEnd);
-  }, [transitionEnd]);
+
+  const handleOnTransitionStart = () => {
+    setTransitionStart(true);
+    setTransitionEnd(false);
+  };
 
   useEffect(() => {
     const res = MixIsSelected();
@@ -70,56 +125,11 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     setSoftIsTransition(res);
   }, [soft, SoftMixIsSelected]);
 
-  const obj = {
-    gin: {
-      title: 'Gin',
-      image: { src: gin, alt: 'gin' },
-      price: 6,
-    },
-    vodka: {
-      title: 'Vodka',
-      image: { src: vodka, alt: 'vodka' },
-      price: 6,
-    },
-    whiskey: {
-      title: 'Whiskey',
-      image: { src: whiskey, alt: 'whiskey' },
-      price: 6,
-    },
-    rum: {
-      title: 'Rum',
-      image: { src: rum, alt: 'rum' },
-      price: 6,
-    },
-  };
-
-  const obj2 = {
-    cola: {
-      title: 'Cola',
-      image: { src: cola, alt: 'cola' },
-      price: 5,
-    },
-    lemon: {
-      title: 'Lemon',
-      image: { src: lemon, alt: 'Lemon' },
-      price: 5,
-    },
-    tonic: {
-      title: 'Tonic',
-      image: { src: tonic, alt: 'Tonix' },
-      price: 5,
-    },
-    orange: {
-      title: 'Lima',
-      image: { src: orange, alt: 'Lima' },
-      price: 5,
-    },
-    energy: {
-      title: 'Energy',
-      image: { src: energy, alt: 'Energy' },
-      price: 5,
-    },
-  };
+  useEffect(() => {
+    console.log('____________ Mix ____________');
+    console.log('Transition Start: ' + transitionStart);
+    console.log('Transition End: ' + transitionEnd);
+  }, [transitionStart, transitionEnd]);
 
   useEffect(() => {
     const selectedDrink = Object.values(obj2).filter((drink) => drink.title === mix.soft.name)[0];
@@ -128,7 +138,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     } else {
       setSoftImageSource(cola);
     }
-  }, [soft]);
+  }, [mix, soft]);
 
   useEffect(() => {
     const selectedDrink = Object.values(obj).filter((drink) => drink.title === mix.alcohol.name)[0];
@@ -149,11 +159,15 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   return (
     <>
       <SectionWrapper
-        onTouchStart={transitionEnd ? () => {} : () => handleStepProgress()}
+        onTouchStart={
+          options[0].selected || options[1].selected || options[2].selected || transitionStart
+            ? () => {}
+            : () => handleStepProgress()
+        }
         selected={selected}
         slide={isSlide}
         onTransitionEnd={handleOnTransitionEnd}
-        onTransitionStart={handleOnTransitionEnd}
+        onTransitionStart={handleOnTransitionStart}
       >
         <TitleH1 selected={selected}>Cocktail</TitleH1>
         <SubTitleH2>Create your Drink!</SubTitleH2>
@@ -162,13 +176,13 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
           <>
             <CloseButtonComponent
               defaultFunction={handleClose}
-              transitionState={transitionEnd}
+              transitionState={transitionStart}
               style={{ borderColor: '#ffd8c1' }}
             />
             <MixGridComponent
               selected={selected}
               obj={obj}
-              transitionEnd={transitionEnd}
+              transitionEnd={transitionEnd && steps[1].selected}
               slideIn={false}
               slideOut={isTransition}
             />
@@ -176,25 +190,32 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               type={'mix'}
               selected={selected}
               obj={obj2}
-              transitionEnd={transitionEnd}
+              transitionEnd={transitionEnd && steps[2].selected}
               slideIn={isSoftTransition}
               slideOut={isTransition}
             />
-            <HeaderTitle>{mix?.alcohol.name}</HeaderTitle>
-            <HeaderTitle bottom={-3}>
-              {mix?.soft.name}
-            </HeaderTitle>
+            <SectionServiceName animatePosition={steps[3].selected}>
+              <HeaderAlcohol>{mix?.alcohol.name}</HeaderAlcohol>
+              <HeaderSoft>{mix?.soft.name}</HeaderSoft>
+            </SectionServiceName>
             <PlantImageWrapper animationFadeIn={imageSelected}>
-              <PlantImage src={tropicalTwo} alt="" top={3} right={4} rotate={25} />
-              <PlantImage src={tropicalOne} alt="" top={-2} right={2} rotate={2} />
+              <PlantImage src={tropicalTwo} alt="" top={0} right={4} rotate={25} />
+              <PlantImage src={tropicalOne} alt="" top={-6} right={2} rotate={2} />
               <PlantImage src={tropicalThree} alt="" top={0} right={55} rotate={-90} />
-              <PlantImage src={tropicalFour} alt="" top={-10} right={40} rotate={-70} />
+              <PlantImage src={tropicalFour} alt="" top={-12} right={40} rotate={-70} />
               <BlurredCircle />
             </PlantImageWrapper>
+            <PaymentComponent animateShow={steps[3].selected} variant={1}/>
           </>
         )}
       </SectionWrapper>
-      <ImageSectionWrapper>
+      <ImageSectionWrapper
+        onTouchStart={
+          options[0].selected || options[1].selected || options[2].selected || transitionStart
+            ? () => {}
+            : () => handleStepProgress()
+        }
+      >
         <ImageAlc
           src={alcImageSource}
           alt="Floating Image"
@@ -204,7 +225,13 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
           type={currentSelectedOption}
         />
       </ImageSectionWrapper>
-      <ImageSectionWrapper animationState={imageSelected}>
+      <ImageSectionWrapper
+        onTouchStart={
+          options[0].selected || options[1].selected || options[2].selected || transitionStart
+            ? () => {}
+            : () => handleStepProgress()
+        }
+      >
         <ImageSoft
           src={softImageSource}
           alt="Floating Image"
@@ -273,7 +300,7 @@ const ImageSoft = styled.img.withConfig({
       ? !state.type
         ? 18
         : 83
-      : 47}%;
+      : 42}%;
   right: ${(state) =>
     state.animationBright === 4 && state.animationSelected
       ? 47
@@ -303,7 +330,7 @@ const ImageAlc = styled.img.withConfig({
       ? !state.type
         ? 4.5
         : 70
-      : 24}%;
+      : 19}%;
   right: ${(state) =>
     state.animationBright === 4 && state.animationSelected
       ? 25
@@ -390,12 +417,29 @@ const BlurredCircle = styled.div`
   animation: ${flicker} 2s infinite alternate ease-in-out;
 `;
 
-const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
+const SectionServiceName = styled.section<{ animatePosition: boolean }>`
   position: absolute;
-  bottom: ${(props) => (props.bottom ? props.bottom : 2)}%;
-  left: ${(props) => (props.left ? props.left : 13.4)}%;
+  bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
+  left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
+  width: 21%;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  transition: 1s ease-in-out;
+`;
+
+const HeaderAlcohol = styled.h1<{ bottom?: number; left?: number }>`
   font-size: 6rem;
   color: #fff;
+  margin: 0;
+`;
+
+const HeaderSoft = styled.h1<{ bottom?: number; left?: number }>`
+  font-size: 6rem;
+  color: #fff;
+  margin: 0;
 `;
 
 export default MixMenuComponent;

@@ -35,7 +35,7 @@ const MixGridComponent: React.FC<OptionListInterface> = ({
               animationSelected={drinkAnimationSelected === drink.title}
               key={index}
               drink={drink}
-              handleDrinkSelection={transitionEnd === false ? handleDrinkSelection : () => {}}
+              handleDrinkSelection={transitionEnd ? handleDrinkSelection : () => {}}
             />
           ))}
         </GridContainer>

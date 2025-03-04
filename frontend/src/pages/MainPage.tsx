@@ -68,6 +68,10 @@ const MainPage: React.FC = () => {
     resetSelection();
   };
 
+  useEffect(() => {
+    resetSelection();
+  }, [resetSelection]);
+
   return (
     <SectionGlobalWrapper>
       <MixMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide[0].selected} />

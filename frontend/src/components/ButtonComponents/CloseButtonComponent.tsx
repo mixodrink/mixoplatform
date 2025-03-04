@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import close from 'assets/icons/close.png';
+import { useMenuOptionSteps } from 'store/MenuOptionStore';
 
 interface Props {
   defaultFunction: () => void;
@@ -10,9 +11,10 @@ interface Props {
 }
 
 const CloseButtonComponent: React.FC<Props> = ({ defaultFunction, transitionState, style }) => {
+  const {options} = useMenuOptionSteps();
   return (
     <CloseButton
-      disabled={transitionState}
+      disabled={transitionState && options[0].selected || transitionState && options[1].selected || transitionState && options[2].selected  }
       borderColor={style.borderColor}
       onClick={(e) => {
         e.stopPropagation();
@@ -43,3 +45,4 @@ const CloseButton = styled.button.withConfig({
 `;
 
 export default CloseButtonComponent;
+
