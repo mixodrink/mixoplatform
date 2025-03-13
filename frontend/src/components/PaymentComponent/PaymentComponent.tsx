@@ -7,8 +7,8 @@ interface OptionItemProps {
   variant: string;
 }
 
-const PaymentComponent: React.FC<OptionItemProps> = ({ animateShow, variant }) => {
-  return <PayButtonComponent price={5} animateShow={animateShow} variant={variant}/>;
+const PaymentComponent: React.FC<OptionItemProps> = ({ animateShow, variant, priceSum }) => {
+  return <PayButtonComponent price={priceSum} animateShow={animateShow} variant={variant}/>;
 };
 
 // const SectionWrapper = styled.img.withConfig({

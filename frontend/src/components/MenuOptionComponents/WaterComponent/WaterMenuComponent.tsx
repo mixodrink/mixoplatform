@@ -54,11 +54,6 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
     }
   }, [options, water, WaterIsSelected]);
 
-  useEffect(() => {
-    console.log('Transition End: ' + transitionEnd);
-    console.log('____________ Water ____________');
-  }, [transitionEnd]);
-
   return (
     <>
       <SectionWrapper
@@ -88,7 +83,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
               <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
               <BlurredCircle />
             </PlantImageWrapper>
-            <PaymentComponent animateShow={steps[3].selected} variant={3} />
+            <PaymentComponent animateShow={steps[3].selected} variant={3} priceSum={water?.drink.price}/>
           </>
         )}
       </SectionWrapper>

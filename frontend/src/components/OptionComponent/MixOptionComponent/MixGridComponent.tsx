@@ -18,8 +18,11 @@ const MixGridComponent: React.FC<OptionListInterface> = ({
   const drinkArray = Object.values(obj);
 
   const handleDrinkSelection = (drink) => {
-    setMixSelection({ name: drink.title, price: 10 }, mix.soft);
-    goForward(3);
+    if (drink) {
+      setMixSelection({ name: drink.title, price: drink.price }, mix.soft);
+      goForward(3);
+      console.log('drink', drink);
+    }
   };
 
   useEffect(() => {
@@ -35,7 +38,13 @@ const MixGridComponent: React.FC<OptionListInterface> = ({
               animationSelected={drinkAnimationSelected === drink.title}
               key={index}
               drink={drink}
-              handleDrinkSelection={transitionEnd ? handleDrinkSelection : () => {}}
+              handleDrinkSelection={
+                transitionEnd && mix?.alcohol.name != drink.title && mix?.alcohol.name !== ''
+                  ? () => {
+                      handleDrinkSelection(drink);
+                    }
+                  : () => {}
+              }
             />
           ))}
         </GridContainer>

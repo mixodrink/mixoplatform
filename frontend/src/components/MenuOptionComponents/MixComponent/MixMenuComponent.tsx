@@ -8,6 +8,7 @@ import MixGridComponent from 'components/OptionComponent/MixOptionComponent/MixG
 import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
+import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
 
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
@@ -93,6 +94,8 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   const [currentSelectedOption, setCurrentSelectedOption] = useState<boolean>(false);
   const [softImageSource, setSoftImageSource] = useState(cola);
   const [alcImageSource, setAlcImageSource] = useState(rum);
+  const [currentMixIsSelected, setCurrentMixIsSelected] = useState<boolean>(false);
+  const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState<boolean>(false);
 
   const handleStepProgress = () => {
     setSelectedOption('mix');
@@ -122,14 +125,12 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
 
   useEffect(() => {
     const res = SoftMixIsSelected();
-    setSoftIsTransition(res);
-  }, [soft, SoftMixIsSelected]);
-
-  useEffect(() => {
-    console.log('____________ Mix ____________');
-    console.log('Transition Start: ' + transitionStart);
-    console.log('Transition End: ' + transitionEnd);
-  }, [transitionStart, transitionEnd]);
+    if (steps[2].selected && res) {
+      setSoftIsTransition(false);
+    } else {
+      setSoftIsTransition(res);
+    }
+  }, [steps, soft, SoftMixIsSelected]);
 
   useEffect(() => {
     const selectedDrink = Object.values(obj2).filter((drink) => drink.title === mix.soft.name)[0];
@@ -155,6 +156,14 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     const res = getSelectedOption();
     setCurrentSelectedOption(res?.option === 'mix');
   }, [steps, getSelectedOption, currentSelectedOption]);
+
+  useEffect(() => {
+    const res = MixIsSelected();
+    setCurrentMixIsSelected(res);
+
+    const res2 = SoftMixIsSelected();
+    setCurrentSoftIsSelected(res2);
+  }, [mix, MixIsSelected, SoftMixIsSelected]);
 
   return (
     <>
@@ -185,6 +194,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               transitionEnd={transitionEnd && steps[1].selected}
               slideIn={false}
               slideOut={isTransition}
+              handleSetSoftTransition={setSoftIsTransition}
             />
             <SoftGridComponent
               type={'mix'}
@@ -205,7 +215,24 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               <PlantImage src={tropicalFour} alt="" top={-12} right={40} rotate={-70} />
               <BlurredCircle />
             </PlantImageWrapper>
-            <PaymentComponent animateShow={steps[3].selected} variant={1}/>
+            <PaymentComponent
+              animateShow={steps[3].selected}
+              variant={1}
+              priceSum={mix?.alcohol.price + mix?.soft.price}
+            />
+            <StepControlButtonComponent
+              resMix={setIsTransition}
+              resSoft={setSoftIsTransition}
+              handleClose={handleClose}
+              handleSetSoftTransition={setSoftIsTransition}
+              handleSetMixTransition={setIsTransition}
+              animateArrowBack={currentMixIsSelected}
+              animateArrowForward={
+                (steps[1].selected && currentSoftIsSelected) ||
+                (steps[2].selected && currentSoftIsSelected)
+              }
+              type={'mix'}
+            />
           </>
         )}
       </SectionWrapper>
@@ -282,12 +309,10 @@ const SubTitleH2 = styled.h2<{ selected: string }>`
   overflow: hidden;
 `;
 
-// Default styles for the wrapper
 const ImageSectionWrapper = styled.section`
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-// Image styling
 const ImageSoft = styled.img.withConfig({
   shouldForwardProp: (prop) =>
     !['animationBright', 'animationSelected', 'animationSlide', 'type'].includes(prop),
@@ -317,7 +342,6 @@ const ImageSoft = styled.img.withConfig({
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-// Image styling
 const ImageAlc = styled.img.withConfig({
   shouldForwardProp: (prop) =>
     !['animationBright', 'animationSelected', 'animationSlide', 'type'].includes(prop),
@@ -419,8 +443,8 @@ const BlurredCircle = styled.div`
 
 const SectionServiceName = styled.section<{ animatePosition: boolean }>`
   position: absolute;
-  bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
-  left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
+  bottom: ${(props) => (props.animatePosition ? 19.5 : 5)}%;
+  left: ${(props) => (props.animatePosition ? 40 : 25)}%;
   width: 21%;
   z-index: 1;
   display: flex;
@@ -428,16 +452,15 @@ const SectionServiceName = styled.section<{ animatePosition: boolean }>`
   justify-content: center;
   gap: 20px;
   transition: 1s ease-in-out;
+  font-size: ${(props) => (props.animatePosition ? '7rem' : '4.3rem')};
 `;
 
 const HeaderAlcohol = styled.h1<{ bottom?: number; left?: number }>`
-  font-size: 6rem;
   color: #fff;
   margin: 0;
 `;
 
 const HeaderSoft = styled.h1<{ bottom?: number; left?: number }>`
-  font-size: 6rem;
   color: #fff;
   margin: 0;
 `;

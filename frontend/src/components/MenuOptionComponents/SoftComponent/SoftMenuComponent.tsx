@@ -6,6 +6,7 @@ import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
+import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
 
 import cola from 'assets/soft/cola.png';
 import lemon from 'assets/soft//lemon.png';
@@ -68,7 +69,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
     goForward(3);
   };
 
-  const handleSet = () => {
+  const handleClose = () => {
     handleSetInitialState();
     setSelected(false);
   };
@@ -92,18 +93,24 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
     } else {
       setFloatingImage(cola);
     }
-  }, [soft, SoftIsSelected]);
+  }, [steps, soft, SoftIsSelected]);
 
   useEffect(() => {
     const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
     setImageSelected(filterSelectedStep);
   }, [steps]);
 
+  const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
+  const [softIsTransition, setSoftIsTransition] = useState(false);
   useEffect(() => {
-    console.log('____________ Soft ____________');
-    console.log('Transition Start: ' + transitionStart);
-    console.log('Transition End: ' + transitionEnd);
-  }, [transitionStart, transitionEnd]);
+    const res2 = SoftIsSelected();
+    setCurrentSoftIsSelected(res2);
+    if (steps[2].selected && res2) {
+      setSoftIsTransition(false);
+    } else {
+      setSoftIsTransition(res2);
+    }
+  }, [steps, soft, SoftIsSelected]);
 
   return (
     <>
@@ -124,7 +131,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         {selected && (
           <>
             <CloseButtonComponent
-              defaultFunction={handleSet}
+              defaultFunction={handleClose}
               transitionState={transitionStart}
               style={{ borderColor: '#d8c9ff' }}
             />
@@ -133,7 +140,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               selected={selected}
               obj={obj}
               transitionEnd={transitionEnd && steps[2].selected}
-              slideIn={isTransition}
+              slideIn={softIsTransition}
               slideOut={!isTransition}
             />
             <SectionServiceName animatePosition={steps[3].selected}>
@@ -146,7 +153,22 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
               <BlurredCircle />
             </PlantImageWrapper>
-            <PaymentComponent animateShow={steps[3].selected} variant={2}/>
+            <PaymentComponent
+              animateShow={steps[3].selected}
+              variant={2}
+              priceSum={soft?.drink.price}
+            />
+            <StepControlButtonComponent
+              resSoft={setIsTransition}
+              handleClose={handleClose}
+              handleSetSoftTransition={setSoftIsTransition}
+              animateArrowBack={steps[2].selected || currentSoftIsSelected}
+              animateArrowForward={
+                (steps[1].selected && currentSoftIsSelected) ||
+                (steps[2].selected && currentSoftIsSelected)
+              }
+              type={'soft'}
+            />
           </>
         )}
       </SectionWrapper>
@@ -208,7 +230,7 @@ const ImageSectionWrapper = styled.section.withConfig({
 })`
   position: absolute;
   top: ${(props) =>
-    props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 80}%;
+    props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
   right: ${(props) =>
     props.slide
       ? props.animationState === 1
@@ -319,10 +341,10 @@ const SectionServiceName = styled.section<{ animatePosition: boolean }>`
   justify-content: center;
   gap: 20px;
   transition: 1s ease-in-out;
+  font-size: ${(props) => (props.animatePosition ? '6rem' : '3rem')};
 `;
 
 const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
-  font-size: 6rem;
   color: #fff;
   margin: 0;
 `;

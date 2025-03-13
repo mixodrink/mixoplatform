@@ -20,9 +20,9 @@ const SoftGridComponent: React.FC<OptionListInterface> = ({
 
   const handleDrinkSelection = (drink) => {
     if (type === 'mix') {
-      setMixSelection(mix.alcohol, { name: drink.title, price: 3 });
+      setMixSelection(mix.alcohol, { name: drink.title, price: drink.price });
     } else {
-      setSoftSelection({ name: drink.title, price: 3 });
+      setSoftSelection({ name: drink.title, price: drink.price });
     }
     goForward(4);
   };
@@ -45,7 +45,13 @@ const SoftGridComponent: React.FC<OptionListInterface> = ({
               drink={drink}
               type={type}
               animationSelected={drinkAnimationSelected === drink.title}
-              handleDrinkSelection={transitionEnd ? handleDrinkSelection : () => {}}
+              handleDrinkSelection={
+                transitionEnd && soft?.drink.name != drink.title && soft?.drink.name !== ''
+                  ? () => {
+                      handleDrinkSelection(drink);
+                    }
+                  : () => {}
+              }
             />
           ))}
         </GridContainer>

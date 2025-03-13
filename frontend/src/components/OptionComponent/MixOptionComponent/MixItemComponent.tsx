@@ -37,7 +37,7 @@ const BackgroundBox = styled.div<{ animationSelected: boolean }>`
   position: absolute;
   bottom: 0;
   border-radius: 3rem;
-  border: 20px solid #ffc09b;
+  border: 20px solid ${(props) => (props.animationSelected ? '#fff' : '#ffc09b')};
   background: ${(props) => (props.animationSelected ? '#ffc09b' : '#fff')};
   box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.2);
   transition: 0.8s ease-in-out;

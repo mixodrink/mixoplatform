@@ -41,7 +41,7 @@ const BackgroundBox = styled.div.withConfig({
   position: absolute;
   bottom: 0;
   border-radius: 3rem;
-  border: ${(props) => (props.mod === 'mix' ? '20px solid #ffd8c1' : '20px solid #d8c9ff')};
+  border: ${(props) => (props.mod === 'mix' ? props.animationSelected ? '20px solid #fff' : '20px solid #ffd8c1' : props.animationSelected ?  '20px solid #fff' : '20px solid #d8c9ff')};
   background: ${(props) =>
     props.animationSelected ? (props.mod === 'mix' ? '#ffd8c1' : '#d8c9ff') : '#fff'};
   box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.2);
