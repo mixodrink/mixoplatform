@@ -152,7 +152,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
 
   useEffect(() => {
     const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
-    console.log(filterSelectedStep);
     setImageSelected(filterSelectedStep);
     const res = getSelectedOption();
     setCurrentSelectedOption(res?.option === 'mix');

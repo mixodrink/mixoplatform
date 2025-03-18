@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import arrow from 'assets/icons/arrow.png';
@@ -34,10 +34,6 @@ const StepControlButtonComponentSoft: React.FC<Props> = ({
       goForward(4);
     }
   };
-
-  useEffect(() => {
-    console.log(clickableState);
-  }, [clickableState]);
 
   return (
     <>

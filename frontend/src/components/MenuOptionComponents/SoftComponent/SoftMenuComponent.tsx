@@ -98,7 +98,6 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 
     const res2 = SoftIsSelected();
     setCurrentSoftIsSelected(res2);
-    console.log(res2);
     if (res2 && steps[3].selected) {
       setSoftIsTransition(true);
     } else {
