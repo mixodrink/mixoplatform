@@ -152,6 +152,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
 
   useEffect(() => {
     const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
+    console.log(filterSelectedStep);
     setImageSelected(filterSelectedStep);
     const res = getSelectedOption();
     setCurrentSelectedOption(res?.option === 'mix');
@@ -221,6 +222,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               priceSum={mix?.alcohol.price + mix?.soft.price}
             />
             <StepControlButtonComponent
+              clickableState={transitionEnd}
               resMix={setIsTransition}
               resSoft={setSoftIsTransition}
               handleClose={handleClose}
@@ -249,6 +251,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
           animationBright={imageSelected}
           animationSelected={selected}
           animationSlide={isSlide}
+          isBright={currentMixIsSelected}
           type={currentSelectedOption}
         />
       </ImageSectionWrapper>
@@ -265,6 +268,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
           animationBright={imageSelected}
           animationSelected={selected}
           animationSlide={isSlide}
+          isBright={currentSoftIsSelected}
           type={currentSelectedOption}
         />
       </ImageSectionWrapper>
@@ -315,7 +319,7 @@ const ImageSectionWrapper = styled.section`
 
 const ImageSoft = styled.img.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationBright', 'animationSelected', 'animationSlide', 'type'].includes(prop),
+    !['animationBright', 'animationSelected', 'animationSlide', 'type', 'isBright'].includes(prop),
 })`
   position: absolute;
   top: ${(state) =>
@@ -333,7 +337,9 @@ const ImageSoft = styled.img.withConfig({
       ? 16
       : -100}%;
   filter: ${(state) =>
-    state.animationBright === 1 || state.animationBright === 4
+    state.isBright
+      ? 'brightness(1)'
+      : state.animationBright === 1
       ? 'brightness(1)'
       : 'brightness(0.5)'};
   rotate: -9deg;
@@ -344,7 +350,7 @@ const ImageSoft = styled.img.withConfig({
 
 const ImageAlc = styled.img.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationBright', 'animationSelected', 'animationSlide', 'type'].includes(prop),
+    !['animationBright', 'animationSelected', 'animationSlide', 'type', 'isBright'].includes(prop),
 })`
   position: absolute;
   top: ${(state) =>
@@ -362,7 +368,9 @@ const ImageAlc = styled.img.withConfig({
       ? 1
       : -100}%;
   filter: ${(state) =>
-    state.animationBright === 1 || state.animationBright === 3 || state.animationBright === 4
+    state.isBright
+      ? 'brightness(1)'
+      : state.animationBright === 1
       ? 'brightness(1)'
       : 'brightness(0.5)'};
   rotate: 9deg;

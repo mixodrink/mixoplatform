@@ -6,18 +6,18 @@ import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
-import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
+import StepControlButtonComponentSoft from 'components/ButtonComponents/StepControlButtonComponentSoft';
+
+import tropicalOne from 'assets/plants/tropical-one.png';
+import tropicalTwo from 'assets/plants/tropical-two.png';
+import tropicalThree from 'assets/plants/tropical-three.png';
+import tropicalFour from 'assets/plants/tropical-four.png';
 
 import cola from 'assets/soft/cola.png';
 import lemon from 'assets/soft//lemon.png';
 import tonic from 'assets/soft/tonic.png';
 import orange from 'assets/soft/orange.png';
 import energy from 'assets/soft/energy.png';
-
-import tropicalOne from 'assets/plants/tropical-one.png';
-import tropicalTwo from 'assets/plants/tropical-two.png';
-import tropicalThree from 'assets/plants/tropical-three.png';
-import tropicalFour from 'assets/plants/tropical-four.png';
 
 interface Props {
   isSlide: boolean;
@@ -59,9 +59,10 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
-  const [isTransition, setIsTransition] = useState();
   const [floatingImage, setFloatingImage] = useState<string>(cola);
   const [imageSelected, setImageSelected] = useState<string>(1);
+  const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
+  const [softIsTransition, setSoftIsTransition] = useState(false);
 
   const handleStepProgress = () => {
     setSelectedOption('soft');
@@ -85,30 +86,23 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   };
 
   useEffect(() => {
-    const res = SoftIsSelected();
-    setIsTransition(res);
     const selectedDrink = Object.values(obj).filter((drink) => drink.title === soft.drink.name)[0];
     if (selectedDrink) {
       setFloatingImage(selectedDrink.image.src);
     } else {
       setFloatingImage(cola);
     }
-  }, [steps, soft, SoftIsSelected]);
 
-  useEffect(() => {
     const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
     setImageSelected(filterSelectedStep);
-  }, [steps]);
 
-  const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
-  const [softIsTransition, setSoftIsTransition] = useState(false);
-  useEffect(() => {
     const res2 = SoftIsSelected();
     setCurrentSoftIsSelected(res2);
-    if (steps[2].selected && res2) {
-      setSoftIsTransition(false);
+    console.log(res2);
+    if (res2 && steps[3].selected) {
+      setSoftIsTransition(true);
     } else {
-      setSoftIsTransition(res2);
+      setSoftIsTransition(false);
     }
   }, [steps, soft, SoftIsSelected]);
 
@@ -141,7 +135,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               obj={obj}
               transitionEnd={transitionEnd && steps[2].selected}
               slideIn={softIsTransition}
-              slideOut={!isTransition}
+              slideOut={true}
             />
             <SectionServiceName animatePosition={steps[3].selected}>
               <HeaderTitle>{soft?.drink.name}</HeaderTitle>
@@ -158,14 +152,12 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               variant={2}
               priceSum={soft?.drink.price}
             />
-            <StepControlButtonComponent
-              resSoft={setIsTransition}
+            <StepControlButtonComponentSoft
+              clickableState={transitionEnd}
               handleClose={handleClose}
-              handleSetSoftTransition={setSoftIsTransition}
-              animateArrowBack={steps[2].selected || currentSoftIsSelected}
+              animateArrowBack={steps[3].selected || currentSoftIsSelected}
               animateArrowForward={
-                (steps[1].selected && currentSoftIsSelected) ||
-                (steps[2].selected && currentSoftIsSelected)
+                steps[1].selected || (steps[2].selected && currentSoftIsSelected)
               }
               type={'soft'}
             />
@@ -180,7 +172,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         slide={selected}
         isMenu={imageSelected === 1}
       >
-        <Image src={floatingImage} alt="Floating Image" animationState={imageSelected} />
+        <Image src={floatingImage} alt="Floating Image" animationState={imageSelected} isBright={currentSoftIsSelected}/>
       </ImageSectionWrapper>
     </>
   );
@@ -247,17 +239,36 @@ const ImageSectionWrapper = styled.section.withConfig({
 
 // Image styling
 const Image = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationState', 'type'].includes(prop),
+  shouldForwardProp: (prop) => !['animationState', 'type', 'isBright'].includes(prop),
 })`
   filter: ${(props) =>
-    props.animationState === 1
+    props.isBright
       ? 'brightness(1)'
-      : props.animationState === 3
-      ? 'brightness(0.3)'
-      : 'brightness(1)'};
+      : props.animationState === 1
+      ? 'brightness(1)'
+      : 'brightness(0.5)'};
   width: ${(props) => (props.animationState <= 3 ? 250 : 350)}px;
   height: ${(props) => (props.animationState <= 3 ? 400 : 700)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+`;
+
+const SectionServiceName = styled.section<{ animatePosition: boolean }>`
+  position: absolute;
+  bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
+  left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
+  width: 21%;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  transition: 1s ease-in-out;
+  font-size: ${(props) => (props.animatePosition ? '6rem' : '3rem')};
+`;
+
+const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
+  color: #fff;
+  margin: 0;
 `;
 
 const fadeIn = keyframes`
@@ -328,25 +339,6 @@ const BlurredCircle = styled.div`
   filter: blur(100px);
   z-index: -1;
   animation: ${flicker} 2s infinite alternate ease-in-out;
-`;
-
-const SectionServiceName = styled.section<{ animatePosition: boolean }>`
-  position: absolute;
-  bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
-  left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
-  width: 21%;
-  z-index: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 20px;
-  transition: 1s ease-in-out;
-  font-size: ${(props) => (props.animatePosition ? '6rem' : '3rem')};
-`;
-
-const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
-  color: #fff;
-  margin: 0;
 `;
 
 export default SoftMenuComponent;

@@ -21,7 +21,6 @@ const MixGridComponent: React.FC<OptionListInterface> = ({
     if (drink) {
       setMixSelection({ name: drink.title, price: drink.price }, mix.soft);
       goForward(3);
-      console.log('drink', drink);
     }
   };
 
