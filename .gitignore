@@ -1,0 +1,8 @@
+backend/node_modules
+frontend_old/node_modules
+node-red/node_modules
+frontend/node_modules
+backend/.env
+frontend/.env
+node-red/.env
+
