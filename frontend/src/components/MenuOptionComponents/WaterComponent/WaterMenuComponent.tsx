@@ -80,7 +80,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
           <>
             <CloseButtonComponent
               defaultFunction={handleClose}
-              transitionState={transitionEnd}
+              transitionStart={transitionEnd}
               style={{ borderColor: '#c3eeff' }}
             />
             <SectionServiceName animatePosition={steps[3].selected}>

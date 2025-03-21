@@ -14,14 +14,13 @@ interface SectionWrapperProps {
 }
 
 const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant }) => {
-  const { goForward } = useStepProgressStore();
-
-  const handleTouch = () => {
-    goForward(5);
-    console.log('done');
-  };
+  const { goForward, steps } = useStepProgressStore();
   return (
-    <SectionWrapper animateShow={animateShow} variant={variant} onTouchStart={() => handleTouch}>
+    <SectionWrapper
+      animateShow={animateShow}
+      variant={variant}
+      onTouchStart={!steps[3].selected ? () => {} : () => goForward(5)}
+    >
       <SectionTitle>{price}€</SectionTitle>
       <SectionText>Pay</SectionText>
     </SectionWrapper>

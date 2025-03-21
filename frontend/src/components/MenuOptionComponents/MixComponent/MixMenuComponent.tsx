@@ -185,7 +185,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
           <>
             <CloseButtonComponent
               defaultFunction={handleClose}
-              transitionState={transitionStart}
+              transitionStart={transitionStart}
               style={{ borderColor: '#ffd8c1' }}
             />
             <MixGridComponent
@@ -224,14 +224,11 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               resMix={setIsTransition}
               resSoft={setSoftIsTransition}
               handleClose={handleClose}
-              handleSetSoftTransition={setSoftIsTransition}
-              handleSetMixTransition={setIsTransition}
               animateArrowBack={currentMixIsSelected}
               animateArrowForward={
                 (steps[1].selected && currentSoftIsSelected) ||
                 (steps[2].selected && currentSoftIsSelected)
               }
-              type={'mix'}
             />
           </>
         )}

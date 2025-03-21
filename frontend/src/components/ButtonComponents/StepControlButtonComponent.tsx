@@ -18,8 +18,6 @@ interface Props {
 const StepControlButtonComponent: React.FC<Props> = ({
   animateArrowBack,
   animateArrowForward,
-  handleSetSoftTransition,
-  handleSetMixTransition,
   handleClose,
   resSoft,
   clickableState,

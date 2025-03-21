@@ -125,7 +125,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
           <>
             <CloseButtonComponent
               defaultFunction={handleClose}
-              transitionState={transitionStart}
+              transitionStart={transitionStart}
               style={{ borderColor: '#d8c9ff' }}
             />
             <SoftGridComponent
@@ -156,7 +156,6 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               handleClose={handleClose}
               animateArrowBack={currentSoftIsSelected}
               animateArrowForward={currentSoftIsSelected}
-              type={'soft'}
             />
           </>
         )}
