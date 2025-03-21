@@ -1,14 +1,27 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
+import { useStepProgressStore } from 'store/ProgressStepsStore';
 
 interface OptionItemProps {
   price: number;
   animateShow: boolean;
+  variant: number;
+}
+
+interface SectionWrapperProps {
+  animateShow: boolean;
+  variant: number;
 }
 
 const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant }) => {
+  const { goForward } = useStepProgressStore();
+
+  const handleTouch = () => {
+    goForward(5);
+    console.log('done');
+  };
   return (
-    <SectionWrapper animateShow={animateShow} variant={variant}>
+    <SectionWrapper animateShow={animateShow} variant={variant} onTouchStart={() => handleTouch}>
       <SectionTitle>{price}€</SectionTitle>
       <SectionText>Pay</SectionText>
     </SectionWrapper>
@@ -53,7 +66,7 @@ const animationBorderWater = keyframes`
 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['animateShow', 'variant'].includes(prop),
-})`
+})<SectionWrapperProps>`
   position: absolute;
   bottom: 2.5%;
   right: 5.5%;
@@ -99,19 +112,16 @@ const SectionWrapper = styled.section.withConfig({
     return 'none';
   }};
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
 `;
 
-const SectionTitle = styled.h1.withConfig({
-  shouldForwardProp: (prop) => ![].includes(prop),
-})`
+const SectionTitle = styled.h1`
   font-size: 10rem;
   color: #fff;
   margin-top: 180px;
 `;
 
-const SectionText = styled.p.withConfig({
-  shouldForwardProp: (prop) => ![].includes(prop),
-})`
+const SectionText = styled.p`
   font-size: 10rem;
   color: #fff;
   margin-top: 120px;

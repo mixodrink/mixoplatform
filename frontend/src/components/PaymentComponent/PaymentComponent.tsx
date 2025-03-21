@@ -4,11 +4,12 @@ import PayButtonComponent from './PayButtonComponent';
 
 interface OptionItemProps {
   animateShow: boolean;
-  variant: string;
+  variant: number;
+  priceSum: number;
 }
 
 const PaymentComponent: React.FC<OptionItemProps> = ({ animateShow, variant, priceSum }) => {
-  return <PayButtonComponent price={priceSum} animateShow={animateShow} variant={variant}/>;
+  return <PayButtonComponent price={priceSum} animateShow={animateShow} variant={variant} />;
 };
 
 // const SectionWrapper = styled.img.withConfig({

@@ -69,8 +69,8 @@ const obj2 = {
     price: 5,
   },
   orange: {
-    title: 'Lima',
-    image: { src: orange, alt: 'Lima' },
+    title: 'Lime',
+    image: { src: orange, alt: 'Lime' },
     price: 5,
   },
   energy: {
@@ -194,7 +194,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               transitionEnd={transitionEnd && steps[1].selected}
               slideIn={false}
               slideOut={isTransition}
-              handleSetSoftTransition={setSoftIsTransition}
             />
             <SoftGridComponent
               type={'mix'}
@@ -278,15 +277,15 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 })`
-  width: 89%;
-  height: ${(state) => (state.selected ? 94 : 29)}%;
+  width: ${(state) => (state.selected ? 96.4 : 89)}%;
+  height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #fd660e;
-  border-radius: 3rem;
+  border-radius: ${(state) => (state.selected ? 0 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
   border: 20px solid #ffc09b;
-  top: 40px;
-  left: ${(state) => (state.slide ? 1500 : 43)}px;
+  top: ${(state) => (state.selected ? 0 : 40)}px;
+  left: ${(state) => (state.slide ? 1500 : state.selected ? 0 : 43)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -324,7 +323,7 @@ const ImageSoft = styled.img.withConfig({
   top: ${(state) =>
     state.animationBright === 1
       ? 18
-      : state.animationBright === 2 || state.animationBright === 3
+      : state.animationBright === 2 || state.animationBright === 3 || state.animationBright === 5
       ? !state.type
         ? 18
         : 83
@@ -342,8 +341,8 @@ const ImageSoft = styled.img.withConfig({
       ? 'brightness(1)'
       : 'brightness(0.5)'};
   rotate: -9deg;
-  width: ${(state) => (state.animationBright <= 3 ? 190 : 270)}px;
-  height: ${(state) => (state.animationBright <= 3 ? 300 : 520)}px;
+  width: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 190 : 270)}px;
+  height: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 300 : 520)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -355,7 +354,7 @@ const ImageAlc = styled.img.withConfig({
   top: ${(state) =>
     state.animationBright === 1
       ? 4.5
-      : state.animationBright === 2 || state.animationBright === 3
+      : state.animationBright === 2 || state.animationBright === 3 || state.animationBright === 5
       ? !state.type
         ? 4.5
         : 70
@@ -373,8 +372,8 @@ const ImageAlc = styled.img.withConfig({
       ? 'brightness(1)'
       : 'brightness(0.5)'};
   rotate: 9deg;
-  width: ${(state) => (state.animationBright <= 3 ? 200 : 340)}px;
-  height: ${(state) => (state.animationBright <= 3 ? 550 : 950)}px;
+  width: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 200 : 340)}px;
+  height: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 550 : 950)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

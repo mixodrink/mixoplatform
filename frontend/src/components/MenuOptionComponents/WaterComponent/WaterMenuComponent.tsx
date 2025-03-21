@@ -54,10 +54,20 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
     }
   }, [options, water, WaterIsSelected]);
 
+  const [imageSelected, setImageSelected] = useState(0);
+  useEffect(() => {
+    const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
+    setImageSelected(filterSelectedStep);
+  }, [steps]);
+
   return (
     <>
       <SectionWrapper
-        onTouchStart={transitionEnd ? () => {} : () => handleStepProgress()}
+        onTouchStart={
+          options[0].selected || options[1].selected || options[2].selected || transitionEnd
+            ? () => {}
+            : () => handleStepProgress()
+        }
         selected={selected}
         slide={isSlide}
         onTransitionEnd={handleOnTransitionEnd}
@@ -76,18 +86,26 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
             <SectionServiceName animatePosition={steps[3].selected}>
               <HeaderTitle>{water.drink.name}</HeaderTitle>
             </SectionServiceName>
-            <PlantImageWrapper animationFadeIn={4}>
+            <PlantImageWrapper animationFadeIn={imageSelected}>
               <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
               <PlantImage src={tropicalOne} alt="" top={-10} right={6} rotate={11} />
               <PlantImage src={tropicalThree} alt="" top={-6} right={52} rotate={-90} />
               <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
               <BlurredCircle />
             </PlantImageWrapper>
-            <PaymentComponent animateShow={steps[3].selected} variant={3} priceSum={water?.drink.price}/>
+            <PaymentComponent
+              animateShow={steps[3].selected}
+              variant={3}
+              priceSum={water?.drink.price}
+            />
           </>
         )}
       </SectionWrapper>
-      <WaterOptionComponent animationSlideIn={selected} animationSlideOut={isTransition} />
+      <WaterOptionComponent
+        animationSlideIn={selected}
+        animationSlideOut={isTransition}
+        animationBackSlideOut={steps[4].selected}
+      />
     </>
   );
 };
@@ -95,14 +113,14 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 })`
-  width: 89%;
-  height: ${(state) => (state.selected ? 94 : 29)}%;
+  width: ${(state) => (state.selected ? 96.4 : 89)}%;
+  height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #40c2f6;
-  border-radius: 3rem;
+  border-radius: ${(state) => (state.selected ? 0 : 3)}rem;
   position: absolute;
-  bottom: 40px;
+  bottom: ${(state) => (state.selected ? 0 : 40)}px;
   border: 20px solid #b3e9ff;
-  left: ${(state) => (state.slide ? 300 : 4)}%;
+  left: ${(state) => (state.slide ? 300 : state.selected ? -0.1 : 4)}%;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

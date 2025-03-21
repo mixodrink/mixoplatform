@@ -39,13 +39,13 @@ const StepControlButtonComponentSoft: React.FC<Props> = ({
     <>
       <SectionWrapper>
         <BackButton
-          animateShow={animateArrowBack}
+          animateShow={animateArrowBack && !steps[4].selected}
           onTouchStart={!clickableState ? () => {} : () => handleGoBack()}
         >
           <ArrowImageLeft src={arrow} alt="" />
         </BackButton>
         <ForwardButton
-          animateShow={animateArrowForward}
+          animateShow={animateArrowForward && !steps[4].selected && !steps[3].selected}
           onTouchStart={!clickableState ? () => {} : () => handleGoForward()}
         >
           <ArrowImageRight src={arrow} alt="" variant={true} />
@@ -66,7 +66,7 @@ const BackButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['animateShow', 'variant'].includes(prop),
 })`
   position: absolute;
-  left: 2%;
+  left: 0%;
   width: 120px;
   height: 300px;
   border: none;
@@ -80,7 +80,7 @@ const ForwardButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['animateShow'].includes(prop),
 })`
   position: absolute;
-  left: 89%;
+  left: 90.8%;
   width: 120px;
   height: 300px;
   border: none;
@@ -95,7 +95,7 @@ const ArrowImageLeft = styled.img.withConfig({
 })`
   position: absolute;
   top: 25%;
-  left: -15%;
+  left: -8%;
   width: 150px;
   height: 150px;
   transform: rotate(0deg);
@@ -106,7 +106,7 @@ const ArrowImageRight = styled.img.withConfig({
 })`
   position: absolute;
   top: 25%;
-  left: -10%;
+  left: -17%;
   width: 150px;
   height: 150px;
   transform: rotate(180deg);

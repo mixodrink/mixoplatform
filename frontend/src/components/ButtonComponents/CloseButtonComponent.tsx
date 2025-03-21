@@ -7,7 +7,11 @@ import { useMenuOptionSteps } from 'store/MenuOptionStore';
 interface Props {
   defaultFunction: () => void;
   transitionState: boolean;
-  style: object;
+  style: { borderColor: string };
+}
+
+interface CloseButtonProps {
+  borderColor: string;
 }
 
 const CloseButtonComponent: React.FC<Props> = ({ defaultFunction, transitionState, style }) => {
@@ -28,7 +32,7 @@ const CloseButtonComponent: React.FC<Props> = ({ defaultFunction, transitionStat
 
 const CloseButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['borderColor'].includes(prop),
-})`
+})<CloseButtonProps>`
   width: 100px;
   height: 100px;
   background: #ffffff78; /* White background */

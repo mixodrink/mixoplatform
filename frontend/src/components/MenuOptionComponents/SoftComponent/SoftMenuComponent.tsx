@@ -41,8 +41,8 @@ const obj = {
     price: 5,
   },
   orange: {
-    title: 'Lima',
-    image: { src: orange, alt: 'Lima' },
+    title: 'Lime',
+    image: { src: orange, alt: 'Lime' },
     price: 5,
   },
   energy: {
@@ -98,7 +98,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 
     const res2 = SoftIsSelected();
     setCurrentSoftIsSelected(res2);
-    if (res2 && steps[3].selected) {
+    if ((res2 && steps[3].selected) || (res2 && steps[4].selected)) {
       setSoftIsTransition(true);
     } else {
       setSoftIsTransition(false);
@@ -154,10 +154,8 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
             <StepControlButtonComponentSoft
               clickableState={transitionEnd}
               handleClose={handleClose}
-              animateArrowBack={steps[3].selected || currentSoftIsSelected}
-              animateArrowForward={
-                steps[1].selected || (steps[2].selected && currentSoftIsSelected)
-              }
+              animateArrowBack={currentSoftIsSelected}
+              animateArrowForward={currentSoftIsSelected}
               type={'soft'}
             />
           </>
@@ -170,8 +168,14 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         deg={6}
         slide={selected}
         isMenu={imageSelected === 1}
+        paymentState={steps[4].selected}
       >
-        <Image src={floatingImage} alt="Floating Image" animationState={imageSelected} isBright={currentSoftIsSelected}/>
+        <Image
+          src={floatingImage}
+          alt="Floating Image"
+          animationState={imageSelected}
+          isBright={currentSoftIsSelected}
+        />
       </ImageSectionWrapper>
     </>
   );
@@ -180,15 +184,15 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 })`
-  width: 89%;
-  height: ${(state) => (state.selected ? 94 : 29)}%;
+  width: ${(state) => (state.selected ? 96.4 : 89)}%;
+  height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #5f31d4;
-  border-radius: 3rem;
+  border-radius: ${(state) => (state.selected ? 0 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
   border: 20px solid #d8c9ff;
-  top: ${(state) => (state.selected ? 2 : 34.5)}%;
-  right: ${(state) => (state.slide ? 1500 : 40)}px;
+  top: ${(state) => (state.selected ? 0 : 34.5)}%;
+  right: ${(state) => (state.slide ? 1500 : state.selected ? -0.4 : 40)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -217,14 +221,14 @@ const SubTitleH2 = styled.h2`
 // Default styles for the wrapper
 const ImageSectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationState', 'top', 'deg', 'type', 'slide', 'isMenu'].includes(prop),
+    !['animationState', 'top', 'deg', 'type', 'slide', 'isMenu', 'paymentState'].includes(prop),
 })`
   position: absolute;
   top: ${(props) =>
     props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
   right: ${(props) =>
     props.slide
-      ? props.animationState === 1
+      ? props.animationState === 1 || props.paymentState
         ? props.right
         : props.animationState === 4
         ? 31
@@ -246,8 +250,8 @@ const Image = styled.img.withConfig({
       : props.animationState === 1
       ? 'brightness(1)'
       : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 ? 250 : 350)}px;
-  height: ${(props) => (props.animationState <= 3 ? 400 : 700)}px;
+  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 220 : 350)}px;
+  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 700)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

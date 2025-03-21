@@ -5,6 +5,21 @@ import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import { OptionListInterface } from 'interfaces/OptionListInterface';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 
+interface Drink {
+  title: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+  price: number;
+}
+
+interface GridContainerProps {
+  columns: number;
+  slideIn: boolean;
+  slideOut: boolean;
+}
+
 const SoftGridComponent: React.FC<OptionListInterface> = ({
   type,
   obj,
@@ -16,11 +31,12 @@ const SoftGridComponent: React.FC<OptionListInterface> = ({
   const drinkArray = Object.values(obj);
   const { mix, soft, setSoftSelection, setMixSelection } = useDrinkSelection();
   const { goForward } = useStepProgressStore();
-  const [drinkAnimationSelected, setDrinkAnimationSelected] = React.useState<boolean>('');
+  const [drinkAnimationSelected, setDrinkAnimationSelected] = React.useState<string>('');
 
-  const handleDrinkSelection = (drink) => {
+  const handleDrinkSelection = (drink: Drink) => {
     if (type === 'mix') {
-      setMixSelection(mix.alcohol, { name: drink.title, price: drink.price });
+      const alcohol = mix.alcohol.name ? { name: mix.alcohol.name, price: mix.alcohol.price } : { name: '', price: 0 };
+      setMixSelection(alcohol, { name: drink.title, price: drink.price });
     } else {
       setSoftSelection({ name: drink.title, price: drink.price });
     }
@@ -29,9 +45,9 @@ const SoftGridComponent: React.FC<OptionListInterface> = ({
 
   useEffect(() => {
     if (type === 'mix') {
-      setDrinkAnimationSelected(mix.soft.name);
+      setDrinkAnimationSelected(mix.soft.name ?? '');
     } else {
-      setDrinkAnimationSelected(soft.drink.name);
+      setDrinkAnimationSelected(soft.drink.name ?? '');
     }
   }, [soft, mix, type]);
 
@@ -43,7 +59,7 @@ const SoftGridComponent: React.FC<OptionListInterface> = ({
             <SoftItemComponent
               key={index}
               drink={drink}
-              type={type}
+              type={type || ''}
               animationSelected={drinkAnimationSelected === drink.title}
               handleDrinkSelection={
                 transitionEnd && soft?.drink.name != drink.title && soft?.drink.name !== ''
@@ -72,14 +88,14 @@ const fadeIn = keyframes`
 
 const GridContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['columns', 'slideIn', 'slideOut'].includes(prop),
-})`
+})<GridContainerProps>`
   width: 80%;
   margin: auto;
   padding: 20px;
   position: absolute;
   top: 20%;
   left: ${(props) =>
-    props.slideIn & props.slideOut ? -100 : props.slideIn ? -100 : props.slideOut ? 8 : 100}%;
+    props.slideIn && props.slideOut ? -100 : props.slideIn ? -100 : props.slideOut ? 8 : 100}%;
   display: grid;
   grid-template-columns: repeat(${(props) => props.columns}, 1fr);
   gap: 50px;

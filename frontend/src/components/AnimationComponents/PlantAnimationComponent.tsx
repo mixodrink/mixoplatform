@@ -34,7 +34,7 @@ const fadeIn = keyframes`
   }
 `;
 
-const PlantImageWrapper = styled.section<{ animationFadeIn: boolean }>`
+const PlantImageWrapper = styled.section<{ animationFadeIn: number }>`
   position: absolute;
   top: 47%;
   right: 0;
