@@ -1,6 +1,9 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
+// import { createDrink } from 'api/local/create-drink';
+// import { useMenuOptionSteps } from 'store/MenuOptionStore';
+// import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
 interface OptionItemProps {
   price: number;
@@ -14,14 +17,36 @@ interface SectionWrapperProps {
 }
 
 const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant }) => {
-  const { goForward } = useStepProgressStore();
+  const { goForward, steps } = useStepProgressStore();
+  // const { options } = useMenuOptionSteps();
+  // const { mix, soft } = useDrinkSelection();
 
-  const handleTouch = () => {
+  const handleAddDrink = async () => {
     goForward(5);
-    console.log('done');
+    // const newDrink = options[0].selected ? {
+    //   type: 'mix',
+    //   item: {
+    //     alcohol: mix.alcohol.name,
+    //     soft: mix.soft.name,
+    //   },
+    //   price: mix.alcohol.price + mix.soft.price,
+    // } : {
+    //   type: 'soft',
+    //   item: {
+    //     soft: soft.drink.name,
+    //   },
+    //   price: soft.drink.price,
+    // }
+    // const createdDrink = await createDrink(newDrink);
+    // console.log(createdDrink);
   };
+
   return (
-    <SectionWrapper animateShow={animateShow} variant={variant} onTouchStart={() => handleTouch}>
+    <SectionWrapper
+      animateShow={animateShow}
+      variant={variant}
+      onClick={!steps[3].selected ? () => {} : () => handleAddDrink()}
+    >
       <SectionTitle>{price}€</SectionTitle>
       <SectionText>Pay</SectionText>
     </SectionWrapper>

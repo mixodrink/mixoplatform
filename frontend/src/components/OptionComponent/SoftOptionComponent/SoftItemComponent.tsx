@@ -47,6 +47,7 @@ const OptionContainer = styled.section`
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  z-index: 10;
 `;
 
 const BackgroundBox = styled.div.withConfig({
@@ -71,7 +72,9 @@ const BackgroundBox = styled.div.withConfig({
   transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-const DrinkImage = styled.img<{ animationSelected: boolean }>`
+const DrinkImage = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
+})`
   width: 130px;
   height: 240px;
   margin-bottom: 0px;
