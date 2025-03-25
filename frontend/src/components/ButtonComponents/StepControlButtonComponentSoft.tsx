@@ -40,13 +40,13 @@ const StepControlButtonComponentSoft: React.FC<Props> = ({
       <SectionWrapper>
         <BackButton
           animateShow={animateArrowBack && !steps[4].selected}
-          onTouchStart={!clickableState ? () => {} : () => handleGoBack()}
+          onClick={!clickableState ? () => {} : () => handleGoBack()}
         >
           <ArrowImageLeft src={arrow} alt="" />
         </BackButton>
         <ForwardButton
           animateShow={animateArrowForward && !steps[4].selected && !steps[3].selected}
-          onTouchStart={!clickableState ? () => {} : () => handleGoForward()}
+          onClick={!clickableState ? () => {} : () => handleGoForward()}
         >
           <ArrowImageRight src={arrow} alt="" variant={true} />
         </ForwardButton>
@@ -59,7 +59,7 @@ const SectionWrapper = styled.section`
   position: absolute;
   bottom: 54%;
   width: 100%;
-  z-index: 30;
+  z-index: 15;
 `;
 
 const BackButton = styled.button.withConfig({

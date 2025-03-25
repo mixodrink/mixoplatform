@@ -7,6 +7,7 @@ import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/So
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 import StepControlButtonComponentSoft from 'components/ButtonComponents/StepControlButtonComponentSoft';
+import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
@@ -18,6 +19,7 @@ import lemon from 'assets/soft//lemon.png';
 import tonic from 'assets/soft/tonic.png';
 import orange from 'assets/soft/orange.png';
 import energy from 'assets/soft/energy.png';
+import card from 'assets/icons/credit-soft.png';
 
 interface Props {
   isSlide: boolean;
@@ -108,7 +110,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   return (
     <>
       <SectionWrapper
-        onTouchStart={
+        onClick={
           options[0].selected || options[1].selected || options[2].selected || transitionStart
             ? () => {}
             : () => handleStepProgress()
@@ -157,6 +159,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               animateArrowBack={currentSoftIsSelected}
               animateArrowForward={currentSoftIsSelected}
             />
+            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>
@@ -186,12 +189,12 @@ const SectionWrapper = styled.section.withConfig({
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #5f31d4;
-  border-radius: ${(state) => (state.selected ? 0 : 3)}rem;
+  border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
   border: 20px solid #d8c9ff;
   top: ${(state) => (state.selected ? 0 : 34.5)}%;
-  right: ${(state) => (state.slide ? 1500 : state.selected ? -0.4 : 40)}px;
+  right: ${(state) => (state.slide ? 1500 : state.selected ? -3 : 40)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -254,7 +257,9 @@ const Image = styled.img.withConfig({
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-const SectionServiceName = styled.section<{ animatePosition: boolean }>`
+const SectionServiceName = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
+})`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
@@ -283,7 +288,9 @@ const fadeIn = keyframes`
   }
 `;
 
-const PlantImageWrapper = styled.section<{ animationFadeIn: boolean }>`
+const PlantImageWrapper = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
+})`
   position: absolute;
   top: 47%;
   right: 0;
@@ -312,7 +319,9 @@ const rotate = keyframes`
   }
 `;
 
-const PlantImage = styled.img<{ top: number; right: number; rotate: number }>`
+const PlantImage = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
+})`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;

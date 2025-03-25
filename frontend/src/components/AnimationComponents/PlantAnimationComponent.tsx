@@ -34,7 +34,9 @@ const fadeIn = keyframes`
   }
 `;
 
-const PlantImageWrapper = styled.section<{ animationFadeIn: number }>`
+const PlantImageWrapper = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
+})`
   position: absolute;
   top: 47%;
   right: 0;
@@ -63,7 +65,9 @@ const rotate = keyframes`
   }
 `;
 
-const PlantImage = styled.img<{ top: number; right: number; rotate: number }>`
+const PlantImage = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
+})`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;

@@ -15,19 +15,22 @@ import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
 import tropicalThree from 'assets/plants/tropical-three.png';
 import tropicalFour from 'assets/plants/tropical-four.png';
+import card from 'assets/icons/credit-water.png';
+
+import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 interface Props {
   isSlide: boolean;
   handleSetInitialState: () => void;
 }
 
-const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props) => {
+const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
   const { steps, goForward } = useStepProgressStore();
   const { water, WaterIsSelected, setWaterSelection } = useDrinkSelection();
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
-  const [isTransition, setIsTransition] = useState();
+  const [isTransition, setIsTransition] = useState<boolean>(false);
 
   const handleStepProgress = () => {
     setSelectedOption('water');
@@ -54,7 +57,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
     }
   }, [options, water, WaterIsSelected]);
 
-  const [imageSelected, setImageSelected] = useState(0);
+  const [imageSelected, setImageSelected] = useState<number>(0);
   useEffect(() => {
     const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
     setImageSelected(filterSelectedStep);
@@ -63,7 +66,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
   return (
     <>
       <SectionWrapper
-        onTouchStart={
+        onClick={
           options[0].selected || options[1].selected || options[2].selected || transitionEnd
             ? () => {}
             : () => handleStepProgress()
@@ -98,6 +101,7 @@ const WaterMenuComponent: React.FC = ({ isSlide, handleSetInitialState }: Props)
               variant={3}
               priceSum={water?.drink.price}
             />
+            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>
@@ -116,11 +120,11 @@ const SectionWrapper = styled.section.withConfig({
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #40c2f6;
-  border-radius: ${(state) => (state.selected ? 0 : 3)}rem;
+  border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   position: absolute;
   bottom: ${(state) => (state.selected ? 0 : 40)}px;
   border: 20px solid #b3e9ff;
-  left: ${(state) => (state.slide ? 300 : state.selected ? -0.1 : 4)}%;
+  left: ${(state) => (state.slide ? 300 : state.selected ? 0.3 : 4)}%;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -156,7 +160,9 @@ const fadeIn = keyframes`
   }
 `;
 
-const PlantImageWrapper = styled.section<{ animationFadeIn: boolean }>`
+const PlantImageWrapper = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
+})`
   position: absolute;
   top: 47%;
   right: 0;
@@ -185,7 +191,9 @@ const rotate = keyframes`
   }
 `;
 
-const PlantImage = styled.img<{ top: number; right: number; rotate: number }>`
+const PlantImage = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
+})`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;
@@ -215,7 +223,9 @@ const BlurredCircle = styled.div`
   animation: ${flicker} 2s infinite alternate ease-in-out;
 `;
 
-const SectionServiceName = styled.section<{ animatePosition: boolean }>`
+const SectionServiceName = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
+})`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;

@@ -7,9 +7,9 @@ import { useStepProgressStore } from 'store/ProgressStepsStore';
 interface Props {
   animateArrowBack: boolean;
   animateArrowForward: boolean;
-  handleSetSoftTransition: void;
-  handleSetMixTransition?: void;
-  handleClose: void;
+  handleSetSoftTransition: (value: boolean) => void;
+  handleSetMixTransition?: (value: boolean) => void;
+  handleClose: () => void;
   resSoft: boolean;
   clickableState: boolean;
   resMix?: boolean;
@@ -18,6 +18,8 @@ interface Props {
 const StepControlButtonComponent: React.FC<Props> = ({
   animateArrowBack,
   animateArrowForward,
+  handleSetSoftTransition,
+  handleSetMixTransition,
   handleClose,
   resSoft,
   clickableState,
@@ -30,14 +32,14 @@ const StepControlButtonComponent: React.FC<Props> = ({
     if (currentStepNumber === 1) {
       goBack(1);
       handleClose();
-      resMix();
-      resSoft();
+      handleSetMixTransition(!resMix);
+      handleSetSoftTransition(!resSoft);
     } else if (currentStepNumber === 3) {
-      resSoft();
+      handleSetSoftTransition(!resSoft);
       goBack(currentStepNumber);
     } else {
-      resMix();
-      resSoft();
+      handleSetMixTransition(!resMix);
+      handleSetSoftTransition(!resSoft);
       goBack(currentStepNumber);
     }
   };
@@ -58,13 +60,13 @@ const StepControlButtonComponent: React.FC<Props> = ({
       <SectionWrapper>
         <BackButton
           animateShow={animateArrowBack && !steps[4].selected}
-          onTouchStart={!clickableState ? () => {} : () => handleGoBack()}
+          onClick={!clickableState ? () => {} : () => handleGoBack()}
         >
           <ArrowImageLeft src={arrow} alt="" />
         </BackButton>
         <ForwardButton
           animateShow={animateArrowForward && !steps[4].selected}
-          onTouchStart={!clickableState ? () => {} : () => handleGoForward()}
+          onClick={!clickableState ? () => {} : () => handleGoForward()}
         >
           <ArrowImageRight src={arrow} alt="" variant={true} />
         </ForwardButton>
@@ -76,7 +78,7 @@ const SectionWrapper = styled.section`
   position: absolute;
   bottom: 54%;
   width: 100%;
-  z-index: 30;
+  z-index: 15;
 `;
 
 const BackButton = styled.button.withConfig({

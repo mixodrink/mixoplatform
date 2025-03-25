@@ -9,6 +9,7 @@ import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/So
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
+import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
@@ -24,6 +25,7 @@ import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
 import tropicalThree from 'assets/plants/tropical-three.png';
 import tropicalFour from 'assets/plants/tropical-four.png';
+import card from 'assets/icons/credit-mix.png';
 
 interface Props {
   isSlide: boolean;
@@ -165,10 +167,14 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     setCurrentSoftIsSelected(res2);
   }, [mix, MixIsSelected, SoftMixIsSelected]);
 
+  useEffect(() => {
+    console.log(transitionEnd);
+  }, [transitionEnd]);
+
   return (
     <>
       <SectionWrapper
-        onTouchStart={
+        onClick={
           options[0].selected || options[1].selected || options[2].selected || transitionStart
             ? () => {}
             : () => handleStepProgress()
@@ -223,6 +229,8 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               clickableState={transitionEnd}
               resMix={setIsTransition}
               resSoft={setSoftIsTransition}
+              handleSetMixTransition={setIsTransition}
+              handleSetSoftTransition={setSoftIsTransition}
               handleClose={handleClose}
               animateArrowBack={currentMixIsSelected}
               animateArrowForward={
@@ -230,11 +238,12 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
                 (steps[2].selected && currentSoftIsSelected)
               }
             />
+            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>
       <ImageSectionWrapper
-        onTouchStart={
+        onClick={
           options[0].selected || options[1].selected || options[2].selected || transitionStart
             ? () => {}
             : () => handleStepProgress()
@@ -251,7 +260,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
         />
       </ImageSectionWrapper>
       <ImageSectionWrapper
-        onTouchStart={
+        onClick={
           options[0].selected || options[1].selected || options[2].selected || transitionStart
             ? () => {}
             : () => handleStepProgress()
@@ -277,12 +286,12 @@ const SectionWrapper = styled.section.withConfig({
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #fd660e;
-  border-radius: ${(state) => (state.selected ? 0 : 3)}rem;
+  border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
   border: 20px solid #ffc09b;
-  top: ${(state) => (state.selected ? 0 : 40)}px;
-  left: ${(state) => (state.slide ? 1500 : state.selected ? 0 : 43)}px;
+  top: ${(state) => (state.selected ? -1 : 40)}px;
+  left: ${(state) => (state.slide ? 1500 : state.selected ? 2 : 43)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -384,7 +393,9 @@ const fadeIn = keyframes`
   }
 `;
 
-const PlantImageWrapper = styled.section<{ animationFadeIn: boolean }>`
+const PlantImageWrapper = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
+})`
   position: absolute;
   top: 47%;
   right: 0;
@@ -413,7 +424,9 @@ const rotate = keyframes`
   }
 `;
 
-const PlantImage = styled.img<{ top: number; right: number; rotate: number }>`
+const PlantImage = styled.img.withConfig({
+  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
+})`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;
@@ -444,7 +457,9 @@ const BlurredCircle = styled.div`
   animation: ${flicker} 2s infinite alternate ease-in-out;
 `;
 
-const SectionServiceName = styled.section<{ animatePosition: boolean }>`
+const SectionServiceName = styled.section.withConfig({
+  shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
+})`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 19.5 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 25)}%;
