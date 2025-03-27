@@ -64,6 +64,14 @@
         "env": []
     },
     {
+        "id": "87f78a96b7bfae65",
+        "type": "tab",
+        "label": "SOCKET-TEST",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "2ec98106af1c1c70",
         "type": "group",
         "z": "4e43d26051bd0999",
@@ -98,7 +106,9 @@
             "685b4670c3b597f2"
         ],
         "x": 1434,
-        "y": 99
+        "y": 99,
+        "w": 842,
+        "h": 342
     },
     {
         "id": "7855306510558539",
@@ -132,7 +142,9 @@
             "8d1a97f255874521"
         ],
         "x": 2014,
-        "y": 539
+        "y": 539,
+        "w": 492,
+        "h": 382
     },
     {
         "id": "2bb221e101f1d74c",
@@ -154,7 +166,9 @@
             "1f70e8ef0d132ea9"
         ],
         "x": 2424,
-        "y": 279
+        "y": 279,
+        "w": 492,
+        "h": 142
     },
     {
         "id": "ba1374df5e449b0a",
@@ -202,7 +216,9 @@
             "3f2efd04be3a07f6"
         ],
         "x": 114,
-        "y": 779
+        "y": 779,
+        "w": 862,
+        "h": 262
     },
     {
         "id": "6e2a4045876fe188",
@@ -259,7 +275,9 @@
             "aa9d12e04c70f774"
         ],
         "x": 114,
-        "y": 139
+        "y": 139,
+        "w": 1102,
+        "h": 582
     },
     {
         "id": "dfeb56198dca6c6b",
@@ -347,7 +365,9 @@
             "d88dd785cc07bd8a"
         ],
         "x": 114,
-        "y": 1099
+        "y": 1099,
+        "w": 1042,
+        "h": 702
     },
     {
         "id": "9524c8df8279db23",
@@ -865,7 +885,9 @@
             "fdf79007902a4f49"
         ],
         "x": 94,
-        "y": 99
+        "y": 99,
+        "w": 522,
+        "h": 542
     },
     {
         "id": "33fa5da050dcbebc",
@@ -902,7 +924,9 @@
             "1010474fce44f47a"
         ],
         "x": 654,
-        "y": 99
+        "y": 99,
+        "w": 442,
+        "h": 342
     },
     {
         "id": "7ca1bc9566de115f",
@@ -938,7 +962,9 @@
             "4ed11561edd87eee"
         ],
         "x": 154,
-        "y": 1779
+        "y": 1779,
+        "w": 1122,
+        "h": 222
     },
     {
         "id": "6c36ba1c43b24323",
@@ -1277,6 +1303,12 @@
                 "py": 0
             }
         }
+    },
+    {
+        "id": "ce90a0062855eb35",
+        "type": "websocket-listener",
+        "path": "ws://localhost:3000",
+        "wholemsg": "false"
     },
     {
         "id": "20c6caa76871b31b",
@@ -5229,54 +5261,6 @@
         "wires": [
             [
                 "0377e94d79766205"
-            ]
-        ]
-    },
-    {
-        "id": "a3e95db479eda984",
-        "type": "inject",
-        "z": "69bf2d12ddf2851f",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 120,
-        "y": 240,
-        "wires": [
-            [
-                "226102f9605f48ff"
-            ]
-        ]
-    },
-    {
-        "id": "226102f9605f48ff",
-        "type": "template",
-        "z": "69bf2d12ddf2851f",
-        "name": "",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "{\n    \"module\":\"alcBarDispenser\",\n    \"command\":\"restart\"\n}",
-        "output": "str",
-        "x": 280,
-        "y": 240,
-        "wires": [
-            [
-                "2fb50bab21346aaf"
             ]
         ]
     },
@@ -23039,6 +23023,135 @@
         "wires": [
             [
                 "21c19fe0b5ae57ec"
+            ]
+        ]
+    },
+    {
+        "id": "78edc0c68766d98e",
+        "type": "websocket in",
+        "z": "87f78a96b7bfae65",
+        "name": "",
+        "server": "ce90a0062855eb35",
+        "client": "",
+        "x": 130,
+        "y": 300,
+        "wires": [
+            [
+                "78806bf7180113ca"
+            ]
+        ]
+    },
+    {
+        "id": "1960d359ba38365b",
+        "type": "websocket out",
+        "z": "87f78a96b7bfae65",
+        "name": "",
+        "server": "ce90a0062855eb35",
+        "client": "",
+        "x": 490,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "fef4adc6a0d140bf",
+        "type": "debug",
+        "z": "87f78a96b7bfae65",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "aa7f42e122acfee9",
+        "type": "inject",
+        "z": "87f78a96b7bfae65",
+        "name": "Trigger",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 360,
+        "wires": [
+            [
+                "ba458a8638dd592a"
+            ]
+        ]
+    },
+    {
+        "id": "ba458a8638dd592a",
+        "type": "template",
+        "z": "87f78a96b7bfae65",
+        "name": "home-arm",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "plain",
+        "template": "{\n    \"module\":\"glassDispenser\",\n    \"command\":\"arm1\"\n}",
+        "output": "str",
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "1960d359ba38365b",
+                "fef4adc6a0d140bf"
+            ]
+        ]
+    },
+    {
+        "id": "1ffcb80b45b36633",
+        "type": "debug",
+        "z": "87f78a96b7bfae65",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "78806bf7180113ca",
+        "type": "function",
+        "z": "87f78a96b7bfae65",
+        "name": "decode Buffer",
+        "func": "// First, parse the payload to turn the string into an object\nlet parsedPayload = JSON.parse(msg.payload);\n\n// Now check if `data` is an array (Buffer in byte array format)\nif (Array.isArray(parsedPayload.data)) {\n    // Convert the array of bytes into a Buffer and decode it to a string\n    parsedPayload.data = Buffer.from(parsedPayload.data).toString('utf-8');\n}\n\n// Now update the message payload with the decoded data\nmsg.payload = parsedPayload;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 300,
+        "wires": [
+            [
+                "1ffcb80b45b36633"
             ]
         ]
     }

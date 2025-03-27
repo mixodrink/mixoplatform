@@ -64,6 +64,14 @@
         "env": []
     },
     {
+        "id": "87f78a96b7bfae65",
+        "type": "tab",
+        "label": "SOCKET-TEST",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "2ec98106af1c1c70",
         "type": "group",
         "z": "4e43d26051bd0999",
@@ -98,7 +106,9 @@
             "685b4670c3b597f2"
         ],
         "x": 1434,
-        "y": 99
+        "y": 99,
+        "w": 842,
+        "h": 342
     },
     {
         "id": "7855306510558539",
@@ -132,7 +142,9 @@
             "8d1a97f255874521"
         ],
         "x": 2014,
-        "y": 539
+        "y": 539,
+        "w": 492,
+        "h": 382
     },
     {
         "id": "2bb221e101f1d74c",
@@ -154,7 +166,9 @@
             "1f70e8ef0d132ea9"
         ],
         "x": 2424,
-        "y": 279
+        "y": 279,
+        "w": 492,
+        "h": 142
     },
     {
         "id": "ba1374df5e449b0a",
@@ -948,7 +962,9 @@
             "4ed11561edd87eee"
         ],
         "x": 154,
-        "y": 1779
+        "y": 1779,
+        "w": 1122,
+        "h": 222
     },
     {
         "id": "6c36ba1c43b24323",
@@ -1287,6 +1303,12 @@
                 "py": 0
             }
         }
+    },
+    {
+        "id": "ce90a0062855eb35",
+        "type": "websocket-listener",
+        "path": "ws://localhost:3000",
+        "wholemsg": "false"
     },
     {
         "id": "20c6caa76871b31b",
@@ -23003,5 +23025,114 @@
                 "21c19fe0b5ae57ec"
             ]
         ]
+    },
+    {
+        "id": "78edc0c68766d98e",
+        "type": "websocket in",
+        "z": "87f78a96b7bfae65",
+        "name": "",
+        "server": "ce90a0062855eb35",
+        "client": "",
+        "x": 130,
+        "y": 300,
+        "wires": [
+            [
+                "1ffcb80b45b36633"
+            ]
+        ]
+    },
+    {
+        "id": "1960d359ba38365b",
+        "type": "websocket out",
+        "z": "87f78a96b7bfae65",
+        "name": "",
+        "server": "ce90a0062855eb35",
+        "client": "",
+        "x": 490,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "fef4adc6a0d140bf",
+        "type": "debug",
+        "z": "87f78a96b7bfae65",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "aa7f42e122acfee9",
+        "type": "inject",
+        "z": "87f78a96b7bfae65",
+        "name": "Trigger",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 360,
+        "wires": [
+            [
+                "ba458a8638dd592a"
+            ]
+        ]
+    },
+    {
+        "id": "ba458a8638dd592a",
+        "type": "template",
+        "z": "87f78a96b7bfae65",
+        "name": "home-arm",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "plain",
+        "template": "{\n    \"module\":\"glassDispenser\",\n    \"command\":\"arm1\"\n}",
+        "output": "str",
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "1960d359ba38365b",
+                "fef4adc6a0d140bf"
+            ]
+        ]
+    },
+    {
+        "id": "1ffcb80b45b36633",
+        "type": "debug",
+        "z": "87f78a96b7bfae65",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 300,
+        "wires": []
     }
 ]
