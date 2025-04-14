@@ -1,14 +1,13 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
-import axios from "axios";
+import axios from 'axios';
 
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { PAYTER_API_KEY, PAYTER_TEST_URI, PAYTER_TERMINAL_SERIAL_NUMBER } =
-  process.env;
-const BASE_URL = `${PAYTER_TEST_URI}/terminals/${PAYTER_TERMINAL_SERIAL_NUMBER}`;
+const { PAYTER_API_KEY, PAYTER_URI, PAYTER_TERMINAL_SERIAL_NUMBER } = process.env;
+const BASE_URL = `${PAYTER_URI}/terminals/${PAYTER_TERMINAL_SERIAL_NUMBER}`;
 
 /*
 
@@ -16,16 +15,12 @@ PAYTER POST
 
 */
 
-export const postPayter = async (
-  endpoint: string,
-  next: NextFunction,
-  params?: any
-) => {
+export const postPayter = async (endpoint: string, next: NextFunction, params?: any) => {
   try {
     const url = `${BASE_URL}${endpoint}`;
     const headers = {
       Authorization: `CPS apikey="${PAYTER_API_KEY}"`,
-      Accept: "*/*",
+      Accept: '*/*',
     };
 
     const response = await axios.post(url, null, {
@@ -44,16 +39,12 @@ PAYTER GET
 
 */
 
-export const getPayter = async (
-  endpoint: string,
-  next: NextFunction,
-  params?: any
-) => {
+export const getPayter = async (endpoint: string, next: NextFunction, params?: any) => {
   try {
     const url = `${BASE_URL}${endpoint}`;
     const headers = {
       Authorization: `CPS apikey="${PAYTER_API_KEY}"`,
-      Accept: "*/*",
+      Accept: '*/*',
     };
 
     const response = await axios.get(url, {
@@ -82,55 +73,51 @@ export const startPayment = async (
     const { authorizedAmount } = req.body;
 
     //call payter api to start the terminal
-    const started = await postPayter("/start", next, {
+    const started = await postPayter('/start', next, {
       authorizedAmount: authorizedAmount,
     });
 
     if (started?.status !== 200) {
-      await postPayter("/stop", next, {
-        uiMessage: "Stoped",
+      await postPayter('/stop', next, {
+        uiMessage: 'Stoped',
         uiMessageTimeout: 30,
       });
-      throw Error("Error starting the terminal");
+      throw Error('Error starting the terminal');
     }
 
     //call payter api to read the card
-    const cardRead = await getPayter("/card", next, { waitTime: 10 });
+    const cardRead = await getPayter('/card', next, { waitTime: 10 });
 
     if (cardRead?.status !== 200) {
-      await postPayter("/stop", next, {
-        uiMessage: "Stoped",
+      await postPayter('/stop', next, {
+        uiMessage: 'Stoped',
         uiMessageTimeout: 30,
       });
-      throw Error("Error reading the card");
+      throw Error('Error reading the card');
     }
 
     //call payter api to authorize the session
-    const authorized = await postPayter("/authorize", next);
+    const authorized = await postPayter('/authorize', next);
 
     if (authorized?.status !== 200) {
-      await postPayter("/stop", next, {
-        uiMessage: "Stoped",
+      await postPayter('/stop', next, {
+        uiMessage: 'Stoped',
         uiMessageTimeout: 30,
       });
-      throw Error("Error authorizeing the session");
+      throw Error('Error authorizeing the session');
     }
 
     //call payter api to commit the authorized session
-    const commited = await postPayter(
-      `/sessions/${authorized.data.sessionId}/commit`,
-      next,
-      {
-        sessionId: authorized.data.sessionId,
-        commitAmount: authorized.data.authorizedAmount,
-      }
-    );
+    const commited = await postPayter(`/sessions/${authorized.data.sessionId}/commit`, next, {
+      sessionId: authorized.data.sessionId,
+      commitAmount: authorized.data.authorizedAmount,
+    });
     if (commited?.status !== 200) {
-      await postPayter("/stop", next, {
-        uiMessage: "Stoped",
+      await postPayter('/stop', next, {
+        uiMessage: 'Stoped',
         uiMessageTimeout: 30,
       });
-      throw Error("Error commiting the session");
+      throw Error('Error commiting the session');
     }
     res.status(200).json(commited.data);
   } catch (err: any) {
@@ -144,8 +131,8 @@ export const stopPayment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const stopped = await postPayter("/stop", next, {
-      uiMessage: "Stoped",
+    const stopped = await postPayter('/stop', next, {
+      uiMessage: 'Stoped',
       uiMessageTimeout: 30,
     });
     if (stopped) res.status(200);

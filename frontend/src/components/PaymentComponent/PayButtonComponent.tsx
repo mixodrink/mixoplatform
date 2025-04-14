@@ -2,6 +2,8 @@ import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { createDrink } from 'api/local/create-drink';
+import { connectNodeRed } from 'api/local/node-red';
+
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
@@ -65,8 +67,8 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
 
     if (newDrink) {
       try {
-        const createdDrink = await createDrink(newDrink);
-        console.log('Created drink:', createdDrink);
+        await createDrink(newDrink);
+        await connectNodeRed(newDrink);
       } catch (error) {
         console.error('Error creating drink:', error);
       }

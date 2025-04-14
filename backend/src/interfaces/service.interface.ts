@@ -22,5 +22,5 @@ export interface IServiceDocument extends IService, Document {}
 
 //  Static method for creating a service
 export interface IServiceModel extends Model<IServiceDocument> {
-  buildMachine(service: IService): IServiceDocument;
+  createService(service: IService): IServiceDocument;
 }

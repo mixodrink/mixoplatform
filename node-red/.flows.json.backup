@@ -72,6 +72,14 @@
         "env": []
     },
     {
+        "id": "5d6980f14b2ed5bf",
+        "type": "tab",
+        "label": "Flujo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "2ec98106af1c1c70",
         "type": "group",
         "z": "4e43d26051bd0999",
@@ -1147,6 +1155,12 @@
         "y": 239
     },
     {
+        "id": "ce90a0062855eb35",
+        "type": "websocket-listener",
+        "path": "ws://localhost:3000",
+        "wholemsg": "false"
+    },
+    {
         "id": "e4526d4276440d6d",
         "type": "mongodb4-client",
         "name": "",
@@ -1303,12 +1317,6 @@
                 "py": 0
             }
         }
-    },
-    {
-        "id": "ce90a0062855eb35",
-        "type": "websocket-listener",
-        "path": "ws://localhost:3000",
-        "wholemsg": "false"
     },
     {
         "id": "20c6caa76871b31b",
@@ -23037,7 +23045,7 @@
         "y": 300,
         "wires": [
             [
-                "78806bf7180113ca"
+                "1ffcb80b45b36633"
             ]
         ]
     },
@@ -23132,27 +23140,119 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 560,
-        "y": 220,
+        "y": 300,
         "wires": []
     },
     {
-        "id": "78806bf7180113ca",
+        "id": "3e590cc06ee3df43",
+        "type": "http in",
+        "z": "5d6980f14b2ed5bf",
+        "name": "TPV Led Endpoint - /start-leds",
+        "url": "/start-leds",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "5319421516b126e3"
+            ]
+        ]
+    },
+    {
+        "id": "3a6cc89ba3eb1e93",
         "type": "function",
-        "z": "87f78a96b7bfae65",
-        "name": "decode Buffer",
-        "func": "// First, parse the payload to turn the string into an object\nlet parsedPayload = JSON.parse(msg.payload);\n\n// Now check if `data` is an array (Buffer in byte array format)\nif (Array.isArray(parsedPayload.data)) {\n    // Convert the array of bytes into a Buffer and decode it to a string\n    parsedPayload.data = Buffer.from(parsedPayload.data).toString('utf-8');\n}\n\n// Now update the message payload with the decoded data\nmsg.payload = parsedPayload;\n\nreturn msg;\n",
+        "z": "5d6980f14b2ed5bf",
+        "name": "SET RESPONSE HEADERS",
+        "func": "if (msg.payload) {\n    msg.payload += \"\\n\"\n\n    msg.payload = { status: 'success', message: 'Request processed successfully.', data: JSON.parse(msg.payload) };\n    msg.statusCode = 200;\n\n    return msg;\n} else {\n    msg.payload = { status: 'error', message: 'Invalid request.' };\n    msg.statusCode = 400;\n\n    return msg;\n}",
         "outputs": 1,
-        "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
-        "y": 300,
+        "x": 640,
+        "y": 200,
         "wires": [
             [
-                "1ffcb80b45b36633"
+                "bcf7df6f9c46c726",
+                "e0ddac7e851ff893",
+                "8e428b3ed53c432b"
             ]
         ]
+    },
+    {
+        "id": "5319421516b126e3",
+        "type": "json",
+        "z": "5d6980f14b2ed5bf",
+        "name": "Paymeny Post Data",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 390,
+        "y": 200,
+        "wires": [
+            [
+                "3a6cc89ba3eb1e93"
+            ]
+        ]
+    },
+    {
+        "id": "bcf7df6f9c46c726",
+        "type": "http response",
+        "z": "5d6980f14b2ed5bf",
+        "name": "success",
+        "statusCode": "200",
+        "headers": {},
+        "x": 880,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e0ddac7e851ff893",
+        "type": "debug",
+        "z": "5d6980f14b2ed5bf",
+        "name": "RESPONSE FRONTEND",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "8e428b3ed53c432b",
+        "type": "template",
+        "z": "5d6980f14b2ed5bf",
+        "name": "ENABLE LED TPV WHITE",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "plain",
+        "template": "{\n    \"module\":\"iceDispenser\",\n    \"command\":\"enableLed\",\n    \"element\":\"0\",\n    \"element2\":\"3\",\n    \"value\":\"16777215\"\n}",
+        "output": "str",
+        "x": 1090,
+        "y": 220,
+        "wires": [
+            [
+                "d4a6de24e04763b5"
+            ]
+        ]
+    },
+    {
+        "id": "d4a6de24e04763b5",
+        "type": "link out",
+        "z": "5d6980f14b2ed5bf",
+        "name": "link out 967",
+        "mode": "link",
+        "links": [],
+        "x": 1255,
+        "y": 220,
+        "wires": []
     }
 ]

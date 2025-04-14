@@ -1,6 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { IService } from "interfaces/service.interface";
-import { createServiceDB } from "../services/service.service";
+import { NextFunction, Request, Response } from 'express';
+import axios from 'axios';
+
+import { IService, INodeRed } from 'interfaces/service.interface';
+import { createServiceDB } from 'services/service.service';
+const BASE_URL = `http://localhost:1880/start-leds`;
 
 /*Example service body.req
 
@@ -28,6 +31,26 @@ export const createService = async (
     const savedService = await createServiceDB(service);
     res.status(201).json(savedService);
   } catch (err: any) {
+    next(err);
+  }
+};
+
+export const nodeRedConnector = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const url = `${BASE_URL}`;
+    const headers = {
+      Accept: '*/*',
+    };
+
+    const response = await axios.post("http://localhost:1880/start-leds", req.body, { headers });
+
+    res.status(response.status).json(response.data);
+  } catch (err: any) {
+    console.error('Error en nodeRedConnector:', err.message);
     next(err);
   }
 };
