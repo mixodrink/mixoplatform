@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import { Document, Model } from 'mongoose';
 
 export enum MachineStatus {
   ACTIVE = 0,
@@ -6,19 +6,13 @@ export enum MachineStatus {
   MAINTENANCE = 2,
 }
 
-//  Drinks should be an array (Fix)
-export interface Drink {
-  type: string; // Changed from "name" to "type" for consistency
-  price: number;
-}
-
-//  Fix alcoholValues & bibValues (Now they are arrays)
 export interface IMachine {
   name: string;
   location: string;
   status: MachineStatus;
-  alcoholValues: Drink[]; // Array of drinks
-  bibValues: Drink[]; // Array of drinks
+  drinks: Array<string>;
+  lastMaintenance: Date | null;
+  lastService: Date | null;
 }
 
 export interface IMachineDocument extends IMachine, Document {}

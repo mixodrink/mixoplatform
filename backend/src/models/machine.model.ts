@@ -1,30 +1,27 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 import {
   IMachine,
   IMachineDocument,
   IMachineModel,
   MachineStatus,
-} from "../interfaces/machine.interface";
+} from '../interfaces/machine.interface';
 
 const MachineSchema = new Schema<IMachineDocument>(
   {
     name: { type: String, required: true, unique: true },
     location: { type: String, required: true },
     status: { type: Number, enum: MachineStatus, required: true },
-
-    //  Define drinks as an array
-    alcoholValues: [
+    drinks: { type: [String], required: true },
+    lastMaintenance: {
+      type: Date || null,
+    },
+    lastService: {
+      type: Date || null,
+    },
+    nfc: [
       {
-        type: { type: String, required: true },
-        price: { type: Number, required: true },
-        _id: false, // <----- Disable _id in subdocuments
-      },
-    ],
-    bibValues: [
-      {
-        type: { type: String, required: true },
-        price: { type: Number, required: true },
-        _id: false, // <----- Disable _id in subdocuments
+        cardId: { type: String, required: true },
+        drinks: { type: [Number], required: true },
       },
     ],
   },
@@ -36,9 +33,6 @@ MachineSchema.statics.buildMachine = function (machine: IMachine) {
   return new this(machine);
 };
 
-const Machine = model<IMachineDocument, IMachineModel>(
-  "Machine",
-  MachineSchema
-);
+const Machine = model<IMachineDocument, IMachineModel>('Machine', MachineSchema);
 
 export default Machine;

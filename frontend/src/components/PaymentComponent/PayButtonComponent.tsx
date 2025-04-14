@@ -1,9 +1,9 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
-// import { createDrink } from 'api/local/create-drink';
-// import { useMenuOptionSteps } from 'store/MenuOptionStore';
-// import { useDrinkSelection } from 'store/DrinkSelectionStore';
+import { createDrink } from 'api/local/create-drink';
+import { useMenuOptionSteps } from 'store/MenuOptionStore';
+import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
 interface OptionItemProps {
   price: number;
@@ -18,27 +18,59 @@ interface SectionWrapperProps {
 
 const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant }) => {
   const { goForward, steps } = useStepProgressStore();
-  // const { options } = useMenuOptionSteps();
-  // const { mix, soft } = useDrinkSelection();
+  const { options } = useMenuOptionSteps();
+  const { mix, soft, water } = useDrinkSelection();
 
   const handleAddDrink = async () => {
     goForward(5);
-    // const newDrink = options[0].selected ? {
-    //   type: 'mix',
-    //   item: {
-    //     alcohol: mix.alcohol.name,
-    //     soft: mix.soft.name,
-    //   },
-    //   price: mix.alcohol.price + mix.soft.price,
-    // } : {
-    //   type: 'soft',
-    //   item: {
-    //     soft: soft.drink.name,
-    //   },
-    //   price: soft.drink.price,
-    // }
-    // const createdDrink = await createDrink(newDrink);
-    // console.log(createdDrink);
+
+    // Get the selected option
+    const selectedOption = options.find((option) => option.selected);
+
+    if (!selectedOption) return;
+
+    let newDrink;
+
+    if (selectedOption.option === 'mix') {
+      newDrink = {
+        machineId: '12I72P128391H8120D01291JS1',
+        type: 0,
+        drink: [mix.alcohol.name, mix.soft.name],
+        paymentType: 0,
+        price: mix.alcohol.price + mix.soft.price,
+        cardId: 'AB12HDB293SN02',
+        cardNumber: '1234567890123456',
+      };
+    } else if (selectedOption.option === 'soft') {
+      newDrink = {
+        machineId: '12I72P128391H8120D01291JS1',
+        type: 1,
+        drink: [mix.soft.name],
+        paymentType: 0,
+        price: soft.drink.price,
+        cardId: 'AB12HDB293SN02',
+        cardNumber: '1234567890123456',
+      };
+    } else if (selectedOption.option === 'water') {
+      newDrink = {
+        machineId: '12I72P128391H8120D01291JS1',
+        type: 2,
+        drink: [water.drink.name],
+        paymentType: 0,
+        price: water.drink.price,
+        cardId: 'AB12HDB293SN02',
+        cardNumber: '1234567890123456',
+      };
+    }
+
+    if (newDrink) {
+      try {
+        const createdDrink = await createDrink(newDrink);
+        console.log('Created drink:', createdDrink);
+      } catch (error) {
+        console.error('Error creating drink:', error);
+      }
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import { Document, Model } from 'mongoose';
 export enum ServiceType {
   MIX,
   WATER,
@@ -11,8 +11,7 @@ export enum PaymentType {
 export interface IService {
   machineId: string;
   type: ServiceType;
-  alcohol: string;
-  bib: string;
+  drink: [string];
   paymentType: PaymentType;
   price: number;
   cardId: string;

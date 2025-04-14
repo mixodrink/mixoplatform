@@ -5,6 +5,6 @@ import { DrinkModel } from 'models';
 
 // POST /api/drinks
 export const createDrink = async (drink: DrinkModel) => {
-  const response = await api.post('/drinks', drink);
-  return response.data.data.drink;
+  const response = await api.post('/service/createService', drink);
+  return response.data;
 };

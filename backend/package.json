@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npx tsx --watch src/server.ts",
     "seed": "tsx src/dev/seed.ts",
-    "dev": " npm run test && npm run seed && npm start ",
+    "dev": " npm start ",
     "test": "jest --runInBand",
     "test:watch": "jest --watch"
   },
