@@ -6,7 +6,7 @@ import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
-import WaterOptionComponent from 'components/OptionComponent/WaterOptionComponent/WaterOptionComponent';
+import WaterOptionComponent from 'components/GridServiceComponent/WaterItemComponent/WaterItemComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 
 import waterImage from 'assets/soft/water.png';
@@ -15,9 +15,6 @@ import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
 import tropicalThree from 'assets/plants/tropical-three.png';
 import tropicalFour from 'assets/plants/tropical-four.png';
-import card from 'assets/icons/credit-water.png';
-
-import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 interface Props {
   isSlide: boolean;
@@ -101,7 +98,6 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
               variant={3}
               priceSum={water?.drink.price}
             />
-            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>

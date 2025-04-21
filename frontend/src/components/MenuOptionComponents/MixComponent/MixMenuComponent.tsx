@@ -4,12 +4,11 @@ import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
-import MixGridComponent from 'components/OptionComponent/MixOptionComponent/MixGridComponent';
-import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
+import MixGridComponent from 'components/GridServiceComponent/MixGridComponent/MixGridComponent';
+import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
-import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
@@ -25,7 +24,6 @@ import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
 import tropicalThree from 'assets/plants/tropical-three.png';
 import tropicalFour from 'assets/plants/tropical-four.png';
-import card from 'assets/icons/credit-mix.png';
 
 interface Props {
   isSlide: boolean;
@@ -238,7 +236,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
                 (steps[2].selected && currentSoftIsSelected)
               }
             />
-            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>

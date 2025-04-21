@@ -1,6 +1,8 @@
 import React from 'react';
 // import styled from 'styled-components';
 import PayButtonComponent from './PayButtonComponent';
+import card from 'assets/icons/credit-mix.png';
+import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 interface OptionItemProps {
   animateShow: boolean;
@@ -9,7 +11,12 @@ interface OptionItemProps {
 }
 
 const PaymentComponent: React.FC<OptionItemProps> = ({ animateShow, variant, priceSum }) => {
-  return <PayButtonComponent price={priceSum} animateShow={animateShow} variant={variant} />;
+  return (
+    <>
+      <PaymentImagesComponent cardImageSrc={card} />
+      <PayButtonComponent price={priceSum} animateShow={animateShow} variant={variant} />;
+    </>
+  );
 };
 
 // const SectionWrapper = styled.img.withConfig({

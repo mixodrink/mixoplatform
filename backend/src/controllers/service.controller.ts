@@ -46,7 +46,7 @@ export const nodeRedConnector = async (
       Accept: '*/*',
     };
 
-    const response = await axios.post("http://localhost:1880/start-leds", req.body, { headers });
+    const response = await axios.post("http://localhost:1880/start-leds", req.body.drink, { headers });
 
     res.status(response.status).json(response.data);
   } catch (err: any) {

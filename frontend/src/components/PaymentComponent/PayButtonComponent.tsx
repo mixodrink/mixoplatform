@@ -47,7 +47,7 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
       newDrink = {
         machineId: '12I72P128391H8120D01291JS1',
         type: 1,
-        drink: [mix.soft.name],
+        drink: [soft.drink.name],
         paymentType: 0,
         price: soft.drink.price,
         cardId: 'AB12HDB293SN02',

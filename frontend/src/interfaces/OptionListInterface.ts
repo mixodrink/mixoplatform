@@ -8,10 +8,10 @@ interface Drink {
 }
 
 export interface OptionListInterface {
-  type?: string;
   obj: Record<string, Drink>;
   selected: boolean;
   transitionEnd: boolean;
   slideIn: boolean;
   slideOut: boolean;
+  type?: string;
 }
