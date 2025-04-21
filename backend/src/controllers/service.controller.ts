@@ -35,7 +35,7 @@ export const createService = async (
   }
 };
 
-export const nodeRedConnector = async (
+export const nodeRedLedWorker = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -46,11 +46,37 @@ export const nodeRedConnector = async (
       Accept: '*/*',
     };
 
-    const response = await axios.post("http://localhost:1880/start-leds", req.body.drink, { headers });
+    const response = await axios.post("http://localhost:1880/led-worker", { mode: req.body.mode }, { headers });
 
     res.status(response.status).json(response.data);
   } catch (err: any) {
-    console.error('Error en nodeRedConnector:', err.message);
+    console.error('Error en nodeRedStartLed:', err.message);
+    next(err);
+  }
+};
+
+export const nodeRedStartService = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const url = `${BASE_URL}`;
+    const headers = {
+      Accept: '*/*',
+    };
+
+    const data = {
+      type: req.body.type === 0 ? "mix" : req.body.type === 1 ? "soft" : "water",
+      alcohol: req.body.drink[0],
+      mix: req.body.drink[1],
+    };
+
+    const response = await axios.post("http://localhost:1880/start", data, { headers });
+
+    res.status(response.status).json(response.data);
+  } catch (err: any) {
+    console.error('Error en nodeRedStartService:', err.message);
     next(err);
   }
 };

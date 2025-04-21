@@ -2,7 +2,8 @@ import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { createDrink } from 'api/local/create-drink';
-import { connectNodeRed } from 'api/local/node-red';
+import { postPayterStart } from 'api/local/payment';
+import { nodeRedLedWorker, nodeRedStartService } from 'api/local/node-red';
 
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
@@ -67,8 +68,15 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
 
     if (newDrink) {
       try {
-        await createDrink(newDrink);
-        await connectNodeRed(newDrink);
+        // await createDrink(newDrink);
+        await nodeRedLedWorker({ mode: 'enable' });
+        const res = await postPayterStart();
+        
+        if (res.state === "COMMITED") {
+          console.log('Payment started successfully');
+          await nodeRedStartService(newDrink);
+          await nodeRedLedWorker({ mode: 'disable' });
+        }
       } catch (error) {
         console.error('Error creating drink:', error);
       }

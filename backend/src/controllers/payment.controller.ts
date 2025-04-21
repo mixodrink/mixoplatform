@@ -69,59 +69,74 @@ export const startPayment = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    //get the amount from the frontend
     const { authorizedAmount } = req.body;
-
-    //call payter api to start the terminal
+    console.log('Starting payment with amount:', authorizedAmount);
+    // Start the terminal
     const started = await postPayter('/start', next, {
-      authorizedAmount: authorizedAmount,
+      authorizedAmount: 10,
     });
 
     if (started?.status !== 200) {
       await postPayter('/stop', next, {
-        uiMessage: 'Stoped',
+        uiMessage: 'Stopped',
         uiMessageTimeout: 30,
       });
-      throw Error('Error starting the terminal');
+      throw new Error(`Error starting the terminal: ${started?.statusText || 'Unknown error'}`);
     }
 
-    //call payter api to read the card
+    console.log('Started:', started.data);
+
+    // Read the card
     const cardRead = await getPayter('/card', next, { waitTime: 10 });
 
     if (cardRead?.status !== 200) {
       await postPayter('/stop', next, {
-        uiMessage: 'Stoped',
+        uiMessage: 'Stopped',
         uiMessageTimeout: 30,
       });
-      throw Error('Error reading the card');
+      throw new Error(`Error reading the card: ${cardRead?.statusText || 'Unknown error'}`);
     }
 
-    //call payter api to authorize the session
+    console.log('Card read:', cardRead.data);
+
+    // Authorize the session
     const authorized = await postPayter('/authorize', next);
 
     if (authorized?.status !== 200) {
       await postPayter('/stop', next, {
-        uiMessage: 'Stoped',
+        uiMessage: 'Stopped',
         uiMessageTimeout: 30,
       });
-      throw Error('Error authorizeing the session');
+      throw new Error(`Error authorizing the session: ${authorized?.statusText || 'Unknown error'}`);
     }
 
-    //call payter api to commit the authorized session
-    const commited = await postPayter(`/sessions/${authorized.data.sessionId}/commit`, next, {
-      sessionId: authorized.data.sessionId,
-      commitAmount: authorized.data.authorizedAmount,
-    });
-    if (commited?.status !== 200) {
+    console.log('Authorized:', authorized.data);
+
+    // Commit the authorized session
+    const sessionId = authorized.data.sessionId;
+    const commitAmount = authorized.data.authorizedAmount;
+
+    const commitUrl = `/sessions/${sessionId}/commit?commitAmount=${commitAmount}&uiMessage=Pago%20Aceptado&uiMessageTimeout=1`;
+    console.log('Commit URL:', commitUrl);
+    console.log('Session ID:', sessionId);
+    console.log('Commit Amount:', commitAmount);
+    const committed = await postPayter(commitUrl, next);
+
+    if (committed?.status !== 200) {
       await postPayter('/stop', next, {
-        uiMessage: 'Stoped',
+        uiMessage: 'Stopped',
         uiMessageTimeout: 30,
       });
-      throw Error('Error commiting the session');
+      throw new Error(`Error committing the session: ${committed?.statusText || 'Unknown error'}`);
     }
-    res.status(200).json(commited.data);
+
+    res.status(200).json(committed.data);
   } catch (err: any) {
-    next(err.response);
+    console.error('Payment error:', err.message || err); // Show real error
+    res.status(500).json({
+      error: true,
+      message: err.message || 'Unexpected error during payment process',
+    });
   }
 };
 
