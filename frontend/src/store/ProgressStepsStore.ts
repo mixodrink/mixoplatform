@@ -6,6 +6,7 @@ type State = [
   { id: number; selected: boolean },
   { id: number; selected: boolean },
   { id: number; selected: boolean },
+  { id: number; selected: boolean },
   { id: number; selected: boolean }
 ];
 
@@ -20,6 +21,8 @@ const initialState: State = [
   { id: 4, selected: false },
   //Drink Animation
   { id: 5, selected: false },
+  //Service Animation
+  { id: 6, selected: false },
 ];
 
 interface StepProgressState {
@@ -38,6 +41,7 @@ export const useStepProgressStore = create<StepProgressState>()(
         { id: 3, selected: false },
         { id: 4, selected: false },
         { id: 5, selected: false },
+        { id: 6, selected: false },
       ],
       goForward: (id: number) => {
         set((state: initialState) => {

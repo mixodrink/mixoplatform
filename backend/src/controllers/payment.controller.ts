@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import axios from 'axios';
+import logger from 'middlewares/logger';
 
 import dotenv from 'dotenv';
 
@@ -39,7 +40,7 @@ PAYTER GET
 
 */
 
-export const getPayter = async (endpoint: string, next: NextFunction, params?: any) => {
+export const getPayter = async (endpoint?: string, next: NextFunction, params?: any) => {
   try {
     const url = `${BASE_URL}${endpoint}`;
     const headers = {
@@ -62,7 +63,6 @@ export const getPayter = async (endpoint: string, next: NextFunction, params?: a
 START PAYMENT
 
 */
-
 export const startPayment = async (
   req: Request,
   res: Response,
@@ -70,73 +70,88 @@ export const startPayment = async (
 ): Promise<void> => {
   try {
     const { authorizedAmount } = req.body;
-    console.log('Starting payment with amount:', authorizedAmount);
-    // Start the terminal
-    const started = await postPayter('/start', next, {
-      authorizedAmount: 10,
-    });
 
-    if (started?.status !== 200) {
-      await postPayter('/stop', next, {
-        uiMessage: 'Stopped',
-        uiMessageTimeout: 30,
+    logger.info(`🔄 Checking terminal state for ${PAYTER_TERMINAL_SERIAL_NUMBER}`);
+
+    // Step 1: Get terminal state
+    const terminalResp = await getPayter('', next);
+
+    if (
+      terminalResp?.status !== 200 ||
+      !terminalResp.data?.online ||
+      terminalResp.data.state !== 'IDLE'
+    ) {
+      logger.warn(
+        `⚠️ Terminal ${PAYTER_TERMINAL_SERIAL_NUMBER} is not ready. State: ${terminalResp?.data?.state}, Online: ${terminalResp?.data?.online}`
+      );
+
+      return res.status(423).json({
+        status: 'unavailable',
+        step: 'check-terminal',
+        message: 'Terminal is not IDLE or offline. Please try again shortly.',
       });
-      throw new Error(`Error starting the terminal: ${started?.statusText || 'Unknown error'}`);
     }
 
-    console.log('Started:', started.data);
+    logger.info(`✅ Terminal ${PAYTER_TERMINAL_SERIAL_NUMBER} is online and IDLE`);
 
-    // Read the card
+    // Step 2: Start terminal
+    const started = await postPayter('/start', next, { authorizedAmount });
+
+    if (started?.status !== 200) {
+      logger.error(`❌ Failed to start terminal`);
+      await postPayter('/stop', next, { uiMessage: 'Stopped', uiMessageTimeout: 30 });
+      throw new Error('Error starting the terminal');
+    }
+
+    logger.info('✅ Terminal started');
+
+    // Step 3: Read card
     const cardRead = await getPayter('/card', next, { waitTime: 10 });
 
     if (cardRead?.status !== 200) {
-      await postPayter('/stop', next, {
-        uiMessage: 'Stopped',
-        uiMessageTimeout: 30,
-      });
-      throw new Error(`Error reading the card: ${cardRead?.statusText || 'Unknown error'}`);
+      logger.error(`❌ Card read failed`);
+      await postPayter('/stop', next, { uiMessage: 'Stopped', uiMessageTimeout: 30 });
+      throw new Error('Error reading the card');
     }
 
-    console.log('Card read:', cardRead.data);
+    logger.info('💳 Card read:', cardRead.data);
 
-    // Authorize the session
+    // Step 4: Authorize
     const authorized = await postPayter('/authorize', next);
 
     if (authorized?.status !== 200) {
-      await postPayter('/stop', next, {
-        uiMessage: 'Stopped',
-        uiMessageTimeout: 30,
-      });
-      throw new Error(`Error authorizing the session: ${authorized?.statusText || 'Unknown error'}`);
+      logger.error(`❌ Authorization failed`);
+      await postPayter('/stop', next, { uiMessage: 'Stopped', uiMessageTimeout: 30 });
+      throw new Error('Error authorizing the session');
     }
 
-    console.log('Authorized:', authorized.data);
+    logger.info('✅ Authorized');
 
-    // Commit the authorized session
+    // Step 5: Commit
     const sessionId = authorized.data.sessionId;
     const commitAmount = authorized.data.authorizedAmount;
 
+    logger.info(`📦 Committing session ${sessionId} with amount ${commitAmount}`);
+
     const commitUrl = `/sessions/${sessionId}/commit?commitAmount=${commitAmount}&uiMessage=Pago%20Aceptado&uiMessageTimeout=1`;
-    console.log('Commit URL:', commitUrl);
-    console.log('Session ID:', sessionId);
-    console.log('Commit Amount:', commitAmount);
     const committed = await postPayter(commitUrl, next);
 
     if (committed?.status !== 200) {
-      await postPayter('/stop', next, {
-        uiMessage: 'Stopped',
-        uiMessageTimeout: 30,
-      });
-      throw new Error(`Error committing the session: ${committed?.statusText || 'Unknown error'}`);
+      logger.error(`❌ Commit failed`);
+      await postPayter('/stop', next, { uiMessage: 'Stopped', uiMessageTimeout: 30 });
+      throw new Error('Error committing the session');
     }
 
+    logger.info('✅ Payment committed');
     res.status(200).json(committed.data);
   } catch (err: any) {
-    console.error('Payment error:', err.message || err); // Show real error
-    res.status(500).json({
-      error: true,
-      message: err.message || 'Unexpected error during payment process',
-    });
+    logger.error(`❌ Payment error: ${err.message || err}`);
+    if (!res.headersSent) {
+      return res.status(500).json({
+        error: true,
+        message: err.message || 'Unexpected error during payment process',
+      });
+    }
   }
 };
 

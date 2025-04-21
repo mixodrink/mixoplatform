@@ -12,6 +12,7 @@ interface OptionItemProps {
   price: number;
   animateShow: boolean;
   variant: number;
+  handlePaymentClose: () => void;
 }
 
 interface SectionWrapperProps {
@@ -19,15 +20,14 @@ interface SectionWrapperProps {
   variant: number;
 }
 
-const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant }) => {
-  const { goForward, steps } = useStepProgressStore();
-  const { options } = useMenuOptionSteps();
-  const { mix, soft, water } = useDrinkSelection();
+const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant, handlePaymentClose }) => {
+  const { goForward, steps, setInitialState } = useStepProgressStore();
+  const { options, setMenuInitialState } = useMenuOptionSteps();
+  const { mix, soft, water, resetSelection } = useDrinkSelection();
 
   const handleAddDrink = async () => {
     goForward(5);
 
-    // Get the selected option
     const selectedOption = options.find((option) => option.selected);
 
     if (!selectedOption) return;
@@ -68,17 +68,21 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
 
     if (newDrink) {
       try {
-        // await createDrink(newDrink);
         await nodeRedLedWorker({ mode: 'enable' });
         const res = await postPayterStart();
         
         if (res.state === "COMMITED") {
           console.log('Payment started successfully');
+          await createDrink(newDrink);
           await nodeRedStartService(newDrink);
           await nodeRedLedWorker({ mode: 'disable' });
+          goForward(6);
         }
       } catch (error) {
         console.error('Error creating drink:', error);
+        await nodeRedLedWorker({ mode: 'disable' });
+        handlePaymentClose();
+        goBack(1);
       }
     }
   };

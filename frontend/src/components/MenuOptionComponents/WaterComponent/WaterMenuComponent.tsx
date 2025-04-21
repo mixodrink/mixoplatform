@@ -97,6 +97,7 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
               animateShow={steps[3].selected}
               variant={3}
               priceSum={water?.drink.price}
+              paymentClose={handleClose}
             />
           </>
         )}

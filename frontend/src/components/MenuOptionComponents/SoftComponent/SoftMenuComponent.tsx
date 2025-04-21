@@ -150,6 +150,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               animateShow={steps[3].selected}
               variant={2}
               priceSum={soft?.drink.price}
+              paymentClose={handleClose}
             />
             <StepControlButtonComponentSoft
               clickableState={transitionEnd}
