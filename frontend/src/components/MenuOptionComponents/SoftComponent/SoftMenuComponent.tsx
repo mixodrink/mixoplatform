@@ -3,11 +3,10 @@ import styled, { keyframes, css } from 'styled-components';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
-import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
+import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 import StepControlButtonComponentSoft from 'components/ButtonComponents/StepControlButtonComponentSoft';
-import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
@@ -19,7 +18,6 @@ import lemon from 'assets/soft//lemon.png';
 import tonic from 'assets/soft/tonic.png';
 import orange from 'assets/soft/orange.png';
 import energy from 'assets/soft/energy.png';
-import card from 'assets/icons/credit-soft.png';
 
 interface Props {
   isSlide: boolean;
@@ -152,6 +150,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               animateShow={steps[3].selected}
               variant={2}
               priceSum={soft?.drink.price}
+              paymentClose={handleClose}
             />
             <StepControlButtonComponentSoft
               clickableState={transitionEnd}
@@ -159,7 +158,6 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               animateArrowBack={currentSoftIsSelected}
               animateArrowForward={currentSoftIsSelected}
             />
-            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>

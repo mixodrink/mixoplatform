@@ -72,6 +72,14 @@
         "env": []
     },
     {
+        "id": "5d6980f14b2ed5bf",
+        "type": "tab",
+        "label": "Flujo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "2ec98106af1c1c70",
         "type": "group",
         "z": "4e43d26051bd0999",
@@ -301,7 +309,9 @@
             "532c1f5d07e45cec"
         ],
         "x": 168,
-        "y": 213
+        "y": 213,
+        "w": 954,
+        "h": 994
     },
     {
         "id": "3f3d99bb42a0f2e6",
@@ -1018,7 +1028,9 @@
             "70c6f5270b559b54"
         ],
         "x": 194,
-        "y": 1039
+        "y": 1039,
+        "w": 902,
+        "h": 142
     },
     {
         "id": "8f33846f4bf4f1ef",
@@ -1044,7 +1056,9 @@
             "537efd44c85f02a8"
         ],
         "x": 194,
-        "y": 879
+        "y": 879,
+        "w": 902,
+        "h": 142
     },
     {
         "id": "bd834a8a7667260a",
@@ -1070,7 +1084,9 @@
             "20a838780ebb307c"
         ],
         "x": 194,
-        "y": 719
+        "y": 719,
+        "w": 902,
+        "h": 142
     },
     {
         "id": "2c0410a2927261a5",
@@ -1096,7 +1112,9 @@
             "4505729dc51d6f3e"
         ],
         "x": 194,
-        "y": 559
+        "y": 559,
+        "w": 902,
+        "h": 142
     },
     {
         "id": "6db42333e387cb72",
@@ -1120,7 +1138,9 @@
             "249c87ed7626a278"
         ],
         "x": 194,
-        "y": 399
+        "y": 399,
+        "w": 542,
+        "h": 142
     },
     {
         "id": "532c1f5d07e45cec",
@@ -1144,7 +1164,15 @@
             "a06d31a3ff0ab3d4"
         ],
         "x": 194,
-        "y": 239
+        "y": 239,
+        "w": 612,
+        "h": 142
+    },
+    {
+        "id": "ce90a0062855eb35",
+        "type": "websocket-listener",
+        "path": "ws://localhost:3000",
+        "wholemsg": "false"
     },
     {
         "id": "e4526d4276440d6d",
@@ -1303,12 +1331,6 @@
                 "py": 0
             }
         }
-    },
-    {
-        "id": "ce90a0062855eb35",
-        "type": "websocket-listener",
-        "path": "ws://localhost:3000",
-        "wholemsg": "false"
     },
     {
         "id": "20c6caa76871b31b",
@@ -14132,8 +14154,9 @@
         "id": "eef384b5761cac20",
         "type": "http in",
         "z": "037f13d1ca4c52e0",
+        "d": true,
         "name": "TPV Led Endpoint - /led-worker",
-        "url": "/led-worker",
+        "url": "/start-leds",
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
@@ -14404,6 +14427,107 @@
         "wires": [
             [
                 "0d8f7614b9eebef0"
+            ]
+        ]
+    },
+    {
+        "id": "87e317b8109b1cea",
+        "type": "http in",
+        "z": "037f13d1ca4c52e0",
+        "name": "TPV Led Endpoint - /led-worker",
+        "url": "/start-leds",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 390,
+        "y": 660,
+        "wires": [
+            [
+                "a093f751f1bc7f0a"
+            ]
+        ]
+    },
+    {
+        "id": "e7550fda899205fd",
+        "type": "http response",
+        "z": "037f13d1ca4c52e0",
+        "name": "success",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1160,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "a093f751f1bc7f0a",
+        "type": "json",
+        "z": "037f13d1ca4c52e0",
+        "name": "Paymeny Post Data",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 630,
+        "y": 660,
+        "wires": [
+            [
+                "a49e972201c0b62c"
+            ]
+        ]
+    },
+    {
+        "id": "a49e972201c0b62c",
+        "type": "function",
+        "z": "037f13d1ca4c52e0",
+        "name": "SET RESPONSE HEADERS",
+        "func": "if (msg.payload) {\n    msg.payload += \"\\n\"\n\n    msg.payload = { status: 'success', message: 'Request processed successfully.', data: JSON.parse(msg.payload) };\n    msg.statusCode = 200;\n\n    return msg;\n} else {\n    msg.payload = { status: 'error', message: 'Invalid request.' };\n    msg.statusCode = 400;\n\n    return msg;\n}",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 660,
+        "wires": [
+            [
+                "e7550fda899205fd",
+                "e5b7fd85a3b9774f"
+            ]
+        ]
+    },
+    {
+        "id": "31237647852a5b90",
+        "type": "debug",
+        "z": "037f13d1ca4c52e0",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1360,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "e5b7fd85a3b9774f",
+        "type": "function",
+        "z": "037f13d1ca4c52e0",
+        "name": "function 1",
+        "func": "const data = {\n    mix: msg.payload.data[0],\n    soft: msg.payload.data[1]\n};\n\nmsg.payload = data;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 660,
+        "wires": [
+            [
+                "31237647852a5b90"
             ]
         ]
     },
@@ -23133,6 +23257,118 @@
         "statusType": "auto",
         "x": 560,
         "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3e590cc06ee3df43",
+        "type": "http in",
+        "z": "5d6980f14b2ed5bf",
+        "name": "TPV Led Endpoint - /start-leds",
+        "url": "/start-leds",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "5319421516b126e3"
+            ]
+        ]
+    },
+    {
+        "id": "3a6cc89ba3eb1e93",
+        "type": "function",
+        "z": "5d6980f14b2ed5bf",
+        "name": "SET RESPONSE HEADERS",
+        "func": "if (msg.payload) {\n    msg.payload += \"\\n\"\n\n    msg.payload = { status: 'success', message: 'Request processed successfully.', data: JSON.parse(msg.payload) };\n    msg.statusCode = 200;\n\n    return msg;\n} else {\n    msg.payload = { status: 'error', message: 'Invalid request.' };\n    msg.statusCode = 400;\n\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 200,
+        "wires": [
+            [
+                "bcf7df6f9c46c726",
+                "e0ddac7e851ff893",
+                "8e428b3ed53c432b"
+            ]
+        ]
+    },
+    {
+        "id": "5319421516b126e3",
+        "type": "json",
+        "z": "5d6980f14b2ed5bf",
+        "name": "Paymeny Post Data",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 390,
+        "y": 200,
+        "wires": [
+            [
+                "3a6cc89ba3eb1e93"
+            ]
+        ]
+    },
+    {
+        "id": "bcf7df6f9c46c726",
+        "type": "http response",
+        "z": "5d6980f14b2ed5bf",
+        "name": "success",
+        "statusCode": "200",
+        "headers": {},
+        "x": 880,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e0ddac7e851ff893",
+        "type": "debug",
+        "z": "5d6980f14b2ed5bf",
+        "name": "RESPONSE FRONTEND",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "8e428b3ed53c432b",
+        "type": "template",
+        "z": "5d6980f14b2ed5bf",
+        "name": "ENABLE LED TPV WHITE",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "plain",
+        "template": "{\n    \"module\":\"iceDispenser\",\n    \"command\":\"enableLed\",\n    \"element\":\"0\",\n    \"element2\":\"3\",\n    \"value\":\"16777215\"\n}",
+        "output": "str",
+        "x": 1090,
+        "y": 220,
+        "wires": [
+            [
+                "d4a6de24e04763b5"
+            ]
+        ]
+    },
+    {
+        "id": "d4a6de24e04763b5",
+        "type": "link out",
+        "z": "5d6980f14b2ed5bf",
+        "name": "link out 967",
+        "mode": "link",
+        "links": [],
+        "x": 1255,
+        "y": 220,
         "wires": []
     }
 ]

@@ -4,12 +4,11 @@ import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
-import MixGridComponent from 'components/OptionComponent/MixOptionComponent/MixGridComponent';
-import SoftGridComponent from 'components/OptionComponent/SoftOptionComponent/SoftGridComponent';
+import MixGridComponent from 'components/GridServiceComponent/MixGridComponent/MixGridComponent';
+import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
 import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
-import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
 
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
@@ -25,7 +24,6 @@ import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
 import tropicalThree from 'assets/plants/tropical-three.png';
 import tropicalFour from 'assets/plants/tropical-four.png';
-import card from 'assets/icons/credit-mix.png';
 
 interface Props {
   isSlide: boolean;
@@ -224,6 +222,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               animateShow={steps[3].selected}
               variant={1}
               priceSum={mix?.alcohol.price + mix?.soft.price}
+              paymentClose={handleClose}
             />
             <StepControlButtonComponent
               clickableState={transitionEnd}
@@ -238,7 +237,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
                 (steps[2].selected && currentSoftIsSelected)
               }
             />
-            {<PaymentImagesComponent cardImageSrc={card} />}
           </>
         )}
       </SectionWrapper>
@@ -333,11 +331,15 @@ const ImageSoft = styled.img.withConfig({
       ? !state.type
         ? 18
         : 83
+      : state.animationBright === 6
+      ? 83
       : 42}%;
   right: ${(state) =>
     state.animationBright === 4 && state.animationSelected
       ? 47
       : state.type || state.animationBright === 1
+      ? 16
+      : state.animationBright === 6
       ? 16
       : -100}%;
   filter: ${(state) =>
@@ -347,8 +349,14 @@ const ImageSoft = styled.img.withConfig({
       ? 'brightness(1)'
       : 'brightness(0.5)'};
   rotate: -9deg;
-  width: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 190 : 270)}px;
-  height: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 300 : 520)}px;
+  width: ${(state) =>
+    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+      ? 190
+      : 270}px;
+  height: ${(state) =>
+    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+      ? 300
+      : 520}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -364,11 +372,15 @@ const ImageAlc = styled.img.withConfig({
       ? !state.type
         ? 4.5
         : 70
+      : state.animationBright === 6
+      ? 70
       : 19}%;
   right: ${(state) =>
     state.animationBright === 4 && state.animationSelected
       ? 25
       : state.type || state.animationBright === 1
+      ? 1
+      : state.animationBright === 6
       ? 1
       : -100}%;
   filter: ${(state) =>
@@ -378,8 +390,14 @@ const ImageAlc = styled.img.withConfig({
       ? 'brightness(1)'
       : 'brightness(0.5)'};
   rotate: 9deg;
-  width: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 200 : 340)}px;
-  height: ${(state) => (state.animationBright <= 3 || state.animationBright === 5 ? 550 : 950)}px;
+  width: ${(state) =>
+    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+      ? 200
+      : 340}px;
+  height: ${(state) =>
+    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+      ? 550
+      : 950}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

@@ -1,6 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { IService } from "interfaces/service.interface";
-import { createServiceDB } from "../services/service.service";
+import { NextFunction, Request, Response } from 'express';
+import axios from 'axios';
+
+import { IService, INodeRed } from 'interfaces/service.interface';
+import { createServiceDB } from 'services/service.service';
+const BASE_URL = `http://localhost:1880/start-leds`;
 
 /*Example service body.req
 
@@ -28,6 +31,52 @@ export const createService = async (
     const savedService = await createServiceDB(service);
     res.status(201).json(savedService);
   } catch (err: any) {
+    next(err);
+  }
+};
+
+export const nodeRedLedWorker = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const url = `${BASE_URL}`;
+    const headers = {
+      Accept: '*/*',
+    };
+
+    const response = await axios.post("http://localhost:1880/led-worker", { mode: req.body.mode }, { headers });
+
+    res.status(response.status).json(response.data);
+  } catch (err: any) {
+    console.error('Error en nodeRedStartLed:', err.message);
+    next(err);
+  }
+};
+
+export const nodeRedStartService = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const url = `${BASE_URL}`;
+    const headers = {
+      Accept: '*/*',
+    };
+
+    const data = {
+      type: req.body.type === 0 ? "mix" : req.body.type === 1 ? "soft" : "water",
+      alcohol: req.body.drink[0],
+      mix: req.body.drink[1],
+    };
+
+    const response = await axios.post("http://localhost:1880/start", data, { headers });
+
+    res.status(response.status).json(response.data);
+  } catch (err: any) {
+    console.error('Error en nodeRedStartService:', err.message);
     next(err);
   }
 };

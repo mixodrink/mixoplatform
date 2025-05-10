@@ -20,7 +20,7 @@ const StepControlButtonComponentSoft: React.FC<Props> = ({
   const { steps, goForward, goBack } = useStepProgressStore();
 
   const handleGoBack = () => {
-    if (steps[1].selected || steps[2].selected) {
+    if (steps[2].selected) {
       goBack(1);
       handleClose();
     } else if (steps[3].selected) {

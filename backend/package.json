@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npx tsx --watch src/server.ts",
     "seed": "tsx src/dev/seed.ts",
-    "dev": " npm run test && npm run seed && npm start ",
+    "dev": " npm start ",
     "test": "jest --runInBand",
     "test:watch": "jest --watch"
   },
@@ -20,6 +20,8 @@
     "dotenv": "^16.4.7",
     "express": "^5.0.1",
     "mongoose": "^8.9.5",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
     "tsx": "^4.19.2",
     "ws": "^8.18.0"
   },

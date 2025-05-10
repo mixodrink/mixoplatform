@@ -20,6 +20,7 @@ const allowOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",
+  "http://192.168.4.101:3000"
 ];
 const corsOptions: cors.CorsOptions = {
   origin: allowOrigins,
