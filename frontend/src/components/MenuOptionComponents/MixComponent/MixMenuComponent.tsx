@@ -165,10 +165,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     setCurrentSoftIsSelected(res2);
   }, [mix, MixIsSelected, SoftMixIsSelected]);
 
-  useEffect(() => {
-    console.log(transitionEnd);
-  }, [transitionEnd]);
-
   return (
     <>
       <SectionWrapper

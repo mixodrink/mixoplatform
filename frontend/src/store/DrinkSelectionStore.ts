@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface DrinkSelectionState {
   mix: {
@@ -20,14 +20,19 @@ interface DrinkSelectionState {
   setWaterSelection: (drink: { name: string; price: number }) => void;
   resetSelection: () => void;
   MixIsSelected: () => boolean;
+  SoftMixIsSelected: () => boolean;
   SoftIsSelected: () => boolean;
   WaterIsSelected: () => boolean;
+  getDrinkName: () => string;
 }
 
 export const useDrinkSelection = create(
   persist<DrinkSelectionState>(
     (set, get) => ({
-      mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+      mix: {
+        alcohol: { name: null, price: 0 },
+        soft: { name: null, price: 0 },
+      },
       soft: { drink: { name: null, price: 0 } },
       water: { drink: { name: null, price: 0 } },
 
@@ -40,21 +45,30 @@ export const useDrinkSelection = create(
 
       setSoftSelection: (drink) =>
         set(() => ({
-          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+          mix: {
+            alcohol: { name: null, price: 0 },
+            soft: { name: null, price: 0 },
+          },
           soft: { drink },
           water: { drink: { name: null, price: 0 } },
         })),
 
       setWaterSelection: (drink) =>
         set(() => ({
-          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+          mix: {
+            alcohol: { name: null, price: 0 },
+            soft: { name: null, price: 0 },
+          },
           soft: { drink: { name: null, price: 0 } },
           water: { drink },
         })),
 
       resetSelection: () =>
         set(() => ({
-          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+          mix: {
+            alcohol: { name: null, price: 0 },
+            soft: { name: null, price: 0 },
+          },
           soft: { drink: { name: null, price: 0 } },
           water: { drink: { name: null, price: 0 } },
         })),
@@ -81,9 +95,27 @@ export const useDrinkSelection = create(
         const { water } = get();
         return water.drink.name !== null;
       },
+
+      getDrinkName: () => {
+        const { mix, soft, water } = get();
+
+        if (mix.alcohol.name && mix.soft.name) {
+          return `${mix.alcohol.name} ${mix.soft.name}`;
+        }
+
+        if (soft.drink.name) {
+          return soft.drink.name;
+        }
+
+        if (water.drink.name) {
+          return water.drink.name;
+        }
+
+        return "";
+      },
     }),
     {
-      name: 'drink-selection-store',
+      name: "drink-selection-store",
       storage: createJSONStorage(() => localStorage),
     }
   )

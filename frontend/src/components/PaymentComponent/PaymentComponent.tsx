@@ -1,10 +1,11 @@
-import React from 'react';
-// import styled from 'styled-components';
-import PayButtonComponent from './PayButtonComponent';
-import card from 'assets/icons/credit-mix.png';
-import PaymentImagesComponent from 'components/PaymentComponent/PaymentImagesComponent';
-import ServiceVideoComponent from 'components/AnimationComponents/ServiceAnimationComponente';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
+import React, { useState, useEffect } from "react";
+
+import PayButtonComponent from "./PayButtonComponent";
+import card from "assets/icons/credit-mix.png";
+import PaymentImagesComponent from "components/PaymentComponent/PaymentImagesComponent";
+import ServiceVideoComponent from "components/AnimationComponents/ServiceAnimationComponente";
+import { useStepProgressStore } from "store/ProgressStepsStore";
+import { useDrinkSelection } from "store/DrinkSelectionStore";
 
 interface OptionItemProps {
   animateShow: boolean;
@@ -20,6 +21,15 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   paymentClose,
 }) => {
   const { steps } = useStepProgressStore();
+  const { getDrinkName } = useDrinkSelection();
+  const [drinkName, setDrinkName] = useState("");
+
+  useEffect(() => {
+    if (steps[5].selected) {
+      let drinkName = getDrinkName();
+      setDrinkName(drinkName);
+    }
+  }, [steps]);
 
   return (
     <>
@@ -28,15 +38,13 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         price={priceSum}
         animateShow={animateShow}
         variant={variant}
-        handlePaymentClose={() => paymentClose()}
+        handlePaymentClose={paymentClose}
       />
-      {steps[5].selected && <ServiceVideoComponent handleClose={paymentClose} />}
+      {steps[5].selected && (
+        <ServiceVideoComponent handleClose={paymentClose} drinkName={drinkName} />
+      )}
     </>
   );
 };
-
-// const SectionWrapper = styled.img.withConfig({
-//   shouldForwardProp: (prop) => ![].includes(prop),
-// })``;
 
 export default PaymentComponent;
