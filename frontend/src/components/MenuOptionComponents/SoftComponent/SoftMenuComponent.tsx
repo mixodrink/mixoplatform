@@ -229,10 +229,10 @@ const ImageSectionWrapper = styled.section.withConfig({
   right: ${(props) =>
     props.slide
       ? props.animationState === 1 || props.paymentState
-        ? props.right
+        ? 2
         : props.animationState === 4
         ? 31
-        : props.right
+        : props.animationState === 6 ? 200 : props.right
       : props.isMenu
       ? props.right
       : 300}%;
@@ -250,8 +250,8 @@ const Image = styled.img.withConfig({
       : props.animationState === 1
       ? 'brightness(1)'
       : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 220 : 350)}px;
-  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 700)}px;
+  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 || props.animationState === 6 ? 220 : 350)}px;
+  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 || props.animationState === 6 ? 400 : 700)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
