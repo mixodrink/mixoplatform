@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import axios from 'axios';
+import { NextFunction, Request, Response } from "express";
+import axios from "axios";
 
-import { IService, INodeRed } from 'interfaces/service.interface';
-import { createServiceDB } from 'services/service.service';
+import { IService, INodeRed } from "interfaces/service.interface";
+import { createServiceDB } from "services/service.service";
 const BASE_URL = `http://localhost:1880/start-leds`;
 
 /*Example service body.req
@@ -43,14 +43,18 @@ export const nodeRedLedWorker = async (
   try {
     const url = `${BASE_URL}`;
     const headers = {
-      Accept: '*/*',
+      Accept: "*/*",
     };
 
-    const response = await axios.post("http://localhost:1880/led-worker", { mode: req.body.mode }, { headers });
+    const response = await axios.post(
+      "http://localhost:1880/led-worker",
+      { mode: req.body.mode },
+      { headers }
+    );
 
     res.status(response.status).json(response.data);
   } catch (err: any) {
-    console.error('Error en nodeRedStartLed:', err.message);
+    console.error("Error en nodeRedStartLed:", err.message);
     next(err);
   }
 };
@@ -63,20 +67,35 @@ export const nodeRedStartService = async (
   try {
     const url = `${BASE_URL}`;
     const headers = {
-      Accept: '*/*',
+      Accept: "*/*",
     };
-
-    const data = {
-      type: req.body.type === 0 ? "mix" : req.body.type === 1 ? "soft" : "water",
-      alcohol: req.body.drink[0],
-      mix: req.body.drink[1],
-    };
-
-    const response = await axios.post("http://localhost:1880/start", data, { headers });
+    console.log(req.body);
+    const drink = req.body;
+    let data = {};
+    if (drink.type === 0) {
+      data = {
+        type: "mix",
+        alcohol: req.body.drink[0],
+        mix: req.body.drink[1],
+      };
+    } else if (drink.type === 1) {
+      data = {
+        type: "soft",
+        mix: req.body.drink[0],
+      };
+    } else {
+      data = {
+        type: "water",
+        mix: req.body.drink[0],
+      };
+    }
+    const response = await axios.post("http://localhost:1880/start", data, {
+      headers,
+    });
 
     res.status(response.status).json(response.data);
   } catch (err: any) {
-    console.error('Error en nodeRedStartService:', err.message);
+    console.error("Error en nodeRedStartService:", err.message);
     next(err);
   }
 };

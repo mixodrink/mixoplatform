@@ -1,87 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
-import { useMenuOptionSteps } from 'store/MenuOptionStore';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
-import { useDrinkSelection } from 'store/DrinkSelectionStore';
+import React, { useState, useEffect } from "react";
+import styled, { keyframes, css } from "styled-components";
+import { useMenuOptionSteps } from "store/MenuOptionStore";
+import { useStepProgressStore } from "store/ProgressStepsStore";
+import { useDrinkSelection } from "store/DrinkSelectionStore";
 
-import MixGridComponent from 'components/GridServiceComponent/MixGridComponent/MixGridComponent';
-import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
-import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
-import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
-import StepControlButtonComponent from 'components/ButtonComponents/StepControlButtonComponent';
+import MixGridComponent from "components/GridServiceComponent/MixGridComponent/MixGridComponent";
+import SoftGridComponent from "components/GridServiceComponent/SoftGridComponent/SoftGridComponent";
+import CloseButtonComponent from "components/ButtonComponents/CloseButtonComponent";
+import PaymentComponent from "components/PaymentComponent/PaymentComponent";
+import StepControlButtonComponent from "components/ButtonComponents/StepControlButtonComponent";
 
-import gin from 'assets/alcohol/gin.png';
-import vodka from 'assets/alcohol/vodka.png';
-import whiskey from 'assets/alcohol/whiskey.png';
-import rum from 'assets/alcohol/rum.png';
-import cola from 'assets/soft/cola.png';
-import lemon from 'assets/soft//lemon.png';
-import tonic from 'assets/soft/tonic.png';
-import orange from 'assets/soft/orange.png';
-import energy from 'assets/soft/energy.png';
+import gin from "assets/alcohol/gin.png";
+import vodka from "assets/alcohol/vodka.png";
+import whiskey from "assets/alcohol/whiskey.png";
+import rum from "assets/alcohol/rum.png";
+import cola from "assets/soft/cola.png";
+import lemon from "assets/soft//lemon.png";
+import tonic from "assets/soft/tonic.png";
+import oorange from "assets/soft/orange.png";
+import energy from "assets/soft/energy.png";
 
-import tropicalOne from 'assets/plants/tropical-one.png';
-import tropicalTwo from 'assets/plants/tropical-two.png';
-import tropicalThree from 'assets/plants/tropical-three.png';
-import tropicalFour from 'assets/plants/tropical-four.png';
+import tropicalOne from "assets/plants/tropical-one.png";
+import tropicalTwo from "assets/plants/tropical-two.png";
+import tropicalThree from "assets/plants/tropical-three.png";
+import tropicalFour from "assets/plants/tropical-four.png";
 
 interface Props {
   isSlide: boolean;
   handleSetInitialState: () => void;
 }
 const obj = {
+  rum: {
+    title: "Rum",
+    image: { src: rum, alt: "rum" },
+    price: 6,
+  },
   gin: {
-    title: 'Gin',
-    image: { src: gin, alt: 'gin' },
+    title: "Gin",
+    image: { src: gin, alt: "gin" },
     price: 6,
   },
   vodka: {
-    title: 'Vodka',
-    image: { src: vodka, alt: 'vodka' },
+    title: "Vodka",
+    image: { src: vodka, alt: "vodka" },
     price: 6,
   },
   whiskey: {
-    title: 'Whiskey',
-    image: { src: whiskey, alt: 'whiskey' },
-    price: 6,
-  },
-  rum: {
-    title: 'Rum',
-    image: { src: rum, alt: 'rum' },
+    title: "Whiskey",
+    image: { src: whiskey, alt: "whiskey" },
     price: 6,
   },
 };
 
 const obj2 = {
   cola: {
-    title: 'Cola',
-    image: { src: cola, alt: 'cola' },
+    title: "Cola",
+    image: { src: cola, alt: "cola" },
     price: 5,
   },
   lemon: {
-    title: 'Lemon',
-    image: { src: lemon, alt: 'Lemon' },
+    title: "Lemon",
+    image: { src: lemon, alt: "Lemon" },
     price: 5,
   },
   tonic: {
-    title: 'Tonic',
-    image: { src: tonic, alt: 'Tonix' },
+    title: "Tonic",
+    image: { src: tonic, alt: "Tonix" },
     price: 5,
   },
   orange: {
-    title: 'Lime',
-    image: { src: orange, alt: 'Lime' },
+    title: "Lime",
+    image: { src: oorange, alt: "Lime" },
     price: 5,
   },
   energy: {
-    title: 'Energy',
-    image: { src: energy, alt: 'Energy' },
+    title: "Energy",
+    image: { src: energy, alt: "Energy" },
     price: 5,
   },
 };
 
-const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
-  const { options, setSelectedOption, getSelectedOption } = useMenuOptionSteps();
+const MixMenuComponent: React.FC<Props> = ({
+  isSlide,
+  handleSetInitialState,
+}) => {
+  const { options, setSelectedOption, getSelectedOption } =
+    useMenuOptionSteps();
   const { steps, goForward } = useStepProgressStore();
   const { mix, soft, MixIsSelected, SoftMixIsSelected } = useDrinkSelection();
 
@@ -91,14 +95,17 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   const [isTransition, setIsTransition] = useState();
   const [isSoftTransition, setSoftIsTransition] = useState();
   const [imageSelected, setImageSelected] = useState<string>(1);
-  const [currentSelectedOption, setCurrentSelectedOption] = useState<boolean>(false);
+  const [currentSelectedOption, setCurrentSelectedOption] =
+    useState<boolean>(false);
   const [softImageSource, setSoftImageSource] = useState(cola);
   const [alcImageSource, setAlcImageSource] = useState(rum);
-  const [currentMixIsSelected, setCurrentMixIsSelected] = useState<boolean>(false);
-  const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState<boolean>(false);
+  const [currentMixIsSelected, setCurrentMixIsSelected] =
+    useState<boolean>(false);
+  const [currentSoftIsSelected, setCurrentSoftIsSelected] =
+    useState<boolean>(false);
 
   const handleStepProgress = () => {
-    setSelectedOption('mix');
+    setSelectedOption("mix");
     setSelected(true);
     goForward(2);
   };
@@ -133,7 +140,9 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   }, [steps, soft, SoftMixIsSelected]);
 
   useEffect(() => {
-    const selectedDrink = Object.values(obj2).filter((drink) => drink.title === mix.soft.name)[0];
+    const selectedDrink = Object.values(obj2).filter(
+      (drink) => drink.title === mix.soft.name
+    )[0];
     if (selectedDrink) {
       setSoftImageSource(selectedDrink.image.src);
     } else {
@@ -142,7 +151,9 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   }, [mix, soft]);
 
   useEffect(() => {
-    const selectedDrink = Object.values(obj).filter((drink) => drink.title === mix.alcohol.name)[0];
+    const selectedDrink = Object.values(obj).filter(
+      (drink) => drink.title === mix.alcohol.name
+    )[0];
     if (selectedDrink) {
       setAlcImageSource(selectedDrink.image.src);
     } else {
@@ -151,10 +162,11 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   }, [mix]);
 
   useEffect(() => {
-    const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
+    const filterSelectedStep = steps.filter((step) => step.selected === true)[0]
+      .id;
     setImageSelected(filterSelectedStep);
     const res = getSelectedOption();
-    setCurrentSelectedOption(res?.option === 'mix');
+    setCurrentSelectedOption(res?.option === "mix");
   }, [steps, getSelectedOption, currentSelectedOption]);
 
   useEffect(() => {
@@ -169,7 +181,10 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     <>
       <SectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
+          options[0].selected ||
+          options[1].selected ||
+          options[2].selected ||
+          transitionStart
             ? () => {}
             : () => handleStepProgress()
         }
@@ -186,7 +201,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
             <CloseButtonComponent
               defaultFunction={handleClose}
               transitionStart={transitionStart}
-              style={{ borderColor: '#ffd8c1' }}
+              style={{ borderColor: "#ffd8c1" }}
             />
             <MixGridComponent
               selected={selected}
@@ -196,7 +211,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               slideOut={isTransition}
             />
             <SoftGridComponent
-              type={'mix'}
+              type={"mix"}
               selected={selected}
               obj={obj2}
               transitionEnd={transitionEnd && steps[2].selected}
@@ -208,10 +223,34 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
               <HeaderSoft>{mix?.soft.name}</HeaderSoft>
             </SectionServiceName>
             <PlantImageWrapper animationFadeIn={imageSelected}>
-              <PlantImage src={tropicalTwo} alt="" top={0} right={4} rotate={25} />
-              <PlantImage src={tropicalOne} alt="" top={-6} right={2} rotate={2} />
-              <PlantImage src={tropicalThree} alt="" top={0} right={55} rotate={-90} />
-              <PlantImage src={tropicalFour} alt="" top={-12} right={40} rotate={-70} />
+              <PlantImage
+                src={tropicalTwo}
+                alt=""
+                top={0}
+                right={4}
+                rotate={25}
+              />
+              <PlantImage
+                src={tropicalOne}
+                alt=""
+                top={-6}
+                right={2}
+                rotate={2}
+              />
+              <PlantImage
+                src={tropicalThree}
+                alt=""
+                top={0}
+                right={55}
+                rotate={-90}
+              />
+              <PlantImage
+                src={tropicalFour}
+                alt=""
+                top={-12}
+                right={40}
+                rotate={-70}
+              />
               <BlurredCircle />
             </PlantImageWrapper>
             <PaymentComponent
@@ -238,7 +277,10 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
       </SectionWrapper>
       <ImageSectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
+          options[0].selected ||
+          options[1].selected ||
+          options[2].selected ||
+          transitionStart
             ? () => {}
             : () => handleStepProgress()
         }
@@ -255,7 +297,10 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
       </ImageSectionWrapper>
       <ImageSectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
+          options[0].selected ||
+          options[1].selected ||
+          options[2].selected ||
+          transitionStart
             ? () => {}
             : () => handleStepProgress()
         }
@@ -275,7 +320,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
 };
 
 const SectionWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
+  shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 })`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
@@ -317,13 +362,21 @@ const ImageSectionWrapper = styled.section`
 
 const ImageSoft = styled.img.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationBright', 'animationSelected', 'animationSlide', 'type', 'isBright'].includes(prop),
+    ![
+      "animationBright",
+      "animationSelected",
+      "animationSlide",
+      "type",
+      "isBright",
+    ].includes(prop),
 })`
   position: absolute;
   top: ${(state) =>
     state.animationBright === 1
       ? 18
-      : state.animationBright === 2 || state.animationBright === 3 || state.animationBright === 5
+      : state.animationBright === 2 ||
+        state.animationBright === 3 ||
+        state.animationBright === 5
       ? !state.type
         ? 18
         : 83
@@ -340,17 +393,21 @@ const ImageSoft = styled.img.withConfig({
       : -100}%;
   filter: ${(state) =>
     state.isBright
-      ? 'brightness(1)'
+      ? "brightness(1)"
       : state.animationBright === 1
-      ? 'brightness(1)'
-      : 'brightness(0.5)'};
+      ? "brightness(1)"
+      : "brightness(0.5)"};
   rotate: -9deg;
   width: ${(state) =>
-    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+    state.animationBright <= 3 ||
+    state.animationBright === 5 ||
+    state.animationBright === 6
       ? 190
       : 270}px;
   height: ${(state) =>
-    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+    state.animationBright <= 3 ||
+    state.animationBright === 5 ||
+    state.animationBright === 6
       ? 300
       : 520}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -358,13 +415,21 @@ const ImageSoft = styled.img.withConfig({
 
 const ImageAlc = styled.img.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationBright', 'animationSelected', 'animationSlide', 'type', 'isBright'].includes(prop),
+    ![
+      "animationBright",
+      "animationSelected",
+      "animationSlide",
+      "type",
+      "isBright",
+    ].includes(prop),
 })`
   position: absolute;
   top: ${(state) =>
     state.animationBright === 1
       ? 4.5
-      : state.animationBright === 2 || state.animationBright === 3 || state.animationBright === 5
+      : state.animationBright === 2 ||
+        state.animationBright === 3 ||
+        state.animationBright === 5
       ? !state.type
         ? 4.5
         : 70
@@ -381,17 +446,21 @@ const ImageAlc = styled.img.withConfig({
       : -100}%;
   filter: ${(state) =>
     state.isBright
-      ? 'brightness(1)'
+      ? "brightness(1)"
       : state.animationBright === 1
-      ? 'brightness(1)'
-      : 'brightness(0.5)'};
+      ? "brightness(1)"
+      : "brightness(0.5)"};
   rotate: 9deg;
   width: ${(state) =>
-    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+    state.animationBright <= 3 ||
+    state.animationBright === 5 ||
+    state.animationBright === 6
       ? 200
       : 340}px;
   height: ${(state) =>
-    state.animationBright <= 3 || state.animationBright === 5 || state.animationBright === 6
+    state.animationBright <= 3 ||
+    state.animationBright === 5 ||
+    state.animationBright === 6
       ? 550
       : 950}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -408,7 +477,7 @@ const fadeIn = keyframes`
 `;
 
 const PlantImageWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
+  shouldForwardProp: (prop) => !["animationFadeIn"].includes(prop),
 })`
   position: absolute;
   top: 47%;
@@ -417,7 +486,7 @@ const PlantImageWrapper = styled.section.withConfig({
   height: 100%;
   z-index: 1;
   opacity: 0;
-  display: ${(props) => (props.animationFadeIn === 4 ? 'block' : 'none')};
+  display: ${(props) => (props.animationFadeIn === 4 ? "block" : "none")};
   transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   ${({ animationFadeIn }) =>
     animationFadeIn === 4 &&
@@ -439,7 +508,7 @@ const rotate = keyframes`
 `;
 
 const PlantImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
+  shouldForwardProp: (prop) => !["top", "right", "rotate"].includes(prop),
 })`
   position: absolute;
   top: ${(props) => props.top}%;
@@ -472,7 +541,7 @@ const BlurredCircle = styled.div`
 `;
 
 const SectionServiceName = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
+  shouldForwardProp: (prop) => !["animatePosition"].includes(prop),
 })`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 19.5 : 5)}%;
@@ -484,7 +553,7 @@ const SectionServiceName = styled.section.withConfig({
   justify-content: center;
   gap: 20px;
   transition: 1s ease-in-out;
-  font-size: ${(props) => (props.animatePosition ? '7rem' : '4.3rem')};
+  font-size: ${(props) => (props.animatePosition ? "7rem" : "4.3rem")};
 `;
 
 const HeaderAlcohol = styled.h1<{ bottom?: number; left?: number }>`

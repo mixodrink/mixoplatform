@@ -1,12 +1,12 @@
-import React from 'react';
-import styled, { keyframes, css } from 'styled-components';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
-import { createDrink } from 'api/local/create-drink';
-import { postPayterStart } from 'api/local/payment';
-import { nodeRedLedWorker, nodeRedStartService } from 'api/local/node-red';
+import React from "react";
+import styled, { keyframes, css } from "styled-components";
+import { useStepProgressStore } from "store/ProgressStepsStore";
+import { createDrink } from "api/local/create-drink";
+import { postPayterStart } from "api/local/payment";
+import { nodeRedLedWorker, nodeRedStartService } from "api/local/node-red";
 
-import { useMenuOptionSteps } from 'store/MenuOptionStore';
-import { useDrinkSelection } from 'store/DrinkSelectionStore';
+import { useMenuOptionSteps } from "store/MenuOptionStore";
+import { useDrinkSelection } from "store/DrinkSelectionStore";
 
 interface OptionItemProps {
   price: number;
@@ -20,7 +20,12 @@ interface SectionWrapperProps {
   variant: number;
 }
 
-const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant, handlePaymentClose }) => {
+const PayButtonComponent: React.FC<OptionItemProps> = ({
+  price,
+  animateShow,
+  variant,
+  handlePaymentClose,
+}) => {
   const { goForward, steps, goBack, setInitialState } = useStepProgressStore();
   const { options, setMenuInitialState } = useMenuOptionSteps();
   const { mix, soft, water, resetSelection } = useDrinkSelection();
@@ -34,53 +39,53 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
 
     let newDrink;
 
-    if (selectedOption.option === 'mix') {
+    if (selectedOption.option === "mix") {
       newDrink = {
-        machineId: '12I72P128391H8120D01291JS1',
+        machineId: "12I72P128391H8120D01291JS1",
         type: 0,
         drink: [mix.alcohol.name, mix.soft.name],
         paymentType: 0,
         price: mix.alcohol.price + mix.soft.price,
-        cardId: 'AB12HDB293SN02',
-        cardNumber: '1234567890123456',
+        cardId: "AB12HDB293SN02",
+        cardNumber: "1234567890123456",
       };
-    } else if (selectedOption.option === 'soft') {
+    } else if (selectedOption.option === "soft") {
       newDrink = {
-        machineId: '12I72P128391H8120D01291JS1',
+        machineId: "12I72P128391H8120D01291JS1",
         type: 1,
         drink: [soft.drink.name],
         paymentType: 0,
         price: soft.drink.price,
-        cardId: 'AB12HDB293SN02',
-        cardNumber: '1234567890123456',
+        cardId: "AB12HDB293SN02",
+        cardNumber: "1234567890123456",
       };
-    } else if (selectedOption.option === 'water') {
+    } else if (selectedOption.option === "water") {
       newDrink = {
-        machineId: '12I72P128391H8120D01291JS1',
+        machineId: "12I72P128391H8120D01291JS1",
         type: 2,
         drink: [water.drink.name],
         paymentType: 0,
         price: water.drink.price,
-        cardId: 'AB12HDB293SN02',
-        cardNumber: '1234567890123456',
+        cardId: "AB12HDB293SN02",
+        cardNumber: "1234567890123456",
       };
     }
 
     if (newDrink) {
       try {
-        await nodeRedLedWorker({ mode: 'enable' });
+        await nodeRedLedWorker({ mode: "enable" });
         // const res = await postPayterStart();
-        
+
         // if (res.state === "COMMITED") {
         //   console.log('Payment started successfully');
         //   await createDrink(newDrink);
-        //   await nodeRedStartService(newDrink);
-        //   await nodeRedLedWorker({ mode: 'disable' });
+        await nodeRedStartService(newDrink);
+        await nodeRedLedWorker({ mode: "disable" });
         // }
         goForward(6);
       } catch (error) {
-        console.error('Error creating drink:', error);
-        await nodeRedLedWorker({ mode: 'disable' });
+        console.error("Error creating drink:", error);
+        await nodeRedLedWorker({ mode: "disable" });
         handlePaymentClose();
         goBack(1);
       }
@@ -136,7 +141,7 @@ const animationBorderWater = keyframes`
 `;
 
 const SectionWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animateShow', 'variant'].includes(prop),
+  shouldForwardProp: (prop) => !["animateShow", "variant"].includes(prop),
 })<SectionWrapperProps>`
   position: absolute;
   bottom: 2.5%;
@@ -146,20 +151,20 @@ const SectionWrapper = styled.section.withConfig({
   border-radius: 40px;
   background-color: ${(props) =>
     props.variant === 1
-      ? '#ff9c56'
+      ? "#ff9c56"
       : props.variant === 2
-      ? '#8150ff'
+      ? "#8150ff"
       : props.variant === 3
-      ? '#6fd6ff'
+      ? "#6fd6ff"
       : null};
   border: 20px solid
     ${(props) =>
       props.variant === 1
-        ? '#ffc09b'
+        ? "#ffc09b"
         : props.variant === 2
-        ? '#d6c6ff'
+        ? "#d6c6ff"
         : props.variant === 3
-        ? '#a7e6ff'
+        ? "#a7e6ff"
         : null};
   display: flex;
   justify-content: center;
@@ -180,7 +185,7 @@ const SectionWrapper = styled.section.withConfig({
       return css`
         ${animationBorderWater} 2s infinite
       `;
-    return 'none';
+    return "none";
   }};
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 100;
