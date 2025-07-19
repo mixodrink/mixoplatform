@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import axios from 'axios';
 
-import { IService, INodeRed } from 'interfaces/service.interface';
+import { IService } from 'interfaces/service.interface';
 import { createServiceDB } from 'services/service.service';
 const BASE_URL = `http://localhost:1880/start-leds`;
 

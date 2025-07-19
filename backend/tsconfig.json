@@ -10,6 +10,13 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "outDir": "./dist"
-  }
+    "outDir": "./dist",
+    "paths": {
+      "@models/*": ["models/*"],
+      "@controllers/*": ["controllers/*"]
+    },
+    "types": ["node", "express"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

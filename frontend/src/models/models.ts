@@ -17,4 +17,4 @@ interface User {
   password: string;
 }
 
-export { DrinkModel, AuthToken, User };
+export type { DrinkModel, AuthToken, User };

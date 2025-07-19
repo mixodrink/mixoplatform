@@ -20,7 +20,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   paymentClose,
 }) => {
   const { steps } = useStepProgressStore();
-
+  const STEP_PAYMENT_PAID = steps[5].selected;
   return (
     <>
       <PaymentImagesComponent cardImageSrc={card} />
@@ -30,7 +30,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         variant={variant}
         handlePaymentClose={() => paymentClose()}
       />
-      {steps[5].selected && <ServiceVideoComponent handleClose={paymentClose} />}
+      {STEP_PAYMENT_PAID && <ServiceVideoComponent handleClose={paymentClose} />}
     </>
   );
 };

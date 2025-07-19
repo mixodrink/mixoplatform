@@ -20,6 +20,7 @@ interface DrinkSelectionState {
   setWaterSelection: (drink: { name: string; price: number }) => void;
   resetSelection: () => void;
   MixIsSelected: () => boolean;
+  SoftMixIsSelected: () => boolean;
   SoftIsSelected: () => boolean;
   WaterIsSelected: () => boolean;
 }

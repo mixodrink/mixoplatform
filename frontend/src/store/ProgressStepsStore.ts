@@ -1,14 +1,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-type State = [
-  { id: number; selected: boolean },
-  { id: number; selected: boolean },
-  { id: number; selected: boolean },
-  { id: number; selected: boolean },
-  { id: number; selected: boolean },
-  { id: number; selected: boolean }
-];
+type Step = { id: number; selected: boolean };
+type State = Step[];
 
 const initialState: State = [
   // Menu
@@ -30,6 +24,7 @@ interface StepProgressState {
   goForward: (id: number) => void;
   goBack(id: number): void;
   setInitialState: () => void;
+  getCurrentStep: (state: State) => number;
 }
 
 export const useStepProgressStore = create<StepProgressState>()(
@@ -44,8 +39,8 @@ export const useStepProgressStore = create<StepProgressState>()(
         { id: 6, selected: false },
       ],
       goForward: (id: number) => {
-        set((state: initialState) => {
-          const updatedStep = state.steps.map((step: { id: number; selected: boolean }) => {
+        set((state: StepProgressState) => {
+          const updatedStep = state.steps.map((step: Step) => {
             if (step.id === id) {
               return { ...step, selected: true };
             } else {
@@ -59,8 +54,8 @@ export const useStepProgressStore = create<StepProgressState>()(
         });
       },
       goBack: (id: number) => {
-        set((state: initialState) => {
-          const updatedStep = state.steps.map((step: { id: number; selected: boolean }) => {
+        set((state: StepProgressState) => {
+          const updatedStep = state.steps.map((step: Step) => {
             if (step.id === id) {
               return { ...step, selected: !step.selected };
             } else {
@@ -77,8 +72,8 @@ export const useStepProgressStore = create<StepProgressState>()(
         set(() => ({
           steps: initialState,
         })),
-      getCurrentStep: (state: steps) => {
-        const currentStep = state.filter((step) => step.selected);
+      getCurrentStep: (state: State) => {
+        const currentStep = state.filter((step: Step) => step.selected);
         return currentStep[0].id;
       },
     }),
