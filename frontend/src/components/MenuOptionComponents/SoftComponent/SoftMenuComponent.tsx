@@ -24,6 +24,46 @@ interface Props {
   handleSetInitialState: () => void;
 }
 
+interface SectionWrapperProps {
+  selected: boolean;
+  slide: boolean;
+}
+
+interface TitleProps {
+  $selected: boolean;
+}
+
+interface ImageSectionWrapperProps {
+  animationState: number;
+  top: number;
+  right: number;
+  deg: number;
+  slide: boolean;
+  isMenu: boolean;
+  paymentState: boolean;
+}
+
+interface ImageProps {
+  animationState: number;
+  isBright: boolean;
+}
+
+interface SectionServiceNameProps {
+  animatePosition: boolean;
+}
+
+interface PlantImageWrapperProps {
+  animationFadeIn: number;
+}
+
+interface PlantImageProps {
+  src: string;
+  alt: string;
+  top: number;
+  right: number;
+  rotate: number;
+}
+
 const obj = {
   cola: {
     title: 'Cola',
@@ -54,13 +94,13 @@ const obj = {
 
 const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
-  const { steps, goForward } = useStepProgressStore();
+  const { steps, goForward, getCurrentStep } = useStepProgressStore();
   const { soft, SoftIsSelected } = useDrinkSelection();
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
   const [floatingImage, setFloatingImage] = useState<string>(cola);
-  const [imageSelected, setImageSelected] = useState<string>(1);
+  const [selectedStep, setSelectedStep] = useState<number>(1);
   const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
   const [softIsTransition, setSoftIsTransition] = useState(false);
 
@@ -93,9 +133,6 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
       setFloatingImage(cola);
     }
 
-    const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
-    setImageSelected(filterSelectedStep);
-
     const res2 = SoftIsSelected();
     setCurrentSoftIsSelected(res2);
     if ((res2 && steps[3].selected) || (res2 && steps[4].selected)) {
@@ -105,21 +142,27 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
     }
   }, [steps, soft, SoftIsSelected]);
 
+  const selectedStepFromStore = useStepProgressStore((s) => s.getCurrentStep());
+
+  useEffect(() => {
+    console.log('Selected Step:', selectedStepFromStore);
+    setSelectedStep(selectedStepFromStore);
+  }, [selectedStepFromStore]);
+
   return (
     <>
       <SectionWrapper
         onClick={
           options[0].selected || options[1].selected || options[2].selected || transitionStart
-            ? () => {}
+            ? () => { }
             : () => handleStepProgress()
         }
         selected={selected}
         slide={isSlide}
         onTransitionEnd={handleOnTransitionEnd}
-        onTransitionStart={handleOnTransitionStart}
       >
-        <TitleH1 selected={selected}>Soda</TitleH1>
-        <SubTitleH2 selected={selected}>Perfect Refreshment!</SubTitleH2>
+        <TitleH1 $selected={selected}>Soda</TitleH1>
+        <SubTitleH2 $selected={selected}>Perfect Refreshment!</SubTitleH2>
 
         {selected && (
           <>
@@ -139,7 +182,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
             <SectionServiceName animatePosition={steps[3].selected}>
               <HeaderTitle>{soft?.drink.name}</HeaderTitle>
             </SectionServiceName>
-            <PlantImageWrapper animationFadeIn={imageSelected}>
+            <PlantImageWrapper animationFadeIn={selectedStep}>
               <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
               <PlantImage src={tropicalOne} alt="" top={-8} right={6} rotate={2} />
               <PlantImage src={tropicalThree} alt="" top={-6} right={52} rotate={-90} />
@@ -162,18 +205,18 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         )}
       </SectionWrapper>
       <ImageSectionWrapper
-        animationState={imageSelected}
+        animationState={selectedStep}
         top={45}
         right={1.5}
         deg={6}
         slide={selected}
-        isMenu={imageSelected === 1}
+        isMenu={selectedStep === 1}
         paymentState={steps[4].selected}
       >
         <Image
           src={floatingImage}
           alt="Floating Image"
-          animationState={imageSelected}
+          animationState={selectedStep}
           isBright={currentSoftIsSelected}
         />
       </ImageSectionWrapper>
@@ -183,7 +226,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
-})`
+}) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #5f31d4;
@@ -196,7 +239,7 @@ const SectionWrapper = styled.section.withConfig({
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-const TitleH1 = styled.h1`
+const TitleH1 = styled.h1<TitleProps>`
   font-size: 11rem;
   line-height: 10rem;
   margin: 0;
@@ -206,7 +249,7 @@ const TitleH1 = styled.h1`
   color: #fff;
 `;
 
-const SubTitleH2 = styled.h2`
+const SubTitleH2 = styled.h2<TitleProps>`
   font-size: 4rem;
   font-weight: 400;
   line-height: 10rem;
@@ -221,8 +264,8 @@ const SubTitleH2 = styled.h2`
 // Default styles for the wrapper
 const ImageSectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationState', 'top', 'deg', 'type', 'slide', 'isMenu', 'paymentState'].includes(prop),
-})`
+    !['animationState', 'top', 'right', 'deg', 'slide', 'isMenu', 'paymentState'].includes(prop),
+}) <ImageSectionWrapperProps>`
   position: absolute;
   top: ${(props) =>
     props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
@@ -231,25 +274,25 @@ const ImageSectionWrapper = styled.section.withConfig({
       ? props.animationState === 1 || props.paymentState
         ? props.right
         : props.animationState === 4
-        ? 31
-        : props.right
+          ? 31
+          : props.right
       : props.isMenu
-      ? props.right
-      : 300}%;
+        ? props.right
+        : 300}%;
   rotate: ${(props) => props.deg}deg;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 // Image styling
 const Image = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationState', 'type', 'isBright'].includes(prop),
-})`
+  shouldForwardProp: (prop) => !['animationState', 'isBright'].includes(prop),
+}) <ImageProps>`
   filter: ${(props) =>
     props.isBright
       ? 'brightness(1)'
       : props.animationState === 1
-      ? 'brightness(1)'
-      : 'brightness(0.5)'};
+        ? 'brightness(1)'
+        : 'brightness(0.5)'};
   width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 220 : 350)}px;
   height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 700)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -257,7 +300,7 @@ const Image = styled.img.withConfig({
 
 const SectionServiceName = styled.section.withConfig({
   shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
-})`
+}) <SectionServiceNameProps>`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
@@ -288,7 +331,7 @@ const fadeIn = keyframes`
 
 const PlantImageWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
-})`
+}) <PlantImageWrapperProps>`
   position: absolute;
   top: 47%;
   right: 0;
@@ -319,7 +362,7 @@ const rotate = keyframes`
 
 const PlantImage = styled.img.withConfig({
   shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
-})`
+}) <PlantImageProps>`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;

@@ -5,6 +5,15 @@ import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import { OptionListInterface } from 'interfaces/OptionListInterface';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 
+interface Drink {
+  title: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+  price: number;
+}
+
 const MixGridComponent: React.FC<OptionListInterface> = ({
   obj,
   selected,
@@ -14,18 +23,20 @@ const MixGridComponent: React.FC<OptionListInterface> = ({
 }) => {
   const { mix, setMixSelection } = useDrinkSelection();
   const { goForward } = useStepProgressStore();
-  const [drinkAnimationSelected, setDrinkAnimationSelected] = React.useState<boolean>('');
+  const [drinkAnimationSelected, setDrinkAnimationSelected] = React.useState<string>('');
   const drinkArray = Object.values(obj);
 
-  const handleDrinkSelection = (drink) => {
-    if (drink) {
-      setMixSelection({ name: drink.title, price: drink.price }, mix.soft);
+  const handleDrinkSelection = (drink: Drink) => {
+    if (drink?.title) {
+      const safeName = drink.title as string;
+      const softDrink = mix.soft.name ? { name: mix.soft.name, price: mix.soft.price } : { name: '', price: 0 };
+      setMixSelection({ name: safeName, price: drink.price }, softDrink);
       goForward(3);
     }
   };
 
   useEffect(() => {
-    setDrinkAnimationSelected(mix.alcohol.name);
+    setDrinkAnimationSelected(mix.alcohol.name || '');
   }, [mix]);
 
   return (
@@ -62,9 +73,15 @@ const fadeIn = keyframes`
   }
 `;
 
+interface GridContainerProps {
+  columns: number;
+  slideIn: boolean;
+  slideOut: boolean;
+}
+
 const GridContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['columns', 'slideIn', 'slideOut'].includes(prop),
-})`
+})<GridContainerProps>`
   width: 80%;
   margin: auto;
   padding: 20px;

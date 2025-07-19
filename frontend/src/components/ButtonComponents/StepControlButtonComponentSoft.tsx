@@ -7,8 +7,17 @@ import { useStepProgressStore } from 'store/ProgressStepsStore';
 interface Props {
   animateArrowBack: boolean;
   animateArrowForward: boolean;
-  handleClose: void;
+  handleClose: () => void;
   clickableState: boolean;
+}
+
+// Styled components prop interfaces
+interface ButtonProps {
+  animateShow: boolean;
+}
+
+interface ArrowImageProps {
+  variant?: boolean;
 }
 
 const StepControlButtonComponentSoft: React.FC<Props> = ({
@@ -48,7 +57,7 @@ const StepControlButtonComponentSoft: React.FC<Props> = ({
           animateShow={animateArrowForward && !steps[4].selected && !steps[3].selected}
           onClick={!clickableState ? () => {} : () => handleGoForward()}
         >
-          <ArrowImageRight src={arrow} alt="" variant={true} />
+          <ArrowImageRight src={arrow} alt="" />
         </ForwardButton>
       </SectionWrapper>
     </>
@@ -63,8 +72,8 @@ const SectionWrapper = styled.section`
 `;
 
 const BackButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['animateShow', 'variant'].includes(prop),
-})`
+  shouldForwardProp: (prop) => !['animateShow'].includes(prop),
+})<ButtonProps>`
   position: absolute;
   left: 0%;
   width: 120px;
@@ -78,7 +87,7 @@ const BackButton = styled.button.withConfig({
 
 const ForwardButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['animateShow'].includes(prop),
-})`
+})<ButtonProps>`
   position: absolute;
   left: 90.8%;
   width: 120px;
@@ -92,7 +101,7 @@ const ForwardButton = styled.button.withConfig({
 
 const ArrowImageLeft = styled.img.withConfig({
   shouldForwardProp: (prop) => !['variant'].includes(prop),
-})`
+})<ArrowImageProps>`
   position: absolute;
   top: 25%;
   left: -8%;
@@ -103,7 +112,7 @@ const ArrowImageLeft = styled.img.withConfig({
 
 const ArrowImageRight = styled.img.withConfig({
   shouldForwardProp: (prop) => !['variant'].includes(prop),
-})`
+})<ArrowImageProps>`
   position: absolute;
   top: 25%;
   left: -17%;

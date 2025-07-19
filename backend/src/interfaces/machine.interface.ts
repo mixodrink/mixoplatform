@@ -13,9 +13,10 @@ export interface IMachine {
   drinks: Array<string>;
   lastMaintenance: Date | null;
   lastService: Date | null;
+  nfc: object | null;
 }
 
-export interface IMachineDocument extends IMachine, Document {}
+export interface IMachineDocument extends IMachine, Document { }
 
 //  Static method for creating a machine
 export interface IMachineModel extends Model<IMachineDocument> {

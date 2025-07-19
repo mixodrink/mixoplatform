@@ -188,8 +188,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   }, [mix]);
 
   useEffect(() => {
-    const currentStep = getCurrentStep(steps);
-    setCurrentStep(currentStep); // cambiar por set step of process
     const res = getSelectedOption();
     setCurrentSelectedOption(res?.option === 'mix');
   }, [steps, getSelectedOption, currentSelectedOption]);
@@ -202,9 +200,12 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     res ? setCurrentSoftIsSelected(true) : setCurrentSoftIsSelected(false);
   }, [mix, MixIsSelected, SoftMixIsSelected]);
 
+  const selectedStepFromStore = useStepProgressStore((s) => s.getCurrentStep());
+
   useEffect(() => {
-    console.log(transitionEnd);
-  }, [transitionEnd]);
+    console.log('Selected Step:', selectedStepFromStore);
+    setCurrentStep(selectedStepFromStore);
+  }, [selectedStepFromStore]);
 
   return (
     <>

@@ -1,10 +1,11 @@
-interface DrinkModel {
+interface Drink {
+  machineId: string;
   type: string;
-  drink: {
-    itemM: string;
-    itemS?: string;
-  };
+  drink: string[];
+  paymentType: string;
   price: number;
+  cardId: string;
+  cardNumber: string;
 }
 
 interface AuthToken {
@@ -17,4 +18,4 @@ interface User {
   password: string;
 }
 
-export type { DrinkModel, AuthToken, User };
+export type { Drink, AuthToken, User };

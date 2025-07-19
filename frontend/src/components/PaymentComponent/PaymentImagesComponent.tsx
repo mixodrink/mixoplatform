@@ -19,9 +19,13 @@ const PaymentImagesComponent: React.FC<Props> = ({ cardImageSrc }) => {
   );
 };
 
+interface PaymentImagesWrapperProps {
+  isSlide: boolean;
+}
+
 const PaymentImagesWrapper = styled.div.withConfig({
   shouldForwardProp: (prop) => !['isSlide'].includes(prop),
-})`
+})<PaymentImagesWrapperProps>`
   position: absolute;
   left: 21.5%;
   top: 32%;

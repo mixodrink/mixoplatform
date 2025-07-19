@@ -1,5 +1,3 @@
-interface NodeRedModel {
+export interface NodeRedModel {
   state: boolean;
 }
-
-export { NodeRedModel };

@@ -1,7 +1,7 @@
 import api from 'api/api-base';
-import { DrinkModel } from 'models';
+import { Drink } from 'models/models';
 
-export const createDrink = async (drink: DrinkModel) => {
+export const createDrink = async (drink: Drink) => {
   const response = await api.post('/service/createService', drink);
   return response.data;
 };

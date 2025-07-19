@@ -9,6 +9,12 @@ interface OptionItemProps {
   animationBackSlideOut: boolean;
 }
 
+interface DrinkImageProps {
+  animationSlideIn: boolean;
+  animationSlideOut: boolean;
+  animationBackSlideOut: boolean;
+}
+
 const WaterOptionComponent: React.FC<OptionItemProps> = ({
   animationSlideIn,
   animationSlideOut,
@@ -28,7 +34,7 @@ const WaterOptionComponent: React.FC<OptionItemProps> = ({
 const DrinkImage = styled.img.withConfig({
   shouldForwardProp: (prop) =>
     !['animationSlideIn', 'animationSlideOut', 'animationBackSlideOut'].includes(prop),
-})`
+})<DrinkImageProps>`
   width: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 260 : 430) : 260)}px;
   height: ${(props) =>
     props.animationSlideIn ? (props.animationBackSlideOut ? 395 : 700) : 395}px;

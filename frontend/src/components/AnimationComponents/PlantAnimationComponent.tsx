@@ -10,6 +10,19 @@ interface Props {
   imageSelected: number;
 }
 
+// Styled components prop interfaces
+interface PlantImageWrapperProps {
+  animationFadeIn: number;
+}
+
+interface PlantImageProps {
+  src: string;
+  alt: string;
+  top: number;
+  right: number;
+  rotate: number;
+}
+
 const PlantAnimationComponent: React.FC<Props> = ({ imageSelected }) => {
   return (
     <>
@@ -36,7 +49,7 @@ const fadeIn = keyframes`
 
 const PlantImageWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
-})`
+})<PlantImageWrapperProps>`
   position: absolute;
   top: 47%;
   right: 0;
@@ -67,7 +80,7 @@ const rotate = keyframes`
 
 const PlantImage = styled.img.withConfig({
   shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
-})`
+})<PlantImageProps>`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;

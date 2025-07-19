@@ -66,11 +66,31 @@ export const nodeRedStartService = async (
       Accept: '*/*',
     };
 
-    const data = {
-      type: req.body.type === 0 ? "mix" : req.body.type === 1 ? "soft" : "water",
-      alcohol: req.body.drink[0],
-      mix: req.body.drink[1],
-    };
+    let data;
+
+    if (req.body.type === 'mix') {
+      data = {
+        type: req.body.type,
+        alcohol: req.body.drinks[0] ? req.body.drinks[0] : null,
+        mix: req.body.drinks[1] ? req.body.drinks[1] : null,
+      };
+    }
+
+    if (req.body.type === 'soft') {
+      data = {
+        type: req.body.type,
+        alcohol: null,
+        mix: req.body.drinks[0] ? req.body.drinks[0] : null,
+      };
+    }
+
+    if (req.body.type === 'water') {
+      data = {
+        type: req.body.type,
+        alcohol: null,
+        mix: req.body.drinks[0] ? req.body.drinks[0] : null
+      };
+    }
 
     const response = await axios.post("http://localhost:1880/start", data, { headers });
 

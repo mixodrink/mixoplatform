@@ -21,7 +21,7 @@ interface SectionWrapperProps {
 }
 
 const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant, handlePaymentClose }) => {
-  const { goForward, steps, setInitialState } = useStepProgressStore();
+  const { goForward, goBack, steps, setInitialState } = useStepProgressStore();
   const { options, setMenuInitialState } = useMenuOptionSteps();
   const { mix, soft, water, resetSelection } = useDrinkSelection();
 
@@ -37,9 +37,9 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
     if (selectedOption.option === 'mix') {
       newDrink = {
         machineId: '12I72P128391H8120D01291JS1',
-        type: 0,
-        drink: [mix.alcohol.name, mix.soft.name],
-        paymentType: 0,
+        type: "mix",
+        drink: [mix.alcohol.name, mix.soft.name].filter((d): d is string => d !== null),
+        paymentType: "card",
         price: mix.alcohol.price + mix.soft.price,
         cardId: 'AB12HDB293SN02',
         cardNumber: '1234567890123456',
@@ -47,9 +47,9 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
     } else if (selectedOption.option === 'soft') {
       newDrink = {
         machineId: '12I72P128391H8120D01291JS1',
-        type: 1,
-        drink: [soft.drink.name],
-        paymentType: 0,
+        type: "soft",
+        drink: [soft.drink.name].filter((d): d is string => d !== null),
+        paymentType: "card",
         price: soft.drink.price,
         cardId: 'AB12HDB293SN02',
         cardNumber: '1234567890123456',
@@ -57,9 +57,9 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
     } else if (selectedOption.option === 'water') {
       newDrink = {
         machineId: '12I72P128391H8120D01291JS1',
-        type: 2,
-        drink: [water.drink.name],
-        paymentType: 0,
+        type: "water",
+        drink: [water.drink.name].filter((d): d is string => d !== null),
+        paymentType: "card",
         price: water.drink.price,
         cardId: 'AB12HDB293SN02',
         cardNumber: '1234567890123456',
@@ -69,10 +69,9 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
     if (newDrink) {
       try {
         await nodeRedLedWorker({ mode: 'enable' });
-        const res = await postPayterStart();
-        
-        if (res.state === "COMMITED") {
-          console.log('Payment started successfully');
+        const res = await postPayterStart(newDrink);
+        console.log('Payment started:', res);
+        if (res.commit.state === "COMMITED") {
           await createDrink(newDrink);
           await nodeRedStartService(newDrink);
           await nodeRedLedWorker({ mode: 'disable' });

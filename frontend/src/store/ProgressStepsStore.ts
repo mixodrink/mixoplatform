@@ -24,12 +24,12 @@ interface StepProgressState {
   goForward: (id: number) => void;
   goBack(id: number): void;
   setInitialState: () => void;
-  getCurrentStep: (state: State) => number;
+  getCurrentStep(): number;
 }
 
 export const useStepProgressStore = create<StepProgressState>()(
   persist<StepProgressState>(
-    (set) => ({
+    (set, get) => ({
       steps: [
         { id: 1, selected: true },
         { id: 2, selected: false },
@@ -72,9 +72,9 @@ export const useStepProgressStore = create<StepProgressState>()(
         set(() => ({
           steps: initialState,
         })),
-      getCurrentStep: (state: State) => {
-        const currentStep = state.filter((step: Step) => step.selected);
-        return currentStep[0].id;
+      getCurrentStep: (): number => {
+        const found = get().steps.find((step) => step.selected);
+        return found?.id ?? 1;
       },
     }),
     { name: 'step-store', storage: createJSONStorage(() => localStorage) }

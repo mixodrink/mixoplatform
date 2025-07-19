@@ -21,17 +21,42 @@ interface Props {
   handleSetInitialState: () => void;
 }
 
+interface SectionWrapperProps {
+  selected: boolean;
+  slide: boolean;
+}
+
+interface TitleProps {
+  selected: boolean;
+}
+
+interface PlantImageWrapperProps {
+  animationFadeIn: number;
+}
+
+interface PlantImageProps {
+  top: number;
+  right: number;
+  rotate: number;
+}
+
+interface SectionServiceNameProps {
+  animatePosition: boolean;
+}
+
 const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
-  const { steps, goForward } = useStepProgressStore();
+  const { steps, goForward, getCurrentStep } = useStepProgressStore();
   const { water, WaterIsSelected, setWaterSelection } = useDrinkSelection();
+  const [selectedStep, setSelectedStep] = React.useState<number>(0);
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
+  const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [isTransition, setIsTransition] = useState<boolean>(false);
 
   const handleStepProgress = () => {
     setSelectedOption('water');
-    setWaterSelection({ name: 'Water', image: { src: waterImage, alt: 'water' }, price: 5 });
+    setWaterSelection({ name: 'Water', price: 5 });
     setSelected(true);
     goForward(4);
   };
@@ -42,7 +67,8 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
   };
 
   const handleOnTransitionEnd = () => {
-    setTransitionEnd(!transitionEnd);
+    setTransitionEnd(true);
+    setTransitionStart(false);
   };
 
   useEffect(() => {
@@ -54,24 +80,24 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
     }
   }, [options, water, WaterIsSelected]);
 
-  const [imageSelected, setImageSelected] = useState<number>(0);
+  const selectedStepFromStore = useStepProgressStore((s) => s.getCurrentStep());
+
   useEffect(() => {
-    const filterSelectedStep = steps.filter((step) => step.selected === true)[0].id;
-    setImageSelected(filterSelectedStep);
-  }, [steps]);
+    console.log('Selected Step:', selectedStepFromStore);
+    setSelectedStep(selectedStepFromStore);
+  }, [selectedStepFromStore]);
 
   return (
     <>
       <SectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionEnd
-            ? () => {}
+          options[0].selected || options[1].selected || options[2].selected || transitionStart
+            ? () => { }
             : () => handleStepProgress()
         }
         selected={selected}
         slide={isSlide}
         onTransitionEnd={handleOnTransitionEnd}
-        onTransitionStart={handleOnTransitionEnd}
       >
         <TitleH1 selected={selected}>Water</TitleH1>
         <SubTitleH2 selected={selected}>Super Fresh!</SubTitleH2>
@@ -80,13 +106,13 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
           <>
             <CloseButtonComponent
               defaultFunction={handleClose}
-              transitionStart={transitionEnd}
+              transitionStart={transitionStart}
               style={{ borderColor: '#c3eeff' }}
             />
-            <SectionServiceName animatePosition={steps[3].selected}>
+            <SectionServiceName animatePosition={steps?.[3]?.selected || false}>
               <HeaderTitle>{water.drink.name}</HeaderTitle>
             </SectionServiceName>
-            <PlantImageWrapper animationFadeIn={imageSelected}>
+            <PlantImageWrapper animationFadeIn={selectedStep}>
               <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
               <PlantImage src={tropicalOne} alt="" top={-10} right={6} rotate={11} />
               <PlantImage src={tropicalThree} alt="" top={-6} right={52} rotate={-90} />
@@ -94,7 +120,7 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
               <BlurredCircle />
             </PlantImageWrapper>
             <PaymentComponent
-              animateShow={steps[3].selected}
+              animateShow={steps?.[3]?.selected || false}
               variant={3}
               priceSum={water?.drink.price}
               paymentClose={handleClose}
@@ -105,7 +131,7 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
       <WaterOptionComponent
         animationSlideIn={selected}
         animationSlideOut={isTransition}
-        animationBackSlideOut={steps[4].selected}
+        animationBackSlideOut={steps?.[4]?.selected || false}
       />
     </>
   );
@@ -113,7 +139,7 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
-})`
+}) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #40c2f6;
@@ -125,7 +151,7 @@ const SectionWrapper = styled.section.withConfig({
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-const TitleH1 = styled.h1`
+const TitleH1 = styled.h1<TitleProps>`
   font-size: 11rem;
   line-height: 10rem;
   margin: 0;
@@ -135,7 +161,7 @@ const TitleH1 = styled.h1`
   left: 40px;
 `;
 
-const SubTitleH2 = styled.h2`
+const SubTitleH2 = styled.h2<TitleProps>`
   font-size: 4rem;
   font-weight: 400;
   line-height: 10rem;
@@ -159,7 +185,7 @@ const fadeIn = keyframes`
 
 const PlantImageWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
-})`
+}) <PlantImageWrapperProps>`
   position: absolute;
   top: 47%;
   right: 0;
@@ -190,7 +216,7 @@ const rotate = keyframes`
 
 const PlantImage = styled.img.withConfig({
   shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
-})`
+}) <PlantImageProps>`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;
@@ -222,7 +248,7 @@ const BlurredCircle = styled.div`
 
 const SectionServiceName = styled.section.withConfig({
   shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
-})`
+}) <SectionServiceNameProps>`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;

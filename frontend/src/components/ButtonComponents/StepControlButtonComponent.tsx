@@ -15,6 +15,15 @@ interface Props {
   resMix?: boolean;
 }
 
+// Styled components prop interfaces
+interface ButtonProps {
+  animateShow: boolean;
+}
+
+interface ArrowImageProps {
+  variant?: boolean;
+}
+
 const StepControlButtonComponent: React.FC<Props> = ({
   animateArrowBack,
   animateArrowForward,
@@ -32,13 +41,13 @@ const StepControlButtonComponent: React.FC<Props> = ({
     if (currentStepNumber === 1) {
       goBack(1);
       handleClose();
-      handleSetMixTransition(!resMix);
+      handleSetMixTransition?.(!resMix);
       handleSetSoftTransition(!resSoft);
     } else if (currentStepNumber === 3) {
       handleSetSoftTransition(!resSoft);
       goBack(currentStepNumber);
     } else {
-      handleSetMixTransition(!resMix);
+      handleSetMixTransition?.(!resMix);
       handleSetSoftTransition(!resSoft);
       goBack(currentStepNumber);
     }
@@ -48,7 +57,7 @@ const StepControlButtonComponent: React.FC<Props> = ({
     const currentStepNumber = steps.findIndex((step) => step.selected);
     if (currentStepNumber === 1) {
       goForward(3);
-      handleSetMixTransition(true);
+      handleSetMixTransition?.(true);
     } else if (currentStepNumber === 2) {
       goForward(4);
       handleSetSoftTransition(true);
@@ -68,7 +77,7 @@ const StepControlButtonComponent: React.FC<Props> = ({
           animateShow={animateArrowForward && !steps[4].selected}
           onClick={!clickableState ? () => {} : () => handleGoForward()}
         >
-          <ArrowImageRight src={arrow} alt="" variant={true} />
+          <ArrowImageRight src={arrow} alt="" />
         </ForwardButton>
       </SectionWrapper>
     </>
@@ -82,8 +91,8 @@ const SectionWrapper = styled.section`
 `;
 
 const BackButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['animateShow', 'variant'].includes(prop),
-})`
+  shouldForwardProp: (prop) => !['animateShow'].includes(prop),
+})<ButtonProps>`
   position: absolute;
   left: 0%;
   width: 120px;
@@ -97,7 +106,7 @@ const BackButton = styled.button.withConfig({
 
 const ForwardButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['animateShow'].includes(prop),
-})`
+})<ButtonProps>`
   position: absolute;
   left: 90.8%;
   width: 120px;
@@ -111,7 +120,7 @@ const ForwardButton = styled.button.withConfig({
 
 const ArrowImageLeft = styled.img.withConfig({
   shouldForwardProp: (prop) => !['variant'].includes(prop),
-})`
+})<ArrowImageProps>`
   position: absolute;
   top: 25%;
   left: -8%;
@@ -122,7 +131,7 @@ const ArrowImageLeft = styled.img.withConfig({
 
 const ArrowImageRight = styled.img.withConfig({
   shouldForwardProp: (prop) => !['variant'].includes(prop),
-})`
+})<ArrowImageProps>`
   position: absolute;
   top: 25%;
   left: -17%;

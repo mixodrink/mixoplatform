@@ -9,6 +9,11 @@ interface Props {
   style: { borderColor: string };
 }
 
+// Styled component prop interface
+interface CloseButtonProps {
+  borderColor: string;
+}
+
 const CloseButtonComponent: React.FC<Props> = ({ defaultFunction, transitionStart, style }) => {
   return (
     <CloseButton
@@ -26,7 +31,7 @@ const CloseButtonComponent: React.FC<Props> = ({ defaultFunction, transitionStar
 
 const CloseButton = styled.button.withConfig({
   shouldForwardProp: (prop) => !['borderColor'].includes(prop),
-})`
+})<CloseButtonProps>`
   width: 100px;
   height: 100px;
   background: #ffffff78; /* White background */

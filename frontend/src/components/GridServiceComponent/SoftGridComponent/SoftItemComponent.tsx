@@ -15,7 +15,7 @@ const SoftItemComponent: React.FC<OptionItemProps> = ({
   animationSelected,
 }) => {
   return (
-    <OptionContainer onClick={() => handleDrinkSelection(drink)}>
+    <OptionContainer onClick={() => handleDrinkSelection()}>
       <BackgroundBox mod={type} animationSelected={animationSelected} />
       <DrinkImage
         src={drink.image.src}
@@ -52,7 +52,7 @@ const OptionContainer = styled.section`
 
 const BackgroundBox = styled.div.withConfig({
   shouldForwardProp: (prop) => !['mod', 'animationSelected'].includes(prop),
-})`
+})<{ mod: string; animationSelected: boolean }>`
   width: 250px;
   height: ${(props) => (props.animationSelected ? 290 : 250)}px;
   position: absolute;
@@ -74,7 +74,7 @@ const BackgroundBox = styled.div.withConfig({
 
 const DrinkImage = styled.img.withConfig({
   shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
-})`
+})<{ animationSelected: boolean }>`
   width: 130px;
   height: 240px;
   margin-bottom: 0px;
