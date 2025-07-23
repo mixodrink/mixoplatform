@@ -71,8 +71,8 @@ export const nodeRedStartService = async (
     if (req.body.type === 'mix') {
       data = {
         type: req.body.type,
-        alcohol: req.body.drinks[0] ? req.body.drinks[0] : null,
-        mix: req.body.drinks[1] ? req.body.drinks[1] : null,
+        alcohol: req.body.drink[0] ? req.body.drink[0] : null,
+        mix: req.body.drink[1] ? req.body.drink[1] : null,
       };
     }
 
@@ -80,7 +80,7 @@ export const nodeRedStartService = async (
       data = {
         type: req.body.type,
         alcohol: null,
-        mix: req.body.drinks[0] ? req.body.drinks[0] : null,
+        mix: req.body.drink[0] ? req.body.drink[0] : null,
       };
     }
 
@@ -88,7 +88,7 @@ export const nodeRedStartService = async (
       data = {
         type: req.body.type,
         alcohol: null,
-        mix: req.body.drinks[0] ? req.body.drinks[0] : null
+        mix: req.body.drink[0] ? req.body.drink[0] : null
       };
     }
 

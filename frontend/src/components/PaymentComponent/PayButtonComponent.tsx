@@ -4,6 +4,7 @@ import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { createDrink } from 'api/local/create-drink';
 import { postPayterStart } from 'api/local/payment';
 import { nodeRedLedWorker, nodeRedStartService } from 'api/local/node-red';
+import { createDrinkData } from 'utils/drinkUtils';
 
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
@@ -32,50 +33,25 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, var
 
     if (!selectedOption) return;
 
-    let newDrink;
-
-    if (selectedOption.option === 'mix') {
-      newDrink = {
-        machineId: '12I72P128391H8120D01291JS1',
-        type: "mix",
-        drink: [mix.alcohol.name, mix.soft.name].filter((d): d is string => d !== null),
-        paymentType: "card",
-        price: mix.alcohol.price + mix.soft.price,
-        cardId: 'AB12HDB293SN02',
-        cardNumber: '1234567890123456',
-      };
-    } else if (selectedOption.option === 'soft') {
-      newDrink = {
-        machineId: '12I72P128391H8120D01291JS1',
-        type: "soft",
-        drink: [soft.drink.name].filter((d): d is string => d !== null),
-        paymentType: "card",
-        price: soft.drink.price,
-        cardId: 'AB12HDB293SN02',
-        cardNumber: '1234567890123456',
-      };
-    } else if (selectedOption.option === 'water') {
-      newDrink = {
-        machineId: '12I72P128391H8120D01291JS1',
-        type: "water",
-        drink: [water.drink.name].filter((d): d is string => d !== null),
-        paymentType: "card",
-        price: water.drink.price,
-        cardId: 'AB12HDB293SN02',
-        cardNumber: '1234567890123456',
-      };
-    }
+    const selectedOptionFixed = {
+      ...selectedOption,
+      option: selectedOption.option as 'mix' | 'soft' | 'water',
+    };
+    const newDrink = createDrinkData(selectedOptionFixed, mix, soft, water);
 
     if (newDrink) {
       try {
         await nodeRedLedWorker({ mode: 'enable' });
         const res = await postPayterStart(newDrink);
-        console.log('Payment started:', res);
         if (res.commit.state === "COMMITED") {
           await createDrink(newDrink);
           await nodeRedStartService(newDrink);
           await nodeRedLedWorker({ mode: 'disable' });
           goForward(6);
+        } else {
+          console.error('Payment not committed:', res);
+          await nodeRedLedWorker({ mode: 'disable' });
+          //try again
         }
       } catch (error) {
         console.error('Error creating drink:', error);
