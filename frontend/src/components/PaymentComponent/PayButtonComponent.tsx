@@ -1,72 +1,33 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
-import { createDrink } from 'api/local/create-drink';
-import { postPayterStart } from 'api/local/payment';
-import { nodeRedLedWorker, nodeRedStartService } from 'api/local/node-red';
-import { createDrinkData } from 'utils/drinkUtils';
-
-import { useMenuOptionSteps } from 'store/MenuOptionStore';
-import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
 interface OptionItemProps {
   price: number;
   animateShow: boolean;
   variant: number;
-  handlePaymentClose: () => void;
+  onPaymentClick: () => void;
+  disabled?: boolean;
 }
 
 interface SectionWrapperProps {
   animateShow: boolean;
   variant: number;
+  disabled?: boolean;
 }
 
-const PayButtonComponent: React.FC<OptionItemProps> = ({ price, animateShow, variant, handlePaymentClose }) => {
-  const { goForward, goBack, steps, setInitialState } = useStepProgressStore();
-  const { options, setMenuInitialState } = useMenuOptionSteps();
-  const { mix, soft, water, resetSelection } = useDrinkSelection();
-
-  const handleAddDrink = async () => {
-    goForward(5);
-
-    const selectedOption = options.find((option) => option.selected);
-
-    if (!selectedOption) return;
-
-    const selectedOptionFixed = {
-      ...selectedOption,
-      option: selectedOption.option as 'mix' | 'soft' | 'water',
-    };
-    const newDrink = createDrinkData(selectedOptionFixed, mix, soft, water);
-
-    if (newDrink) {
-      try {
-        await nodeRedLedWorker({ mode: 'enable' });
-        const res = await postPayterStart(newDrink);
-        if (res.commit.state === "COMMITED") {
-          await createDrink(newDrink);
-          await nodeRedStartService(newDrink);
-          await nodeRedLedWorker({ mode: 'disable' });
-          goForward(6);
-        } else {
-          console.error('Payment not committed:', res);
-          await nodeRedLedWorker({ mode: 'disable' });
-          //try again
-        }
-      } catch (error) {
-        console.error('Error creating drink:', error);
-        await nodeRedLedWorker({ mode: 'disable' });
-        handlePaymentClose();
-        goBack(1);
-      }
-    }
-  };
-
+const PayButtonComponent: React.FC<OptionItemProps> = ({ 
+  price, 
+  animateShow, 
+  variant, 
+  onPaymentClick, 
+  disabled = false 
+}) => {
   return (
     <SectionWrapper
       animateShow={animateShow}
       variant={variant}
-      onClick={!steps[3].selected ? () => {} : () => handleAddDrink()}
+      disabled={disabled}
+      onClick={disabled ? undefined : onPaymentClick}
     >
       <SectionTitle>{price}€</SectionTitle>
       <SectionText>Pay</SectionText>
@@ -111,7 +72,7 @@ const animationBorderWater = keyframes`
 `;
 
 const SectionWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animateShow', 'variant'].includes(prop),
+  shouldForwardProp: (prop) => !['animateShow', 'variant', 'disabled'].includes(prop),
 })<SectionWrapperProps>`
   position: absolute;
   bottom: 2.5%;
@@ -120,6 +81,7 @@ const SectionWrapper = styled.section.withConfig({
   height: 14%;
   border-radius: 40px;
   background-color: ${(props) =>
+    props.disabled ? '#cccccc' :
     props.variant === 1
       ? '#ff9c56'
       : props.variant === 2
@@ -129,6 +91,7 @@ const SectionWrapper = styled.section.withConfig({
       : null};
   border: 20px solid
     ${(props) =>
+      props.disabled ? '#aaaaaa' :
       props.variant === 1
         ? '#ffc09b'
         : props.variant === 2
@@ -143,6 +106,7 @@ const SectionWrapper = styled.section.withConfig({
   gap: 50px;
   opacity: ${(props) => (props.animateShow ? 1 : 0)};
   animation: ${(props) => {
+    if (props.disabled) return 'none';
     if (props.variant === 1)
       return css`
         ${animationBorderMix} 2s infinite
@@ -159,6 +123,7 @@ const SectionWrapper = styled.section.withConfig({
   }};
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 100;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
 `;
 
 const SectionTitle = styled.h1`
