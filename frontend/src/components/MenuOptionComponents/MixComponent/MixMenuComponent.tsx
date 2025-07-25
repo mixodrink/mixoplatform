@@ -203,7 +203,6 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   const selectedStepFromStore = useStepProgressStore((s) => s.getCurrentStep());
 
   useEffect(() => {
-    console.log('Selected Step:', selectedStepFromStore);
     setCurrentStep(selectedStepFromStore);
   }, [selectedStepFromStore]);
 

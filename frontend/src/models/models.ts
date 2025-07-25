@@ -1,8 +1,19 @@
+
+export enum PaymentType {
+  CARD,
+  NFC,
+}
+
+export enum ServiceType {
+  MIX,
+  WATER,
+  BIB,
+}
 interface Drink {
   machineId: string;
-  type: string;
+  type: ServiceType;
   drink: string[];
-  paymentType: string;
+  paymentType: PaymentType;
   price: number;
   cardId: string;
   cardNumber: string;

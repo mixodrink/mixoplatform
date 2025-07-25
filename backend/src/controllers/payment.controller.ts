@@ -9,45 +9,146 @@ import {
   stopTerminal,
 } from "../services/payment.service";
 
-export const startPayment = async (req: Request, res: Response): Promise<void> => {
-  const { authorizedAmount } = req.body;
-  if (typeof authorizedAmount !== "number" || authorizedAmount <= 0) {
+interface PaymentError extends Error {
+  response?: any;
+  request?: any;
+}
+
+interface PaymentResult {
+  terminal?: any;
+  start?: any;
+  card?: any;
+  authorization?: any;
+  commit?: any;
+}
+
+// 1️⃣ CHECK TERMINAL FUNCTION
+const handleCheckTerminal = async (): Promise<any> => {
+  logger.info("🔄 Checking terminal state");
+  const terminal = await checkTerminal();
+  
+  if (!terminal?.online || terminal.state !== "IDLE") {
+    logger.warn("⚠️ Terminal unavailable", terminal);
+    throw new Error("Terminal is not IDLE or offline. Please try again shortly.");
+  }
+  
+  return terminal;
+};
+
+// 2️⃣ START TERMINAL FUNCTION
+const handleStartTerminal = async (authorizedAmount: number): Promise<any> => {
+  logger.info("✅ Terminal is ready, starting payment");
+  return await startTerminal(authorizedAmount);
+};
+
+// 3️⃣ READ CARD FUNCTION
+const handleReadCard = async (): Promise<any> => {
+  logger.info("💳 Waiting for card");
+  const cardData = await readCard();
+  logger.info("✅ Card read raw response:", JSON.stringify(cardData));
+  return cardData;
+};
+
+// 4️⃣ VALIDATE CARD DATA FUNCTION
+const validateCardData = (cardData: any, res: Response): boolean => {
+  if (!cardData || !cardData.cardId || !cardData.maskedPan) {
+    logger.error("❌ Invalid card data", cardData);
+    res.status(422).json({
+      error: true,
+      step: "read-card",
+      message: "Invalid card data received.",
+    });
+    return false;
+  }
+  return true;
+};
+
+// 5️⃣ AUTHORIZE SESSION FUNCTION
+const handleAuthorizeSession = async (): Promise<any> => {
+  logger.info("🔐 Authorizing payment");
+  return await authorizeSession();
+};
+
+// 6️⃣ VALIDATE AUTHORIZATION RESPONSE FUNCTION
+const validateAuthResponse = (authResp: any, res: Response): boolean => {
+  if (!authResp || !authResp.sessionId || !authResp.authorizedAmount) {
+    logger.error("❌ Invalid authorization response", authResp);
+    res.status(422).json({
+      error: true,
+      step: "commit-session",
+      message: "Invalid authorization response.",
+    });
+    return false;
+  }
+
+  if (!authResp?.sessionId || !authResp.authorizedAmount) {
+    logger.error("❌ Missing sessionId or authorizedAmount in authorization response", authResp);
     res.status(400).json({
+      error: true,
+      step: "commit-session",
+      message: "Missing sessionId or authorizedAmount in authorization response.",
+    });
+    return false;
+  }
+  
+  return true;
+};
+
+// 7️⃣ COMMIT SESSION FUNCTION
+const handleCommitSession = async (sessionId: string, authorizedAmount: number): Promise<any> => {
+  logger.info(`📦 Committing session ${sessionId}`);
+  const commitData = await commitSession(sessionId, authorizedAmount);
+  logger.info("✅ Payment committed");
+  return commitData;
+};
+
+// 8️⃣ VALIDATE INPUT FUNCTION
+const validateInput = (authorizedAmount: any, res: Response): boolean => {
+  if (typeof authorizedAmount !== "number" || authorizedAmount <= 0) {
+    res.status(422).json({
       error: true,
       step: "validate-input",
       message: "Invalid authorizedAmount; must be a positive number.",
     });
+    return false;
   }
+  return true;
+};
 
-  // 1️⃣ CHECK TERMINAL
-  let terminal;
+// SEPARATE ENDPOINTS FOR EACH STEP
+
+// 🔄 CHECK TERMINAL ENDPOINT
+export const checkPaymentTerminal = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.info("🔄 Checking terminal state");
-    terminal = await checkTerminal();
+    const terminal = await handleCheckTerminal();
+    res.status(200).json({
+      success: true,
+      step: "check-terminal",
+      data: terminal,
+    });
   } catch (err: any) {
     logger.error("❌ Failed to check terminal", err);
-    res.status(500).json({
+    res.status(422).json({
       error: true,
       step: "check-terminal",
       message: err.message || "Failed to reach terminal.",
     });
   }
+};
 
-  if (!terminal?.online || terminal.state !== "IDLE") {
-    logger.warn("⚠️ Terminal unavailable", terminal);
-    res.status(423).json({
-      error: true,
-      step: "check-terminal",
-      message: "Terminal is not IDLE or offline. Please try again shortly.",
-      details: terminal,
-    });
-  }
+// ✅ START TERMINAL ENDPOINT
+export const startPaymentTerminal = async (req: Request, res: Response): Promise<void> => {
+  const { authorizedAmount } = req.body;
+  
+  if (!validateInput(authorizedAmount, res)) return;
 
-  // 2️⃣ START TERMINAL
-  let startResp;
   try {
-    logger.info("✅ Terminal is ready, starting payment");
-    startResp = await startTerminal(authorizedAmount);
+    const startResp = await handleStartTerminal(authorizedAmount);
+    res.status(200).json({
+      success: true,
+      step: "start-terminal",
+      data: startResp,
+    });
   } catch (err: any) {
     logger.error("❌ Failed to start terminal", err);
     // cleanup
@@ -56,19 +157,23 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
     } catch {
       /* ignore */
     }
-    res.status(500).json({
+    res.status(422).json({
       error: true,
       step: "start-terminal",
       message: err.message || "Could not initiate payment on terminal.",
     });
   }
+};
 
-  // 3️⃣ READ CARD
-  let cardData;
+// 💳 READ CARD ENDPOINT
+export const readPaymentCard = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.info("💳 Waiting for card");
-    cardData = await readCard();
-    logger.info("✅ Card read raw response:", JSON.stringify(cardData));
+    const cardData = await handleReadCard();
+    res.status(200).json({
+      success: true,
+      step: "read-card",
+      data: cardData,
+    });
   } catch (err: any) {
     logger.error("❌ Failed to read card", err);
 
@@ -92,7 +197,7 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
       /* ignore */
     }
 
-    res.status(400).json({
+    res.status(422).json({
       error: true,
       step: "read-card",
       message: err.message || "Could not read card.",
@@ -104,21 +209,20 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
       },
     });
   }
+};
 
-  // 4️⃣ AUTHORIZE SESSION
-  if (!cardData || !cardData.cardId || !cardData.maskedPan) {
-    logger.error("❌ Invalid card data", cardData);
-    res.status(500).json({
-      error: true,
-      step: "read-card",
-      message: "Invalid card data received.",
-    });
-  }
-
-  let authResp;
+// 🔐 AUTHORIZE SESSION ENDPOINT
+export const authorizePaymentSession = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.info("🔐 Authorizing payment");
-    authResp = await authorizeSession();
+    const authResp = await handleAuthorizeSession();
+    
+    if (!validateAuthResponse(authResp, res)) return;
+    
+    res.status(200).json({
+      success: true,
+      step: "authorize-session",
+      data: authResp,
+    });
   } catch (err: any) {
     logger.error("❌ Authorization failed", err);
     try {
@@ -126,38 +230,34 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
     } catch {
       /* ignore */
     }
-    res.status(500).json({
+    res.status(422).json({
       error: true,
       step: "authorize-session",
       message: err.message || "Authorization failed.",
     });
   }
+};
 
-  // 5️⃣ COMMIT SESSION
-  if (!authResp || !authResp.sessionId || !authResp.authorizedAmount) {
-    logger.error("❌ Invalid authorization response", authResp);
-    res.status(500).json({
+// 📦 COMMIT SESSION ENDPOINT
+export const commitPaymentSession = async (req: Request, res: Response): Promise<void> => {
+  const { sessionId, authorizedAmount } = req.body;
+  
+  if (!sessionId || !authorizedAmount) {
+    res.status(400).json({
       error: true,
       step: "commit-session",
-      message: "Invalid authorization response.",
-    });
-  }
-
-  if (!authResp?.sessionId || !authResp.authorizedAmount) {
-    logger.error("❌ Missing sessionId or authorizedAmount in authorization response", authResp);
-    res.status(500).json({
-      error: true,
-      step: "commit-session",
-      message: "Missing sessionId or authorizedAmount in authorization response.",
+      message: "Missing sessionId or authorizedAmount.",
     });
     return;
   }
 
-  let commitData;
   try {
-    logger.info(`📦 Committing session ${authResp.sessionId}`);
-    commitData = await commitSession(authResp.sessionId, authResp.authorizedAmount);
-    logger.info("✅ Payment committed");
+    const commitData = await handleCommitSession(sessionId, authorizedAmount);
+    res.status(200).json({
+      success: true,
+      step: "commit-session",
+      data: commitData,
+    });
   } catch (err: any) {
     logger.error("❌ Commit failed", err);
     try {
@@ -171,15 +271,49 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
       message: err.message || "Could not commit payment.",
     });
   }
+};
 
-  // 🎉 ALL DONE:  everything
-  res.json({
-    terminal,
-    start: startResp,
-    card: cardData,
-    authorization: authResp,
-    commit: commitData,
-  });
+// MAIN PAYMENT CONTROLLER (for full flow if still needed)
+export const startPayment = async (req: Request, res: Response): Promise<void> => {
+  const { authorizedAmount } = req.body;
+  
+  // Validate input
+  if (!validateInput(authorizedAmount, res)) return;
+
+  try {
+    // Execute payment flow
+    const terminal = await handleCheckTerminal();
+    const startResp = await handleStartTerminal(authorizedAmount);
+    const cardData = await handleReadCard();
+    
+    if (!validateCardData(cardData, res)) return;
+
+    const authResp = await handleAuthorizeSession();
+    
+    if (!validateAuthResponse(authResp, res)) return;
+
+    const commitData = await handleCommitSession(authResp.sessionId, authResp.authorizedAmount);
+
+    // 🎉 ALL DONE: Return everything
+    res.json({
+      terminal,
+      start: startResp,
+      card: cardData,
+      authorization: authResp,
+      commit: commitData,
+    });
+  } catch (err: any) {
+    logger.error("❌ Payment flow failed", err);
+    try {
+      await stopTerminal("Error in payment flow", 30);
+    } catch {
+      /* ignore */
+    }
+    res.status(500).json({
+      error: true,
+      message: err.message || "Payment flow failed.",
+    });
+  }
 };
 
 export const stopPayment = async (req: Request, res: Response): Promise<void> => {
@@ -191,41 +325,3 @@ export const stopPayment = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ error: true, message: err.message || "Unexpected error" });
   }
 };
-
-
-// src/controllers/paymentController.ts
-// import { Request, Response } from "express";
-// import logger from "../middlewares/logger";
-
-// export const startPayment = async (req: Request, res: Response): Promise<void> => {
-//   const { authorizedAmount } = req.body;
-//   if (typeof authorizedAmount !== "number" || authorizedAmount <= 0) {
-//     res.status(400).json({ error: true, message: "Invalid authorizedAmount" });
-//   }
-
-//   logger.info("🔄 (MOCK) Starting fake payment flow");
-
-//   // Simulate some processing delay
-//   await new Promise((r) => setTimeout(r, 500));
-
-//   const fakeSessionId = "MOCK_SESSION_12345";
-//   const fakeCommitAmount = authorizedAmount;
-
-//   logger.info(`✅ (MOCK) Payment committed for session ${fakeSessionId}`);
-
-//   //  the shape your frontend expects
-//   res.status(200).json({
-//     sessionId: fakeSessionId,
-//     authorizedAmount,
-//     commitAmount: fakeCommitAmount,
-//     status: "committed",
-//     cardInfo: { cardId: "MOCK_CARD", maskedNumber: "**** **** **** 4242" },
-//     meta: { note: "This is a mocked response" },
-//   });
-// };
-
-// export const stopPayment = async (req: Request, res: Response): Promise<void> => {
-//   logger.info("🔄 (MOCK) Stopping fake payment");
-//   // Simulate immediate success
-//   res.status(200).json({ message: "Payment stopped successfully (mock)" });
-// };

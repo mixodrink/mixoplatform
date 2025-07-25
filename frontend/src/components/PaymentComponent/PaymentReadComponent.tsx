@@ -26,9 +26,6 @@ interface PaymentImagesWrapperProps {
 const PaymentImagesWrapper = styled.div.withConfig({
   shouldForwardProp: (prop) => !['isSlide'].includes(prop),
 })<PaymentImagesWrapperProps>`
-  position: absolute;
-  left: 21.5%;
-  top: 32%;
   width: 100%;
   height: 100%;
   opacity: ${(props) => (props.isSlide ? 1 : 0)};
@@ -42,17 +39,17 @@ const PaymentPosImage = styled.img`
 
 const slideAndRotate = keyframes`
   0% {
-    left: 15%;
+    left: 25%;
     top: 2%;
     transform: rotate(25deg);
   }
   50% {
-    left: 25%;
-    top: 10%;
+    left: 55%;
+    top: 35%;
     transform: rotate(0deg);
   }
   100% {
-    left: 15%;
+    left: 25%;
     top: 2%;
     transform: rotate(25deg);
   }
@@ -60,8 +57,8 @@ const slideAndRotate = keyframes`
 
 const CreditCardImage = styled.img`
   position: absolute;
-  left: 5%;
-  top: 45%;
+  left: 4%;
+  top: 25%;
   width: 350px;
   height: 350px;
   animation: ${slideAndRotate} 4s ease-in-out infinite;
@@ -69,9 +66,9 @@ const CreditCardImage = styled.img`
 
 const Text = styled.p`
   position: absolute;
-  left: 5%;
-  top: 22%;
-  width: 50%;
+  left: 2%;
+  top: 85%;
+  width: 100%;
   font-size: 80px;
   font-weight: bold;
   color: #ffffff;
