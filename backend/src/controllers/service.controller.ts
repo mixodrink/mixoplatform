@@ -68,29 +68,19 @@ export const nodeRedStartService = async (
 
     let data;
 
-    if (req.body.type === 'mix') {
-      data = {
-        type: req.body.type,
-        alcohol: req.body.drink[0] ? req.body.drink[0] : null,
-        mix: req.body.drink[1] ? req.body.drink[1] : null,
-      };
-    }
-
-    if (req.body.type === 'soft') {
-      data = {
-        type: req.body.type,
-        alcohol: null,
-        mix: req.body.drink[0] ? req.body.drink[0] : null,
-      };
-    }
-
-    if (req.body.type === 'water') {
-      data = {
-        type: req.body.type,
-        alcohol: null,
-        mix: req.body.drink[0] ? req.body.drink[0] : null
-      };
-    }
+    data = {
+      type: req.body.type,
+      alcohol: req.body.drink[0] ? req.body.drink[0] : null,
+      mix: req.body.drink[1] ? req.body.drink[1] : null,
+      machineId: req.body.machineId,
+      bib: req.body.drink[1] ? req.body.drink[1] : req.body.drink[0] ? req.body.drink[0] : null,
+      price: req.body.price ? req.body.price : null,
+      paymentType: req.body.paymentType ? req.body.paymentType : null,
+      cardId: req.body.cardId ? req.body.cardId : "NFC",
+      cardNumber: req.body.cardNumber ? req.body.cardNumber : "NFC",
+      sessions: req.body.sessions ? req.body.sessions : 1,
+      date: new Date().toISOString(),
+    };
 
     const response = await axios.post("http://localhost:1880/start", data, { headers });
 
