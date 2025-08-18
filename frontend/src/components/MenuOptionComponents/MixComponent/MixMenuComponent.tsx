@@ -106,7 +106,7 @@ const obj2 = {
     price: 5,
   },
   orange: {
-    title: 'Lime',
+    title: 'Orange',
     image: { src: orange, alt: 'Lime' },
     price: 5,
   },
@@ -376,13 +376,12 @@ const ImageSoft = styled.img.withConfig({
           ? 83
           : 42}%;
   right: ${(state) =>
-    state.currentStep === 4 && state.animationSelected
-      ? 47
-      : state.type || state.currentStep === 1
-        ? 16
-        : state.currentStep === 6
+    state.currentStep === 6 ? -100 :
+      state.currentStep === 4 && state.animationSelected
+        ? 47
+        : state.type || state.currentStep === 1
           ? 16
-          : -100}%;
+          : 16}%;
   filter: ${(state) =>
     state.isBright
       ? 'brightness(1)'
@@ -417,13 +416,12 @@ const ImageAlc = styled.img.withConfig({
           ? 70
           : 19}%;
   right: ${(state) =>
-    state.currentStep === 4 && state.animationSelected
-      ? 25
-      : state.type || state.currentStep === 1
-        ? 1
-        : state.currentStep === 6
+    state.currentStep === 6 ? -100 :
+      state.currentStep === 4 && state.animationSelected
+        ? 25
+        : state.type || state.currentStep === 1
           ? 1
-          : -100}%;
+          : 1}%;
   filter: ${(state) =>
     state.isBright
       ? 'brightness(1)'

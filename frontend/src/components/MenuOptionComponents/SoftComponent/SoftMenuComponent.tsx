@@ -269,6 +269,7 @@ const ImageSectionWrapper = styled.section.withConfig({
   top: ${(props) =>
     props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
   right: ${(props) =>
+  props.animationState === 6 ? -100 :
     props.slide
       ? props.animationState === 1 || props.paymentState
         ? props.right
