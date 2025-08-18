@@ -68,25 +68,25 @@ export const nodeRedStartService = async (
 
     let data;
 
-    if (req.body.type === 'mix') {
+    if (req.body.type === 0) {
       data = {
-        type: req.body.type,
+        type: "mix",
         alcohol: req.body.drink[0] ? req.body.drink[0] : null,
         mix: req.body.drink[1] ? req.body.drink[1] : null,
       };
     }
 
-    if (req.body.type === 'soft') {
+    if (req.body.type === 2) {
       data = {
-        type: req.body.type,
+        type: "soft",
         alcohol: null,
         mix: req.body.drink[0] ? req.body.drink[0] : null,
       };
     }
 
-    if (req.body.type === 'water') {
+    if (req.body.type === 1) {
       data = {
-        type: req.body.type,
+        type: "water",
         alcohol: null,
         mix: req.body.drink[0] ? req.body.drink[0] : null
       };

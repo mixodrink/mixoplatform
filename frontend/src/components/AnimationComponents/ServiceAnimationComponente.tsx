@@ -59,7 +59,7 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
       case 'mix':
         if (mix.alcohol.name && mix.soft.name) {
           // Format: {Alcohol}{Soft} (e.g., GinLimon, RonCola)
-          if (mix.alcohol.name === 'Gin' || mix.alcohol.name === 'Vodka') {
+          if (mix.alcohol.name === 'Gin' || mix.alcohol.name === 'Vodka' || mix.alcohol.name === 'Tequila') {
             const videoName = `Gin${mix.soft.name}`;
             return videoMap[videoName] || GinLimon; // Fallback to default if not found
           } else {

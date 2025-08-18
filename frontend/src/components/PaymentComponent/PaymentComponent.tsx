@@ -74,7 +74,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         if (selected.option === "mix") {
           return {
             ...base,
-            type: ServiceType.MIX,
+            type: ServiceType.mix,
             drink: [mix.alcohol.name, mix.soft.name].filter(
               (d): d is string => d !== null
             ),
@@ -84,7 +84,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         if (selected.option === "soft") {
           return {
             ...base,
-            type: ServiceType.BIB,  
+            type: ServiceType.soft,  
             drink: [soft.drink.name].filter((d): d is string => d !== null),
             price: soft.drink.price,
           };
@@ -92,7 +92,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         if (selected.option === "water") {
           return {
             ...base,
-            type: ServiceType.WATER, // ServiceType.WATER
+            type: ServiceType.water, // ServiceType.WATER
             drink: [water.drink.name].filter((d): d is string => d !== null),
             price: water.drink.price,
           };
@@ -110,10 +110,10 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       // Create cloud service data from the local drink
       const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "662d0650564844eb53b404ce",
+        machineId: "687f51714bc446b7970ac0b3",
         type: ServiceType[newDrink.type],
-        alcohol: newDrink.type === ServiceType.MIX ? newDrink.drink[0] : undefined ,
-        bib: newDrink.type === ServiceType.BIB || newDrink.type === ServiceType.WATER ? newDrink.drink[0] : newDrink.drink[1],
+        alcohol: newDrink.type === ServiceType.mix ? newDrink.drink[0] : undefined ,
+        bib: newDrink.type === ServiceType.soft || newDrink.type === ServiceType.water ? newDrink.drink[0] : newDrink.drink[1],
         price: newDrink.price,
         paymentType: newDrink.paymentType.toString(),
         cardId: newDrink.cardId,

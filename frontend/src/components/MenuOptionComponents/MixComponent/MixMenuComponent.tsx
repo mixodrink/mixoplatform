@@ -13,6 +13,7 @@ import StepControlButtonComponent from 'components/ButtonComponents/StepControlB
 import gin from 'assets/alcohol/gin.png';
 import vodka from 'assets/alcohol/vodka.png';
 import whiskey from 'assets/alcohol/whiskey.png';
+import Tequila from 'assets/alcohol/tequila.png';
 import rum from 'assets/alcohol/rum.png';
 import cola from 'assets/soft/cola.png';
 import lemon from 'assets/soft//lemon.png';
@@ -78,8 +79,8 @@ const obj = {
     price: 5,
   },
   whiskey: {
-    title: 'Whiskey',
-    image: { src: whiskey, alt: 'whiskey' },
+    title: 'Tequila',
+    image: { src: Tequila, alt: 'Tequila' },
     price: 5,
   },
   rum: {
@@ -106,7 +107,7 @@ const obj2 = {
     price: 5,
   },
   orange: {
-    title: 'Orange',
+    title: 'Lime',
     image: { src: orange, alt: 'Lime' },
     price: 5,
   },
