@@ -32,9 +32,7 @@ export const useAutoLogin = () => {
     };
 
     // Only perform auto-login if not already authenticated
-    if (!isAuthenticated) {
-      performAutoLogin();
-    }
+    performAutoLogin();
   }, [isAuthenticated, setLoading, setError]);
 
   return {

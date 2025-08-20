@@ -71,22 +71,22 @@ const obj = {
   gin: {
     title: 'Gin',
     image: { src: gin, alt: 'gin' },
-    price: 5,
+    price: 6,
   },
   vodka: {
     title: 'Vodka',
     image: { src: vodka, alt: 'vodka' },
-    price: 5,
+    price: 6,
   },
   whiskey: {
     title: 'Tequila',
     image: { src: Tequila, alt: 'Tequila' },
-    price: 5,
+    price: 6,
   },
   rum: {
     title: 'Rum',
     image: { src: rum, alt: 'rum' },
-    price: 5,
+    price: 6,
   },
 };
 
@@ -94,27 +94,27 @@ const obj2 = {
   cola: {
     title: 'Cola',
     image: { src: cola, alt: 'cola' },
-    price: 5,
+    price: 6,
   },
   lemon: {
     title: 'Lemon',
     image: { src: lemon, alt: 'Lemon' },
-    price: 5,
+    price: 6,
   },
   tonic: {
     title: 'Tonic',
     image: { src: tonic, alt: 'Tonix' },
-    price: 5,
+    price: 6,
   },
   orange: {
     title: 'Lime',
     image: { src: orange, alt: 'Lime' },
-    price: 5,
+    price: 6,
   },
   energy: {
     title: 'Energy',
     image: { src: energy, alt: 'Energy' },
-    price: 6,
+    price: 7,
   },
 };
 
@@ -198,7 +198,8 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     setCurrentMixIsSelected(res);
 
     const res2 = SoftMixIsSelected();
-    res ? setCurrentSoftIsSelected(true) : setCurrentSoftIsSelected(false);
+    console.log('SoftMixIsSelected', res2);
+    setCurrentSoftIsSelected(res2)
   }, [mix, MixIsSelected, SoftMixIsSelected]);
 
   const selectedStepFromStore = useStepProgressStore((s) => s.getCurrentStep());

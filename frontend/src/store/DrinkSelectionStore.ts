@@ -68,8 +68,7 @@ export const useDrinkSelection = create(
       SoftMixIsSelected: () => {
         const { mix, soft } = get();
         return (
-          (mix.soft?.name !== null && mix.soft?.name !== undefined) ||
-          (soft.drink?.name !== null && soft.drink?.name !== undefined)
+          (mix.soft?.name !== null && mix.soft?.name !== undefined && mix.soft?.name !== '')
         );
       },
 
