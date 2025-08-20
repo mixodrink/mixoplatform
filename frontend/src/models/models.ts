@@ -5,15 +5,15 @@ export enum PaymentType {
 }
 
 export enum ServiceType {
-  mix,
-  water,
-  soft,
+  MIX,
+  WATER,
+  SOFT,
 }
 interface Drink {
   machineId: string;
-  type: ServiceType;
+  type: string;
   drink: string[];
-  paymentType: PaymentType;
+  paymentType: string;
   price: number;
   cardId: string;
   cardNumber: string;

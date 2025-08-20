@@ -56,7 +56,7 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
 
   const handleStepProgress = () => {
     setSelectedOption('water');
-    setWaterSelection({ name: 'Water', price: 5 });
+    setWaterSelection({ name: 'Water', price: 4 });
     setSelected(true);
     goForward(4);
   };

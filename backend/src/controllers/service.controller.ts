@@ -68,7 +68,7 @@ export const nodeRedStartService = async (
 
     let data;
 
-    if (req.body.type === 0) {
+    if (req.body.type === "mix") {
       data = {
         type: "mix",
         alcohol: req.body.drink[0] ? req.body.drink[0] : null,
@@ -76,7 +76,7 @@ export const nodeRedStartService = async (
       };
     }
 
-    if (req.body.type === 2) {
+    if (req.body.type === "soft") {
       data = {
         type: "soft",
         alcohol: null,
@@ -84,7 +84,7 @@ export const nodeRedStartService = async (
       };
     }
 
-    if (req.body.type === 1) {
+    if (req.body.type === "water") {
       data = {
         type: "water",
         alcohol: null,

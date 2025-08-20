@@ -114,7 +114,7 @@ const obj2 = {
   energy: {
     title: 'Energy',
     image: { src: energy, alt: 'Energy' },
-    price: 5,
+    price: 6,
   },
 };
 

@@ -10,9 +10,9 @@ export enum PaymentType {
 }
 export interface IService {
   machineId: string;
-  type: ServiceType;
+  type: string;
   drink: [string];
-  paymentType: PaymentType;
+  paymentType: string;
   price: number;
   cardId: string;
   cardNumber: string;
