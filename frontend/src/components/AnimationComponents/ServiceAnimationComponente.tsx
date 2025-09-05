@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
@@ -85,9 +85,19 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
     }
   }, [mix, soft, water, getSelectedOption]);
 
+  const VIDEO_SPEED = 0.7;
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = VIDEO_SPEED;
+    }
+  }, [videoSrc]);
+
   return (
     <SectionWrapper>
       <VideoStyled
+        ref={videoRef}
         autoPlay
         muted
         onEnded={() => handleClose()}

@@ -130,8 +130,8 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
   const [isSoftTransition, setSoftIsTransition] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(1 || null);
   const [currentSelectedOption, setCurrentSelectedOption] = useState<boolean>(false);
-  const [softImageSource, setSoftImageSource] = useState(cola);
-  const [alcImageSource, setAlcImageSource] = useState(rum);
+  const [softImageSource, setSoftImageSource] = useState(lemon);
+  const [alcImageSource, setAlcImageSource] = useState(vodka);
   const [currentMixIsSelected, setCurrentMixIsSelected] = useState<boolean>(false);
   const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState<boolean>(false);
 
@@ -175,7 +175,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     if (selectedDrink) {
       setSoftImageSource(selectedDrink.image.src);
     } else {
-      setSoftImageSource(cola);
+      setSoftImageSource(lemon);
     }
   }, [mix, soft]);
 
@@ -184,7 +184,7 @@ const MixMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) =
     if (selectedDrink) {
       setAlcImageSource(selectedDrink.image.src);
     } else {
-      setAlcImageSource(rum);
+      setAlcImageSource(vodka);
     }
   }, [mix]);
 
@@ -393,7 +393,7 @@ const ImageSoft = styled.img.withConfig({
   rotate: -9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 190
+      ? 150
       : 270}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6

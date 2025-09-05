@@ -10,14 +10,18 @@ export const useAutoLogin = () => {
   const { isAuthenticated, isLoading, error, setLoading, setError } = useAuthStore();
 
   useEffect(() => {
+
     const performAutoLogin = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        console.log('Initializing auto-login...');
+
+        // Limpiar tokens y estado de autenticación al inicio SIEMPRE
+        useAuthStore.getState().clearTokens();
+
+        console.log('Initializing auto-login (forced refresh)...');
         const success = await autoLoginService.ensureAuthenticated();
-        
+
         if (success) {
           console.log('Auto-login initialization successful');
         } else {
@@ -31,9 +35,9 @@ export const useAutoLogin = () => {
       }
     };
 
-    // Only perform auto-login if not already authenticated
+    // Siempre forzar auto-login al montar la app
     performAutoLogin();
-  }, [isAuthenticated, setLoading, setError]);
+  }, [setLoading, setError]);
 
   return {
     isAuthenticated,

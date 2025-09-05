@@ -114,7 +114,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         machineId: "687f51714bc446b7970ac0b3",
         type: newDrink.type,
         alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
-        bib: newDrink.type === "mix" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
+        bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
         price: newDrink.price,
         paymentType: newDrink.paymentType,
         cardId: newDrink.cardId,

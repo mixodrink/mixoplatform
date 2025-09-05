@@ -12,9 +12,21 @@ export class CloudServiceUtils {
    */
   static async createService(serviceData: PostServiceEC2Cloud): Promise<PostServiceEC2Cloud> {
     try {
-      // This will automatically handle authentication
+      // Intento inicial
       return await postActionCloudServiceConstructor(serviceData);
     } catch (error: any) {
+      // Si es error 401, intentamos refrescar el token y reintentamos una vez
+      if (error && error.message && typeof error.message === 'string' && error.message.includes('401')) {
+        try {
+          const refreshed = await autoLoginService.refreshAccessToken?.();
+          if (refreshed) {
+            // Intentar de nuevo con el nuevo token
+            return await postActionCloudServiceConstructor(serviceData);
+          }
+        } catch (refreshError) {
+          console.error('Error al refrescar el token:', refreshError);
+        }
+      }
       console.error('Failed to create cloud service:', error);
       throw error;
     }
