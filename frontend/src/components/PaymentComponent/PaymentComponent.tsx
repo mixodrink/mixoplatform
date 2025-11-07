@@ -51,8 +51,8 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
     try {
       await nodeRedLedWorker({ mode: "enable" });
-      const drikPrice = priceSum * 100;
-      const result = await startPaymentFlow(drikPrice); // Drink Pirce
+      const drinkPrice = priceSum * 100;
+      const result = await startPaymentFlow(drinkPrice); // Drink Pirce
 
       if (!result.success) {
         await nodeRedLedWorker({ mode: "disable" });

@@ -129,7 +129,7 @@ const SectionWrapper = styled.section.withConfig({
 const SectionTitle = styled.h1`
   font-size: 10rem;
   color: #fff;
-  margin-top: 180px;
+  margin-top: 80px;
 `;
 
 const SectionText = styled.p`

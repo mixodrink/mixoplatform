@@ -114,7 +114,7 @@ const obj2 = {
   energy: {
     title: 'Energy',
     image: { src: energy, alt: 'Energy' },
-    price: 7,
+    price: 8,
   },
 };
 
@@ -529,7 +529,7 @@ const SectionServiceName = styled.section.withConfig({
   justify-content: center;
   gap: 20px;
   transition: 1s ease-in-out;
-  font-size: ${(props) => (props.animatePosition ? '7rem' : '4.3rem')};
+  font-size: ${(props) => (props.animatePosition ? '4rem' : '2.3rem')};
 `;
 
 const HeaderAlcohol = styled.h1<{ bottom?: number; left?: number }>`
