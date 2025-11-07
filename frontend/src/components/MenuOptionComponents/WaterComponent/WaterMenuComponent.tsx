@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled, { keyframes, css } from "styled-components";
 
-import { useMenuOptionSteps } from 'store/MenuOptionStore';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
-import { useDrinkSelection } from 'store/DrinkSelectionStore';
+import { useMenuOptionSteps } from "store/MenuOptionStore";
+import { useStepProgressStore } from "store/ProgressStepsStore";
+import { useDrinkSelection } from "store/DrinkSelectionStore";
 
-import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
-import WaterOptionComponent from 'components/GridServiceComponent/WaterItemComponent/WaterItemComponent';
-import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
+import CloseButtonComponent from "components/ButtonComponents/CloseButtonComponent";
+import WaterOptionComponent from "components/GridServiceComponent/WaterItemComponent/WaterItemComponent";
+import PaymentComponent from "components/PaymentComponent/PaymentComponent";
 
-import waterImage from 'assets/soft/water.png';
+import waterImage from "assets/soft/water.png";
 
-import tropicalOne from 'assets/plants/tropical-one.png';
-import tropicalTwo from 'assets/plants/tropical-two.png';
-import tropicalThree from 'assets/plants/tropical-three.png';
-import tropicalFour from 'assets/plants/tropical-four.png';
+import tropicalOne from "assets/plants/tropical-one.png";
+import tropicalTwo from "assets/plants/tropical-two.png";
+import tropicalThree from "assets/plants/tropical-three.png";
+import tropicalFour from "assets/plants/tropical-four.png";
 
 interface Props {
   isSlide: boolean;
@@ -44,7 +44,10 @@ interface SectionServiceNameProps {
   animatePosition: boolean;
 }
 
-const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
+const WaterMenuComponent: React.FC<Props> = ({
+  isSlide,
+  handleSetInitialState,
+}) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
   const { steps, goForward, getCurrentStep } = useStepProgressStore();
   const { water, WaterIsSelected, setWaterSelection } = useDrinkSelection();
@@ -55,8 +58,8 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
   const [isTransition, setIsTransition] = useState<boolean>(false);
 
   const handleStepProgress = () => {
-    setSelectedOption('water');
-    setWaterSelection({ name: 'Water', price: 2 });
+    setSelectedOption("water");
+    setWaterSelection({ name: "Water", price: 4 });
     setSelected(true);
     goForward(4);
   };
@@ -90,8 +93,11 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
     <>
       <SectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
-            ? () => { }
+          options[0].selected ||
+          options[1].selected ||
+          options[2].selected ||
+          transitionStart
+            ? () => {}
             : () => handleStepProgress()
         }
         selected={selected}
@@ -106,16 +112,40 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
             <CloseButtonComponent
               defaultFunction={handleClose}
               transitionStart={transitionStart}
-              style={{ borderColor: '#c3eeff' }}
+              style={{ borderColor: "#c3eeff" }}
             />
             <SectionServiceName animatePosition={steps?.[3]?.selected || false}>
               <HeaderTitle>{water.drink.name}</HeaderTitle>
             </SectionServiceName>
             <PlantImageWrapper animationFadeIn={selectedStep}>
-              <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
-              <PlantImage src={tropicalOne} alt="" top={-10} right={6} rotate={11} />
-              <PlantImage src={tropicalThree} alt="" top={-6} right={52} rotate={-90} />
-              <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
+              <PlantImage
+                src={tropicalTwo}
+                alt=""
+                top={-3}
+                right={6}
+                rotate={25}
+              />
+              <PlantImage
+                src={tropicalOne}
+                alt=""
+                top={-10}
+                right={6}
+                rotate={11}
+              />
+              <PlantImage
+                src={tropicalThree}
+                alt=""
+                top={-6}
+                right={52}
+                rotate={-90}
+              />
+              <PlantImage
+                src={tropicalFour}
+                alt=""
+                top={-16}
+                right={40}
+                rotate={-70}
+              />
               <BlurredCircle />
             </PlantImageWrapper>
             <PaymentComponent
@@ -137,8 +167,8 @@ const WaterMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState })
 };
 
 const SectionWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
-}) <SectionWrapperProps>`
+  shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
+})<SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #40c2f6;
@@ -183,8 +213,8 @@ const fadeIn = keyframes`
 `;
 
 const PlantImageWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
-}) <PlantImageWrapperProps>`
+  shouldForwardProp: (prop) => !["animationFadeIn"].includes(prop),
+})<PlantImageWrapperProps>`
   position: absolute;
   top: 47%;
   right: 0;
@@ -192,7 +222,7 @@ const PlantImageWrapper = styled.section.withConfig({
   height: 100%;
   z-index: 1;
   opacity: 0;
-  display: ${(props) => (props.animationFadeIn === 4 ? 'block' : 'none')};
+  display: ${(props) => (props.animationFadeIn === 4 ? "block" : "none")};
   transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   ${({ animationFadeIn }) =>
     animationFadeIn === 4 &&
@@ -214,8 +244,8 @@ const rotate = keyframes`
 `;
 
 const PlantImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
-}) <PlantImageProps>`
+  shouldForwardProp: (prop) => !["top", "right", "rotate"].includes(prop),
+})<PlantImageProps>`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;
@@ -246,8 +276,8 @@ const BlurredCircle = styled.div`
 `;
 
 const SectionServiceName = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
-}) <SectionServiceNameProps>`
+  shouldForwardProp: (prop) => !["animatePosition"].includes(prop),
+})<SectionServiceNameProps>`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
