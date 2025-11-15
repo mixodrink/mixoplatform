@@ -17,6 +17,7 @@ interface Drink {
   price: number;
   cardId: string;
   cardNumber: string;
+  doubleShot?: boolean;
 }
 
 interface AuthToken {

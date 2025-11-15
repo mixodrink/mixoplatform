@@ -49,10 +49,11 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     const selected = options.find((o) => o.selected);
     if (!selected) return { success: false, error: "No option selected" };
 
-    try {
-      await nodeRedLedWorker({ mode: "enable" });
-      const drinkPrice = priceSum * 100;
-      const result = await startPaymentFlow(drinkPrice); // Drink Pirce
+      try {
+        await nodeRedLedWorker({ mode: "enable" });
+        // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
+        const drinkPrice = Math.round(priceSum * 100);
+        const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
 
       if (!result.success) {
         await nodeRedLedWorker({ mode: "disable" });
@@ -71,6 +72,14 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         cardNumber,
       };
 
+      // read doubleShot flag from localStorage (default false)
+      let doubleShotFlag = false;
+      try {
+        doubleShotFlag = localStorage.getItem('doubleShot') === 'true';
+      } catch (e) {
+        doubleShotFlag = false;
+      }
+
       let newDrink = (() => {
         if (selected.option === "mix") {
           return {
@@ -79,15 +88,17 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
             drink: [mix.alcohol.name, mix.soft.name].filter(
               (d): d is string => d !== null
             ),
-            price: mix.alcohol.price + mix.soft.price,
+            // use priceSum passed from UI/store which already includes double-shot
+            price: priceSum,
+            doubleShot: doubleShotFlag,
           };
         }
         if (selected.option === "soft") {
           return {
             ...base,
-            type: "soft",  
+            type: "soft",
             drink: [soft.drink.name].filter((d): d is string => d !== null),
-            price: soft.drink.price,
+            price: priceSum,
           };
         }
         if (selected.option === "water") {
@@ -95,7 +106,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
             ...base,
             type: "water",
             drink: [water.drink.name].filter((d): d is string => d !== null),
-            price: water.drink.price,
+            price: priceSum,
           };
         }
         return null;
@@ -207,6 +218,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         )}
       </PaymentOverlayContainer>
 
+      {/* showDoubleShot only when selected option is 'mix' (alcohol) */}
       <PayButtonComponent
         price={priceSum}
         animateShow={animateShow}
@@ -215,6 +227,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         disabled={
           paymentState.isProcessing || paymentState.currentStep === "error"
         }
+        showDoubleShot={options.find((o) => o.selected)?.option === 'mix'}
       />
 
       {STEP_PAYMENT_PAID && (

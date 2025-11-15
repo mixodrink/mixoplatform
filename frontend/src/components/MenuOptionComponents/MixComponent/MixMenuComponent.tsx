@@ -150,6 +150,23 @@ const MixMenuComponent: React.FC<Props> = ({
 
   const handleClose = () => {
     handleSetInitialState();
+    // Reset doubleShot when closing the menu
+    try {
+      localStorage.setItem('doubleShot', 'false');
+      try {
+        window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+      } catch (e) {
+        // ignore
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+    try {
+      const apply = useDrinkSelection.getState().applyDoubleShotToCurrentMix;
+      if (typeof apply === 'function') apply(false);
+    } catch (e) {
+      // ignore
+    }
     setSelected(false);
   };
 
@@ -203,6 +220,25 @@ const MixMenuComponent: React.FC<Props> = ({
     const res = getSelectedOption();
     setCurrentSelectedOption(res?.option === "mix");
   }, [steps, getSelectedOption, currentSelectedOption]);
+
+  // track doubleShot from localStorage so price displayed in PaymentComponent includes it
+  const [doubleShotLocal, setDoubleShotLocal] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      setDoubleShotLocal(localStorage.getItem('doubleShot') === 'true');
+    } catch (e) {
+      setDoubleShotLocal(false);
+    }
+
+    const onStorage = (ev: StorageEvent) => {
+      if (ev.key === 'doubleShot') {
+        setDoubleShotLocal(ev.newValue === 'true');
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   useEffect(() => {
     const res = MixIsSelected();
@@ -298,7 +334,7 @@ const MixMenuComponent: React.FC<Props> = ({
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={1}
-              priceSum={mix?.alcohol.price + mix?.soft.price}
+              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0) + (doubleShotLocal ? 2 : 0)}
               paymentClose={handleClose}
             />
             <StepControlButtonComponent

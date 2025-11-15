@@ -23,6 +23,7 @@ interface DrinkSelectionState {
   SoftMixIsSelected: () => boolean;
   SoftIsSelected: () => boolean;
   WaterIsSelected: () => boolean;
+  applyDoubleShotToCurrentMix: (enable: boolean) => void;
 }
 
 export const useDrinkSelection = create(
@@ -33,11 +34,32 @@ export const useDrinkSelection = create(
       water: { drink: { name: null, price: 0 } },
 
       setMixSelection: (alcohol, soft) =>
-        set(() => ({
-          mix: { alcohol, soft },
-          soft: { drink: { name: null, price: 0 } },
-          water: { drink: { name: null, price: 0 } },
-        })),
+        set(() => {
+          // if doubleShot is enabled in localStorage, add 2 to alcohol price
+          let alcoholWithDouble = { ...alcohol };
+          try {
+            const ds = localStorage.getItem('doubleShot') === 'true';
+            if (ds) {
+              alcoholWithDouble = { ...alcohol, price: alcohol.price + 2 };
+            }
+          } catch (e) {
+            // ignore storage errors
+          }
+          return {
+            mix: { alcohol: alcoholWithDouble, soft },
+            soft: { drink: { name: null, price: 0 } },
+            water: { drink: { name: null, price: 0 } },
+          };
+        }),
+
+      // apply or remove double shot surcharge to current selected mix alcohol price
+      applyDoubleShotToCurrentMix: (enable: boolean) =>
+        set((state) => {
+          const current = state.mix.alcohol;
+          if (!current || current.name === null) return {} as any;
+          const newPrice = enable ? current.price + 2 : current.price - 2;
+          return { mix: { ...state.mix, alcohol: { ...current, price: newPrice } } } as any;
+        }),
 
       setSoftSelection: (drink) =>
         set(() => ({
