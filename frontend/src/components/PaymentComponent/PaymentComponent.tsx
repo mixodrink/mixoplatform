@@ -49,11 +49,11 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     const selected = options.find((o) => o.selected);
     if (!selected) return { success: false, error: "No option selected" };
 
-      try {
-        await nodeRedLedWorker({ mode: "enable" });
-        // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
-        const drinkPrice = Math.round(priceSum * 100);
-        const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
+    try {
+      await nodeRedLedWorker({ mode: "enable" });
+      // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
+      const drinkPrice = Math.round(priceSum * 100);
+      const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
 
       if (!result.success) {
         await nodeRedLedWorker({ mode: "disable" });
@@ -63,7 +63,8 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       // Extract card data from payment flow response
       const cardData = result.data?.card;
       const cardId = cardData?.cardId || "UNKNOWN_CARD_ID";
-      const cardNumber = cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
+      const cardNumber =
+        cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
 
       const base = {
         machineId: "650a0ab291e870d4bd7e5c85",
@@ -75,7 +76,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       // read doubleShot flag from localStorage (default false)
       let doubleShotFlag = false;
       try {
-        doubleShotFlag = localStorage.getItem('doubleShot') === 'true';
+        doubleShotFlag = localStorage.getItem("doubleShot") === "true";
       } catch (e) {
         doubleShotFlag = false;
       }
@@ -122,10 +123,13 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       // Create cloud service data from the local drink
       const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "6848b4755ab63433867d81a0",
+        machineId: "662d0650564844eb53b404ce",
         type: newDrink.type,
-        alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
-        bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
+        alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined,
+        bib:
+          newDrink.type === "soft" || newDrink.type === "water"
+            ? newDrink.drink[0]
+            : newDrink.drink[1],
         price: newDrink.price,
         paymentType: newDrink.paymentType,
         cardId: newDrink.cardId,
@@ -136,9 +140,12 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       // Create the service in the cloud (this will auto-authenticate)
       try {
         await createCloudService(cloudServiceData);
-        console.log('Cloud service created successfully');
+        console.log("Cloud service created successfully");
       } catch (cloudError) {
-        console.warn('Failed to create cloud service (continuing with local service):', cloudError);
+        console.warn(
+          "Failed to create cloud service (continuing with local service):",
+          cloudError
+        );
         // Don't fail the entire process if cloud fails, just log the warning
       }
 
@@ -227,7 +234,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         disabled={
           paymentState.isProcessing || paymentState.currentStep === "error"
         }
-        showDoubleShot={options.find((o) => o.selected)?.option === 'mix'}
+        showDoubleShot={options.find((o) => o.selected)?.option === "mix"}
       />
 
       {STEP_PAYMENT_PAID && (
