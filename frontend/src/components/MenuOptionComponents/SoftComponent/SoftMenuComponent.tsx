@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
-import { useMenuOptionSteps } from 'store/MenuOptionStore';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
-import { useDrinkSelection } from 'store/DrinkSelectionStore';
-import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
-import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
-import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
-import StepControlButtonComponentSoft from 'components/ButtonComponents/StepControlButtonComponentSoft';
+import React, { useState, useEffect } from "react";
+import styled, { keyframes, css } from "styled-components";
+import { useMenuOptionSteps } from "store/MenuOptionStore";
+import { useStepProgressStore } from "store/ProgressStepsStore";
+import { useDrinkSelection } from "store/DrinkSelectionStore";
+import SoftGridComponent from "components/GridServiceComponent/SoftGridComponent/SoftGridComponent";
+import CloseButtonComponent from "components/ButtonComponents/CloseButtonComponent";
+import PaymentComponent from "components/PaymentComponent/PaymentComponent";
+import StepControlButtonComponentSoft from "components/ButtonComponents/StepControlButtonComponentSoft";
 
-import tropicalOne from 'assets/plants/tropical-one.png';
-import tropicalTwo from 'assets/plants/tropical-two.png';
-import tropicalThree from 'assets/plants/tropical-three.png';
-import tropicalFour from 'assets/plants/tropical-four.png';
+import tropicalOne from "assets/plants/tropical-one.png";
+import tropicalTwo from "assets/plants/tropical-two.png";
+import tropicalThree from "assets/plants/tropical-three.png";
+import tropicalFour from "assets/plants/tropical-four.png";
 
-import cola from 'assets/soft/cola.png';
-import lemon from 'assets/soft//lemon.png';
-import tonic from 'assets/soft/tonic.png';
-import orange from 'assets/soft/orange.png';
-import energy from 'assets/soft/energy.png';
+import cola from "assets/soft/cola.png";
+import lemon from "assets/soft//lemon.png";
+import tonic from "assets/soft/tonic.png";
+import orange from "assets/soft/orange.png";
+import energy from "assets/soft/energy.png";
 
 interface Props {
   isSlide: boolean;
@@ -66,33 +66,36 @@ interface PlantImageProps {
 
 const obj = {
   cola: {
-    title: 'Cola',
-    image: { src: cola, alt: 'cola' },
-    price: 5,
+    title: "Cola",
+    image: { src: cola, alt: "cola" },
+    price: 4,
   },
   lemon: {
-    title: 'Lemon',
-    image: { src: lemon, alt: 'Lemon' },
-    price: 5,
+    title: "Limón",
+    image: { src: lemon, alt: "Lemon" },
+    price: 4,
   },
   tonic: {
-    title: 'Tonic',
-    image: { src: tonic, alt: 'Tonix' },
-    price: 5,
+    title: "Tónica",
+    image: { src: tonic, alt: "Tonix" },
+    price: 4,
   },
   orange: {
-    title: 'Lime',
-    image: { src: orange, alt: 'Lime' },
-    price: 5,
+    title: "Lima",
+    image: { src: tonic, alt: "Lime" },
+    price: 4,
   },
   energy: {
-    title: 'Energy',
-    image: { src: energy, alt: 'Energy' },
-    price: 7,
+    title: "Energy",
+    image: { src: energy, alt: "Energy" },
+    price: 4,
   },
 };
 
-const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
+const SoftMenuComponent: React.FC<Props> = ({
+  isSlide,
+  handleSetInitialState,
+}) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
   const { steps, goForward, getCurrentStep } = useStepProgressStore();
   const { soft, SoftIsSelected } = useDrinkSelection();
@@ -105,7 +108,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   const [softIsTransition, setSoftIsTransition] = useState(false);
 
   const handleStepProgress = () => {
-    setSelectedOption('soft');
+    setSelectedOption("soft");
     setSelected(true);
     goForward(3);
   };
@@ -126,7 +129,9 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   };
 
   useEffect(() => {
-    const selectedDrink = Object.values(obj).filter((drink) => drink.title === soft.drink.name)[0];
+    const selectedDrink = Object.values(obj).filter(
+      (drink) => drink.title === soft.drink.name
+    )[0];
     if (selectedDrink) {
       setFloatingImage(selectedDrink.image.src);
     } else {
@@ -152,8 +157,11 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
     <>
       <SectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
-            ? () => { }
+          options[0].selected ||
+          options[1].selected ||
+          options[2].selected ||
+          transitionStart
+            ? () => {}
             : () => handleStepProgress()
         }
         selected={selected}
@@ -168,10 +176,10 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
             <CloseButtonComponent
               defaultFunction={handleClose}
               transitionStart={transitionStart}
-              style={{ borderColor: '#d8c9ff' }}
+              style={{ borderColor: "#d8c9ff" }}
             />
             <SoftGridComponent
-              type={'soft'}
+              type={"soft"}
               selected={selected}
               obj={obj}
               transitionEnd={transitionEnd && steps[2].selected}
@@ -182,10 +190,34 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               <HeaderTitle>{soft?.drink.name}</HeaderTitle>
             </SectionServiceName>
             <PlantImageWrapper animationFadeIn={selectedStep}>
-              <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
-              <PlantImage src={tropicalOne} alt="" top={-8} right={6} rotate={2} />
-              <PlantImage src={tropicalThree} alt="" top={-6} right={52} rotate={-90} />
-              <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
+              <PlantImage
+                src={tropicalTwo}
+                alt=""
+                top={-3}
+                right={6}
+                rotate={25}
+              />
+              <PlantImage
+                src={tropicalOne}
+                alt=""
+                top={-8}
+                right={6}
+                rotate={2}
+              />
+              <PlantImage
+                src={tropicalThree}
+                alt=""
+                top={-6}
+                right={52}
+                rotate={-90}
+              />
+              <PlantImage
+                src={tropicalFour}
+                alt=""
+                top={-16}
+                right={40}
+                rotate={-70}
+              />
               <BlurredCircle />
             </PlantImageWrapper>
             <PaymentComponent
@@ -224,8 +256,8 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 };
 
 const SectionWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
-}) <SectionWrapperProps>`
+  shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
+})<SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #5f31d4;
@@ -263,44 +295,59 @@ const SubTitleH2 = styled.h2<TitleProps>`
 // Default styles for the wrapper
 const ImageSectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) =>
-    !['animationState', 'top', 'right', 'deg', 'slide', 'isMenu', 'paymentState'].includes(prop),
-}) <ImageSectionWrapperProps>`
+    ![
+      "animationState",
+      "top",
+      "right",
+      "deg",
+      "slide",
+      "isMenu",
+      "paymentState",
+    ].includes(prop),
+})<ImageSectionWrapperProps>`
   position: absolute;
   top: ${(props) =>
-    props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
+    props.animationState === 1
+      ? props.top
+      : props.animationState === 4
+      ? 30
+      : 78}%;
   right: ${(props) =>
-  props.animationState === 6 ? -100 :
-    props.slide
+    props.animationState === 6
+      ? -100
+      : props.slide
       ? props.animationState === 1 || props.paymentState
         ? props.right
         : props.animationState === 4
-          ? 31
-          : props.right
+        ? 31
+        : props.right
       : props.isMenu
-        ? props.right
-        : 300}%;
+      ? props.right
+      : 300}%;
   rotate: ${(props) => props.deg}deg;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 // Image styling
 const Image = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationState', 'isBright'].includes(prop),
-}) <ImageProps>`
+  shouldForwardProp: (prop) => !["animationState", "isBright"].includes(prop),
+})<ImageProps>`
   filter: ${(props) =>
     props.isBright
-      ? 'brightness(1)'
+      ? "brightness(1)"
       : props.animationState === 1
-        ? 'brightness(1)'
-        : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 220 : 350)}px;
-  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 700)}px;
+      ? "brightness(1)"
+      : "brightness(0.5)"};
+  width: ${(props) =>
+    props.animationState <= 3 || props.animationState === 5 ? 220 : 350}px;
+  height: ${(props) =>
+    props.animationState <= 3 || props.animationState === 5 ? 400 : 700}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const SectionServiceName = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animatePosition'].includes(prop),
-}) <SectionServiceNameProps>`
+  shouldForwardProp: (prop) => !["animatePosition"].includes(prop),
+})<SectionServiceNameProps>`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;
@@ -311,7 +358,7 @@ const SectionServiceName = styled.section.withConfig({
   justify-content: center;
   gap: 20px;
   transition: 1s ease-in-out;
-  font-size: ${(props) => (props.animatePosition ? '6rem' : '3rem')};
+  font-size: ${(props) => (props.animatePosition ? "6rem" : "3rem")};
 `;
 
 const HeaderTitle = styled.h1<{ bottom?: number; left?: number }>`
@@ -330,8 +377,8 @@ const fadeIn = keyframes`
 `;
 
 const PlantImageWrapper = styled.section.withConfig({
-  shouldForwardProp: (prop) => !['animationFadeIn'].includes(prop),
-}) <PlantImageWrapperProps>`
+  shouldForwardProp: (prop) => !["animationFadeIn"].includes(prop),
+})<PlantImageWrapperProps>`
   position: absolute;
   top: 47%;
   right: 0;
@@ -339,7 +386,7 @@ const PlantImageWrapper = styled.section.withConfig({
   height: 100%;
   z-index: 1;
   opacity: 0;
-  display: ${(props) => (props.animationFadeIn === 4 ? 'block' : 'none')};
+  display: ${(props) => (props.animationFadeIn === 4 ? "block" : "none")};
   transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   ${({ animationFadeIn }) =>
     animationFadeIn === 4 &&
@@ -361,8 +408,8 @@ const rotate = keyframes`
 `;
 
 const PlantImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['top', 'right', 'rotate'].includes(prop),
-}) <PlantImageProps>`
+  shouldForwardProp: (prop) => !["top", "right", "rotate"].includes(prop),
+})<PlantImageProps>`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;

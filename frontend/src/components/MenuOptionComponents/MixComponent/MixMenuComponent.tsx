@@ -11,10 +11,10 @@ import PaymentComponent from "components/PaymentComponent/PaymentComponent";
 import StepControlButtonComponent from "components/ButtonComponents/StepControlButtonComponent";
 
 import gin from "assets/alcohol/gin.png";
-import vodka from "assets/alcohol/vodka.png";
+import vodka from "assets/alcohol/vodka2.png";
 import whiskey from "assets/alcohol/whiskey.png";
-import Tequila from "assets/alcohol/tequila.png";
-import rum from "assets/alcohol/rum.png";
+import Tequila from "assets/alcohol/tequila2.png";
+import rum from "assets/alcohol/ron.png";
 import cola from "assets/soft/cola.png";
 import lemon from "assets/soft//lemon.png";
 import tonic from "assets/soft/tonic.png";
@@ -71,22 +71,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 4,
+    price: 5,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 4,
+    price: 5,
   },
   whiskey: {
     title: "Tequila",
     image: { src: Tequila, alt: "Tequila" },
-    price: 4,
+    price: 5,
   },
   rum: {
-    title: "Rum",
+    title: "Ron",
     image: { src: rum, alt: "rum" },
-    price: 4,
+    price: 5,
   },
 };
 
@@ -97,18 +97,18 @@ const obj2 = {
     price: 6,
   },
   lemon: {
-    title: "Lemon",
+    title: "Limón",
     image: { src: lemon, alt: "Lemon" },
     price: 6,
   },
   tonic: {
-    title: "Tonic",
+    title: "Tónica",
     image: { src: tonic, alt: "Tonix" },
     price: 6,
   },
   orange: {
-    title: "Lime",
-    image: { src: orange, alt: "Lime" },
+    title: "Lima",
+    image: { src: tonic, alt: "Lime" },
     price: 6,
   },
   energy: {
@@ -152,9 +152,11 @@ const MixMenuComponent: React.FC<Props> = ({
     handleSetInitialState();
     // Reset doubleShot when closing the menu
     try {
-      localStorage.setItem('doubleShot', 'false');
+      localStorage.setItem("doubleShot", "false");
       try {
-        window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+        window.dispatchEvent(
+          new CustomEvent("doubleShotChange", { detail: false })
+        );
       } catch (e) {
         // ignore
       }
@@ -163,7 +165,7 @@ const MixMenuComponent: React.FC<Props> = ({
     }
     try {
       const apply = useDrinkSelection.getState().applyDoubleShotToCurrentMix;
-      if (typeof apply === 'function') apply(false);
+      if (typeof apply === "function") apply(false);
     } catch (e) {
       // ignore
     }
@@ -226,18 +228,18 @@ const MixMenuComponent: React.FC<Props> = ({
 
   useEffect(() => {
     try {
-      setDoubleShotLocal(localStorage.getItem('doubleShot') === 'true');
+      setDoubleShotLocal(localStorage.getItem("doubleShot") === "true");
     } catch (e) {
       setDoubleShotLocal(false);
     }
 
     const onStorage = (ev: StorageEvent) => {
-      if (ev.key === 'doubleShot') {
-        setDoubleShotLocal(ev.newValue === 'true');
+      if (ev.key === "doubleShot") {
+        setDoubleShotLocal(ev.newValue === "true");
       }
     };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
@@ -334,7 +336,11 @@ const MixMenuComponent: React.FC<Props> = ({
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={1}
-              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0) + (doubleShotLocal ? 2 : 0)}
+              priceSum={
+                (mix?.alcohol.price ?? 0) +
+                (mix?.soft.price ?? 0) +
+                (doubleShotLocal ? 2 : 0)
+              }
               paymentClose={handleClose}
             />
             <StepControlButtonComponent
