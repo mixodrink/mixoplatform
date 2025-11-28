@@ -59,7 +59,7 @@ const WaterMenuComponent: React.FC<Props> = ({
 
   const handleStepProgress = () => {
     setSelectedOption("water");
-    setWaterSelection({ name: "Water", price: 4 });
+    setWaterSelection({ name: "Water", price: 5 });
     setSelected(true);
     goForward(4);
   };
@@ -104,8 +104,8 @@ const WaterMenuComponent: React.FC<Props> = ({
         slide={isSlide}
         onTransitionEnd={handleOnTransitionEnd}
       >
-        <TitleH1 selected={selected}>Water</TitleH1>
-        <SubTitleH2 selected={selected}>Super Fresh!</SubTitleH2>
+        <TitleH1 selected={selected}>Agua</TitleH1>
+        <SubTitleH2 selected={selected}>!Refrescante!</SubTitleH2>
 
         {selected && (
           <>

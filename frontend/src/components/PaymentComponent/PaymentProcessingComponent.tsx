@@ -14,10 +14,8 @@ const PaymentProcessingComponent: React.FC<PaymentProcessingProps> = ({
   return (
     <SuccessWrapper variant={variant}>
       <SuccessIcon>✅</SuccessIcon>
-      <SuccessTitle>Payment Processing!</SuccessTitle>
-      <SuccessMessage>
-        We are processing your payment. Please wait...
-      </SuccessMessage>
+      <SuccessTitle>Procesando Pago!</SuccessTitle>
+      <SuccessMessage>Porfavor espere...</SuccessMessage>
     </SuccessWrapper>
   );
 };

@@ -8,7 +8,7 @@ const BASE_URL = `http://localhost:1880/start-leds`;
 /*Example service body.req
 
   {
-  "machineId": "60d6f7e2b4414c2d88a3c1f1",
+  "machineId": "machineid",
   "type": 0,  ServiceType.MIX
   "alcohol": "Whiskey",
   "bib": "Coke",

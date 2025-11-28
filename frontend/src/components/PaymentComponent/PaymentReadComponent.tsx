@@ -1,8 +1,8 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import React from "react";
+import styled, { keyframes } from "styled-components";
 
-import paymentPos from 'assets/icons/water-payment.png';
-import { useStepProgressStore } from 'store/ProgressStepsStore';
+import paymentPos from "assets/icons/water-payment.png";
+import { useStepProgressStore } from "store/ProgressStepsStore";
 
 interface Props {
   cardImageSrc: string;
@@ -14,7 +14,7 @@ const PaymentImagesComponent: React.FC<Props> = ({ cardImageSrc }) => {
     <PaymentImagesWrapper isSlide={steps[4].selected}>
       <PaymentPosImage src={paymentPos} alt="Payment POS" />
       <CreditCardImage src={cardImageSrc} alt="Credit Card" />
-      <Text>Pay using contactless</Text>
+      <Text>Paga con contactless</Text>
     </PaymentImagesWrapper>
   );
 };
@@ -24,7 +24,7 @@ interface PaymentImagesWrapperProps {
 }
 
 const PaymentImagesWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isSlide'].includes(prop),
+  shouldForwardProp: (prop) => !["isSlide"].includes(prop),
 })<PaymentImagesWrapperProps>`
   width: 100%;
   height: 100%;

@@ -122,7 +122,7 @@ const PayButtonComponent: React.FC<OptionItemProps> = ({
         onClick={disabled ? undefined : onPaymentClick}
       >
         <SectionTitle>{price}€</SectionTitle>
-        <SectionText>Pay</SectionText>
+        <SectionText>Pagar</SectionText>
       </SectionWrapper>
     </Container>
   );

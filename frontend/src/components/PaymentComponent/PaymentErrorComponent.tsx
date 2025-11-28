@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
 interface PaymentErrorProps {
   variant: number;
@@ -7,10 +7,10 @@ interface PaymentErrorProps {
   onCancel: () => void;
 }
 
-const PaymentErrorComponent: React.FC<PaymentErrorProps> = ({ 
-  variant, 
-  onRetry, 
-  onCancel 
+const PaymentErrorComponent: React.FC<PaymentErrorProps> = ({
+  variant,
+  onRetry,
+  onCancel,
 }) => {
   const [countdown, setCountdown] = useState(5);
 
@@ -32,20 +32,14 @@ const PaymentErrorComponent: React.FC<PaymentErrorProps> = ({
   return (
     <ErrorWrapper variant={variant}>
       <ErrorIcon>❌</ErrorIcon>
-      <ErrorTitle>Payment Failed</ErrorTitle>
-      <ErrorMessage>
-        Retrying automatically in {countdown} seconds...
-      </ErrorMessage>
+      <ErrorTitle>Pago Fallido</ErrorTitle>
+      <ErrorMessage>Reintentando en {countdown} segundos...</ErrorMessage>
       <CountdownBar>
         <CountdownProgress countdown={countdown} />
       </CountdownBar>
       <ButtonContainer>
-        <RetryButton onClick={onRetry}>
-          Retry Now
-        </RetryButton>
-        <CancelButton onClick={onCancel}>
-          Cancel
-        </CancelButton>
+        <RetryButton onClick={onRetry}>Reintentar</RetryButton>
+        <CancelButton onClick={onCancel}>Cancelar</CancelButton>
       </ButtonContainer>
     </ErrorWrapper>
   );
@@ -57,11 +51,15 @@ const ErrorWrapper = styled.div<{ variant: number }>`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
-  border: 4px solid ${props => 
-    props.variant === 1 ? '#ff9c56' :
-    props.variant === 2 ? '#8150ff' :
-    props.variant === 3 ? '#6fd6ff' : '#f44336'
-  };
+  border: 4px solid
+    ${(props) =>
+      props.variant === 1
+        ? "#ff9c56"
+        : props.variant === 2
+        ? "#8150ff"
+        : props.variant === 3
+        ? "#6fd6ff"
+        : "#f44336"};
   border-radius: 20px;
   padding: 40px;
   display: flex;

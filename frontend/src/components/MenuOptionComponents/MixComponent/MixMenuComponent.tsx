@@ -11,10 +11,10 @@ import PaymentComponent from "components/PaymentComponent/PaymentComponent";
 import StepControlButtonComponent from "components/ButtonComponents/StepControlButtonComponent";
 
 import gin from "assets/alcohol/gin.png";
-import vodka from "assets/alcohol/vodka2.png";
-import whiskey from "assets/alcohol/whiskey.png";
+import vodka from "assets/baqueira/vodka.png";
+import whiskey from "assets/baqueira/whisky.png";
 import Tequila from "assets/alcohol/tequila2.png";
-import rum from "assets/alcohol/ron.png";
+import rum from "assets/baqueira/ron.png";
 import cola from "assets/soft/cola.png";
 import lemon from "assets/soft//lemon.png";
 import tonic from "assets/soft/tonic.png";
@@ -71,22 +71,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 5,
+    price: 10,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 5,
+    price: 10,
   },
   whiskey: {
-    title: "Tequila",
-    image: { src: Tequila, alt: "Tequila" },
-    price: 5,
+    title: "Whisky",
+    image: { src: whiskey, alt: "whisky" },
+    price: 10,
   },
   rum: {
     title: "Ron",
-    image: { src: rum, alt: "rum" },
-    price: 5,
+    image: { src: rum, alt: "ron" },
+    price: 10,
   },
 };
 
@@ -94,27 +94,27 @@ const obj2 = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 6,
+    price: 5,
   },
   lemon: {
     title: "Limón",
     image: { src: lemon, alt: "Lemon" },
-    price: 6,
+    price: 5,
   },
   tonic: {
     title: "Tónica",
     image: { src: tonic, alt: "Tonix" },
-    price: 6,
+    price: 5,
   },
   orange: {
     title: "Lima",
     image: { src: tonic, alt: "Lime" },
-    price: 6,
+    price: 5,
   },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 8,
+    price: 7,
   },
 };
 
@@ -273,8 +273,8 @@ const MixMenuComponent: React.FC<Props> = ({
         onTransitionEnd={handleOnTransitionEnd}
         onTransitionStart={handleOnTransitionStart}
       >
-        <TitleH1 selected={selected}>Cocktail</TitleH1>
-        <SubTitleH2 selected={selected}>Create your Drink!</SubTitleH2>
+        <TitleH1 selected={selected}>Cubata</TitleH1>
+        <SubTitleH2 selected={selected}>¡Crea tu bebida!</SubTitleH2>
 
         {selected && (
           <>
@@ -537,7 +537,7 @@ const ImageAlc = styled.img.withConfig({
   rotate: 9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 200
+      ? 180
       : 340}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6

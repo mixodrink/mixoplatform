@@ -68,27 +68,27 @@ const obj = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 4,
+    price: 5,
   },
   lemon: {
     title: "Limón",
     image: { src: lemon, alt: "Lemon" },
-    price: 4,
+    price: 5,
   },
   tonic: {
     title: "Tónica",
     image: { src: tonic, alt: "Tonix" },
-    price: 4,
+    price: 5,
   },
   orange: {
     title: "Lima",
     image: { src: tonic, alt: "Lime" },
-    price: 4,
+    price: 5,
   },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 4,
+    price: 7,
   },
 };
 
@@ -169,7 +169,7 @@ const SoftMenuComponent: React.FC<Props> = ({
         onTransitionEnd={handleOnTransitionEnd}
       >
         <TitleH1 $selected={selected}>Soda</TitleH1>
-        <SubTitleH2 $selected={selected}>Perfect Refreshment!</SubTitleH2>
+        <SubTitleH2 $selected={selected}>¡Refresco perfecto!</SubTitleH2>
 
         {selected && (
           <>

@@ -9,11 +9,8 @@ const PaymentSuccessComponent: React.FC<PaymentSuccessProps> = ({
   return (
     <SuccessWrapper variant={variant}>
       {" "}
-      <SuccessIcon>✅</SuccessIcon>{" "}
-      <SuccessTitle>Payment Successful!</SuccessTitle>{" "}
-      <SuccessMessage>
-        Your payment has been processed successfully
-      </SuccessMessage>{" "}
+      <SuccessIcon>✅</SuccessIcon> <SuccessTitle>Pago Aceptado!</SuccessTitle>{" "}
+      <SuccessMessage>Tu pago ha sido procesado</SuccessMessage>{" "}
     </SuccessWrapper>
   );
 };
