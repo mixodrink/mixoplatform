@@ -1,26 +1,47 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 
+interface CustomStyle {
+  container?: React.CSSProperties;
+  backgroundBox?: {
+    width?: string;
+    height?: string;
+    borderRadius?: string;
+    border?: string;
+    background?: string;
+    backgroundSelected?: string;
+    borderSelected?: string;
+  };
+  image?: {
+    width?: string;
+    height?: string;
+  };
+  title?: React.CSSProperties;
+}
+
 interface OptionItemProps {
   drink: { title: string; image: { src: string; alt: string }; price: number };
-  handleDrinkSelection: () => void;
+  handleDrinkSelection: (drink: { title: string; image: { src: string; alt: string }; price: number }) => void;
   animationSelected: boolean;
+  customStyle?: CustomStyle;
 }
 
 const MixItemComponent: React.FC<OptionItemProps> = ({
   drink,
   handleDrinkSelection,
   animationSelected,
+  customStyle,
 }) => {
   return (
-    <OptionContainer onClick={() => handleDrinkSelection(drink)}>
-      <BackgroundBox animationSelected={animationSelected} />
+    <OptionContainer onClick={() => handleDrinkSelection(drink)} style={customStyle?.container}>
+      <BackgroundBox animationSelected={animationSelected} customStyle={customStyle?.backgroundBox} />
       <DrinkImage
         src={drink.image.src}
         alt={drink.image.alt}
         animationSelected={animationSelected}
+        customStyle={customStyle?.image}
       />
-      <DrinkTitle>{drink.title}</DrinkTitle>
+      <DrinkTitle style={customStyle?.title}>{drink.title}</DrinkTitle>
     </OptionContainer>
   );
 };
@@ -49,24 +70,36 @@ const OptionContainer = styled.section`
 `;
 
 const BackgroundBox = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
-})`
-  width: 330px;
-  height: ${(props) => (props.animationSelected ? 500 : 330)}px;
+  shouldForwardProp: (prop) => !['animationSelected', 'customStyle'].includes(prop),
+})<{ animationSelected: boolean; customStyle?: CustomStyle['backgroundBox'] }>`
+  width: ${(props) => props.customStyle?.width || '330px'};
+  height: ${(props) => 
+    props.animationSelected 
+      ? (props.customStyle?.height || '500px')
+      : '330px'
+  };
   position: absolute;
   bottom: 0;
-  border-radius: 3rem;
-  border: 20px solid ${(props) => (props.animationSelected ? '#fff' : '#ffc09b')};
-  background: ${(props) => (props.animationSelected ? '#ffc09b' : '#fff')};
+  border-radius: ${(props) => props.customStyle?.borderRadius || '3rem'};
+  border: ${(props) => 
+    props.animationSelected 
+      ? (props.customStyle?.borderSelected || '20px solid #fff')
+      : (props.customStyle?.border || '20px solid #ffc09b')
+  };
+  background: ${(props) => 
+    props.animationSelected 
+      ? (props.customStyle?.backgroundSelected || '#ffc09b')
+      : (props.customStyle?.background || '#fff')
+  };
   box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.2);
   transition: 0.8s ease-in-out;
 `;
 
 const DrinkImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
-})`
-  width: 150px;
-  height: 450px;
+  shouldForwardProp: (prop) => !['animationSelected', 'customStyle'].includes(prop),
+})<{ animationSelected: boolean; customStyle?: CustomStyle['image'] }>`
+  width: ${(props) => props.customStyle?.width || '150px'};
+  height: ${(props) => props.customStyle?.height || '450px'};
   margin-bottom: 0px;
   z-index: 1;
   filter: drop-shadow(0px 20px 15px rgba(0, 0, 0, 0.372));

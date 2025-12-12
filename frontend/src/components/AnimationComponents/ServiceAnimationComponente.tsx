@@ -85,7 +85,7 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
     }
   }, [mix, soft, water, getSelectedOption]);
 
-  const VIDEO_SPEED = 0.7;
+  const VIDEO_SPEED = 0.5;
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {

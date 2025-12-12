@@ -73,6 +73,11 @@ const obj = {
     image: { src: gin, alt: "gin" },
     price: 10,
   },
+  rum: {
+    title: "Ron",
+    image: { src: rum, alt: "ron" },
+    price: 10,
+  },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
@@ -82,33 +87,28 @@ const obj = {
     title: "Whisky",
     image: { src: whiskey, alt: "whisky" },
     price: 10,
-  },
-  rum: {
-    title: "Ron",
-    image: { src: rum, alt: "ron" },
-    price: 10,
-  },
+  }
 };
 
 const obj2 = {
   cola: {
     title: "Cola",
-    image: { src: cola, alt: "cola" },
+    image: { src: cola, alt: "Cola" },
     price: 5,
   },
   lemon: {
     title: "Limón",
-    image: { src: lemon, alt: "Lemon" },
+    image: { src: lemon, alt: "Limón" },
     price: 5,
   },
   tonic: {
     title: "Tónica",
-    image: { src: tonic, alt: "Tonix" },
+    image: { src: tonic, alt: "Tónica" },
     price: 5,
   },
   orange: {
     title: "Lima",
-    image: { src: tonic, alt: "Lime" },
+    image: { src: tonic, alt: "Lima" },
     price: 5,
   },
   energy: {
@@ -537,7 +537,7 @@ const ImageAlc = styled.img.withConfig({
   rotate: 9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 180
+      ? 140
       : 340}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6

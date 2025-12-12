@@ -55,6 +55,15 @@ const MixGridComponent: React.FC<OptionListInterface> = ({
                     }
                   : () => {}
               }
+              customStyle={
+                drink.title === 'Vodka'
+                  ? {
+                      image: {
+                        width: '130px',
+                      },
+                    }
+                  : undefined
+              }
             />
           ))}
         </GridContainer>

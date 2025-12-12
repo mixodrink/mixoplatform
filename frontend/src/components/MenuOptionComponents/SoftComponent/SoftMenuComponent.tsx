@@ -82,7 +82,7 @@ const obj = {
   },
   orange: {
     title: "Lima",
-    image: { src: tonic, alt: "Lime" },
+    image: { src: tonic, alt: "Lima" },
     price: 5,
   },
   energy: {
