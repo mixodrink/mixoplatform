@@ -90,6 +90,11 @@ const obj = {
     image: { src: energy, alt: "Energy" },
     price: 7,
   },
+  soda: {
+    title: "Soda",
+    image: { src: tonic, alt: "soda" },
+    price: 5,
+  },
 };
 
 const SoftMenuComponent: React.FC<Props> = ({

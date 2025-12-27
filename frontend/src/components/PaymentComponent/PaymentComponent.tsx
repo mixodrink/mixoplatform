@@ -12,10 +12,26 @@ import { useMenuOptionSteps } from "store/MenuOptionStore";
 import { useDrinkSelection } from "store/DrinkSelectionStore";
 import { usePaymentFlow } from "hooks/usePaymentFlow";
 import { createDrink } from "api/local/create-drink";
-import { nodeRedLedWorker, nodeRedStartService } from "api/local/node-red";
-import { ServiceType } from "models/models";
+import { nodeRedStartService } from "api/local/node-red";
 import { createCloudService } from "utils/cloudServiceUtils";
 import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
+
+const MACHINE_ID_LOCAL = "650a0ab291e870d4bd7e5c85";
+const MACHINE_ID_CLOUD = "662d0650564844eb53b404ce";
+const MAX_RETRY_COUNT = 1;
+const RETRY_DELAY_MS = 1000;
+const PAYMENT_RESTART_DELAY_MS = 500;
+const PAYMENT_TYPE = "Card";
+const DEFAULT_SESSIONS = 1;
+const DOUBLE_SHOT_STORAGE_KEY = "doubleShot";
+const UNKNOWN_CARD_ID = "UNKNOWN_CARD_ID";
+const UNKNOWN_CARD_NUMBER = "UNKNOWN_CARD_NUMBER";
+
+const STEP_INDEX_MAIN_MENU = 1;
+const STEP_INDEX_PAYMENT_PROCESSING = 5;
+const STEP_INDEX_SERVICE_ANIMATION = 6;
+const STEP_INDEX_PAYMENT_BUTTON = 3;
+const STEP_INDEX_SERVICE_ANIMATION_CHECK = 5;
 
 interface OptionItemProps {
   animateShow: boolean;
@@ -30,133 +46,111 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   priceSum,
   paymentClose,
 }) => {
-  const { goForward, goBack, steps } = useStepProgressStore();
+  const { goForward, steps } = useStepProgressStore();
   const { options } = useMenuOptionSteps();
   const { mix, soft, water } = useDrinkSelection();
   const { paymentState, startPaymentFlow, cancelPayment } = usePaymentFlow();
   const [retryCount, setRetryCount] = useState(0);
 
-  const STEP_PAYMENT_PAID = steps[5].selected;
-  const STEP_4 = steps[3].selected;
+  const STEP_SERVICE_ANIMATION = steps[STEP_INDEX_SERVICE_ANIMATION_CHECK].selected;
+  const STEP_PAYMENT_BUTTON = steps[STEP_INDEX_PAYMENT_BUTTON].selected;
 
-  const handlePaymentError = useCallback(() => {
-    setRetryCount(0);
-    paymentClose();
-    goBack(1);
-  }, [paymentClose, goBack]);
+  const getDoubleShot = (): boolean => {
+    try {
+      return localStorage.getItem(DOUBLE_SHOT_STORAGE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  };
+
+  const extractCardData = (result: any) => {
+    const cardData = result.data?.card;
+    return {
+      cardId: cardData?.cardId || UNKNOWN_CARD_ID,
+      cardNumber: cardData?.maskedPan || cardData?.cardNumber || UNKNOWN_CARD_NUMBER,
+    };
+  };
+
+  const buildDrinkData = (selectedOption: any, cardInfo: { cardId: string; cardNumber: string }) => {
+    const baseData = {
+      machineId: MACHINE_ID_LOCAL,
+      paymentType: PAYMENT_TYPE,
+      cardId: cardInfo.cardId,
+      cardNumber: cardInfo.cardNumber,
+      price: priceSum,
+    };
+
+    const drinkConfigs = {
+      mix: {
+        type: "mix" as const,
+        drink: [mix.alcohol.name, mix.soft.name].filter((d): d is string => d !== null),
+        doubleShot: getDoubleShot(),
+      },
+      soft: {
+        type: "soft" as const,
+        drink: [soft.drink.name].filter((d): d is string => d !== null),
+      },
+      water: {
+        type: "water" as const,
+        drink: [water.drink.name].filter((d): d is string => d !== null),
+      },
+    };
+
+    const config = drinkConfigs[selectedOption.option as keyof typeof drinkConfigs];
+    return config ? { ...baseData, ...config } : null;
+  };
+
+  const buildCloudServiceData = (drinkData: any): PostServiceEC2Cloud => ({
+    machineId: MACHINE_ID_CLOUD,
+    type: drinkData.type,
+    alcohol: drinkData.type === "mix" ? drinkData.drink[0] : undefined,
+    bib: drinkData.type === "soft" || drinkData.type === "water" 
+      ? drinkData.drink[0] 
+      : drinkData.drink[1],
+    price: drinkData.price,
+    paymentType: drinkData.paymentType,
+    cardId: drinkData.cardId,
+    cardNumber: drinkData.cardNumber,
+    sessions: DEFAULT_SESSIONS,
+  });
 
   const executePaymentFlow = useCallback(async () => {
-    const selected = options.find((o) => o.selected);
-    if (!selected) return { success: false, error: "No option selected" };
+    const selectedOption = options.find((o) => o.selected);
+    if (!selectedOption) {
+      return { success: false, error: "No option selected" };
+    }
 
     try {
-      await nodeRedLedWorker({ mode: "enable" });
-      // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
-      const drinkPrice = Math.round(priceSum * 100);
-      // const drinkPrice = 10;
-      const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
+      const DRINK_PRICE_CENTS = Math.round(priceSum * 100);
+      const paymentResult = await startPaymentFlow(DRINK_PRICE_CENTS);
 
-      if (!result.success) {
-        await nodeRedLedWorker({ mode: "disable" });
-        return { success: false, error: result.error };
+      if (!paymentResult.success) {
+        return { success: false, error: paymentResult.error };
       }
 
-      // Extract card data from payment flow response
-      const cardData = result.data?.card;
-      const cardId = cardData?.cardId || "UNKNOWN_CARD_ID";
-      const cardNumber =
-        cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
+      const cardInfo = extractCardData(paymentResult);
+      const drinkData = buildDrinkData(selectedOption, cardInfo);
 
-      const base = {
-        machineId: "650a0ab291e870d4bd7e5c85",
-        paymentType: "Card",
-        cardId,
-        cardNumber,
-      };
-
-      // read doubleShot flag from localStorage (default false)
-      let doubleShotFlag = false;
-      try {
-        doubleShotFlag = localStorage.getItem("doubleShot") === "true";
-      } catch (e) {
-        doubleShotFlag = false;
-      }
-
-      let newDrink = (() => {
-        if (selected.option === "mix") {
-          return {
-            ...base,
-            type: "mix",
-            drink: [mix.alcohol.name, mix.soft.name].filter(
-              (d): d is string => d !== null
-            ),
-            // use priceSum passed from UI/store which already includes double-shot
-            price: priceSum,
-            doubleShot: doubleShotFlag,
-          };
-        }
-        if (selected.option === "soft") {
-          return {
-            ...base,
-            type: "soft",
-            drink: [soft.drink.name].filter((d): d is string => d !== null),
-            price: priceSum,
-          };
-        }
-        if (selected.option === "water") {
-          return {
-            ...base,
-            type: "water",
-            drink: [water.drink.name].filter((d): d is string => d !== null),
-            price: priceSum,
-          };
-        }
-        return null;
-      })();
-
-      if (!newDrink) {
-        await nodeRedLedWorker({ mode: "disable" });
+      if (!drinkData) {
         return { success: false, error: "Invalid drink config" };
       }
 
-      // Create the drink locally
-      await createDrink(newDrink);
+      await createDrink(drinkData);
 
-      // Create cloud service data from the local drink
-      const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "662d0650564844eb53b404ce",
-        type: newDrink.type,
-        alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined,
-        bib:
-          newDrink.type === "soft" || newDrink.type === "water"
-            ? newDrink.drink[0]
-            : newDrink.drink[1],
-        price: newDrink.price,
-        paymentType: newDrink.paymentType,
-        cardId: newDrink.cardId,
-        cardNumber: newDrink.cardNumber,
-        sessions: 1, // Default to 1 session
-      };
-
-      // Create the service in the cloud (this will auto-authenticate)
+      const cloudServiceData = buildCloudServiceData(drinkData);
       try {
         await createCloudService(cloudServiceData);
         console.log("Cloud service created successfully");
       } catch (cloudError) {
-        console.warn(
-          "Failed to create cloud service (continuing with local service):",
-          cloudError
-        );
-        // Don't fail the entire process if cloud fails, just log the warning
+        console.warn("Failed to create cloud service (continuing with local service):", cloudError);
       }
 
-      await nodeRedStartService(newDrink);
-      await nodeRedLedWorker({ mode: "disable" });
-      goForward(6);
+      await nodeRedStartService(drinkData);
+      goForward(STEP_INDEX_SERVICE_ANIMATION);
       setRetryCount(0);
+      
       return { success: true };
     } catch (err) {
-      await nodeRedLedWorker({ mode: "disable" });
       return {
         success: false,
         error: err instanceof Error ? err.message : "Unknown error",
@@ -164,24 +158,33 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     }
   }, [options, mix, soft, water, priceSum, startPaymentFlow, goForward]);
 
+  const handlePaymentError = useCallback(() => {
+    setRetryCount(0);
+    paymentClose();
+    goForward(STEP_INDEX_MAIN_MENU);
+  }, [paymentClose, goForward]);
+
   const handlePaymentStart = useCallback(async () => {
-    if (!STEP_4 || paymentState.isProcessing) return;
-    goForward(5);
+    if (!STEP_PAYMENT_BUTTON || paymentState.isProcessing) return;
+    
+    goForward(STEP_INDEX_PAYMENT_PROCESSING);
 
     const result = await executePaymentFlow();
     if (result.success) return;
 
-    if (retryCount < 1) {
+    if (retryCount < MAX_RETRY_COUNT) {
       setRetryCount((c) => c + 1);
       setTimeout(async () => {
-        const retry = await executePaymentFlow();
-        if (!retry.success) handlePaymentError();
-      }, 1000);
+        const retryResult = await executePaymentFlow();
+        if (!retryResult.success) {
+          handlePaymentError();
+        }
+      }, RETRY_DELAY_MS);
     } else {
       handlePaymentError();
     }
   }, [
-    STEP_4,
+    STEP_PAYMENT_BUTTON,
     paymentState.isProcessing,
     executePaymentFlow,
     retryCount,
@@ -191,15 +194,17 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
   const handlePaymentCancel = useCallback(async () => {
     await cancelPayment();
-    await nodeRedLedWorker({ mode: "disable" });
     handlePaymentError();
   }, [cancelPayment, handlePaymentError]);
 
   const handleRetryPayment = useCallback(async () => {
     await cancelPayment();
     setRetryCount(0);
-    setTimeout(handlePaymentStart, 500);
+    setTimeout(handlePaymentStart, PAYMENT_RESTART_DELAY_MS);
   }, [cancelPayment, handlePaymentStart]);
+
+  const selectedOption = options.find((o) => o.selected);
+  const showDoubleShot = selectedOption?.option === "mix";
 
   return (
     <>
@@ -209,11 +214,11 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         )}
         {(paymentState.currentStep === "authorizing" ||
           paymentState.currentStep === "committing") && (
-          <PaymentProcessingComponent
-            currentStep={paymentState.currentStep}
-            variant={variant}
-          />
-        )}
+            <PaymentProcessingComponent
+              currentStep={paymentState.currentStep}
+              variant={variant}
+            />
+          )}
         {paymentState.currentStep === "success" && (
           <PaymentSuccessComponent variant={variant} />
         )}
@@ -226,7 +231,6 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         )}
       </PaymentOverlayContainer>
 
-      {/* showDoubleShot only when selected option is 'mix' (alcohol) */}
       <PayButtonComponent
         price={priceSum}
         animateShow={animateShow}
@@ -235,10 +239,10 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         disabled={
           paymentState.isProcessing || paymentState.currentStep === "error"
         }
-        showDoubleShot={options.find((o) => o.selected)?.option === "mix"}
+        showDoubleShot={showDoubleShot}
       />
 
-      {STEP_PAYMENT_PAID && (
+      {STEP_SERVICE_ANIMATION && (
         <ServiceVideoComponent handleClose={paymentClose} />
       )}
     </>

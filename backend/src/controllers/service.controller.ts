@@ -73,6 +73,7 @@ export const nodeRedStartService = async (
         type: "mix",
         alcohol: req.body.drink[0] ? req.body.drink[0] : null,
         mix: req.body.drink[1] ? req.body.drink[1] : null,
+        doubleShot: req.body.doubleShot ? req.body.doubleShot : false
       };
     }
 

@@ -1,29 +1,31 @@
-import React, { useMemo, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { useDrinkSelection } from 'store/DrinkSelectionStore';
-import { useMenuOptionSteps } from 'store/MenuOptionStore';
+import React, { useMemo, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { useDrinkSelection } from "store/DrinkSelectionStore";
+import { useMenuOptionSteps } from "store/MenuOptionStore";
 
 // Import all video files
-import Agua from 'assets/animation/Agua.mp4';
-import BebidaCola from 'assets/animation/BebidaCola.mp4';
-import BebidaEnergetica from 'assets/animation/BebidaEnergetica.mp4';
-import BebidaLimon from 'assets/animation/BebidaLimon.mp4';
-import BebidaNaranja from 'assets/animation/BebidaNaranja.mp4';
-import BebidaTonica from 'assets/animation/BebidaTonica.mp4';
-import GinEnergetica from 'assets/animation/GinEnergetica.mp4';
-import GinLimon from 'assets/animation/GinLimon.mp4';
-import GinNaranja from 'assets/animation/GinNaranja.mp4';
-import GinTonic from 'assets/animation/GinTonic.mp4';
-import RonCola from 'assets/animation/RonCola.mp4';
-import RonEnergetica from 'assets/animation/RonEnergetica.mp4';
-import RonLimon from 'assets/animation/RonLimon.mp4';
-import RonNaranja from 'assets/animation/RonNaranja.mp4';
+import Agua from "assets/animation/Agua.mp4";
+import BebidaCola from "assets/animation/BebidaCola.mp4";
+import BebidaEnergetica from "assets/animation/BebidaEnergetica.mp4";
+import BebidaLimon from "assets/animation/BebidaLimon.mp4";
+import BebidaNaranja from "assets/animation/BebidaNaranja.mp4";
+import BebidaTonica from "assets/animation/BebidaTonica.mp4";
+import GinEnergetica from "assets/animation/GinEnergetica.mp4";
+import GinLimon from "assets/animation/GinLimon.mp4";
+import GinNaranja from "assets/animation/GinNaranja.mp4";
+import GinTonic from "assets/animation/GinTonic.mp4";
+import RonCola from "assets/animation/RonCola.mp4";
+import RonEnergetica from "assets/animation/RonEnergetica.mp4";
+import RonLimon from "assets/animation/RonLimon.mp4";
+import RonNaranja from "assets/animation/RonNaranja.mp4";
 
 interface AnimationProps {
   handleClose: () => void;
 }
 
-const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) => {
+const ServiceAnimationComponent: React.FC<AnimationProps> = ({
+  handleClose,
+}) => {
   const { mix, soft, water } = useDrinkSelection();
   const { getSelectedOption } = useMenuOptionSteps();
 
@@ -32,7 +34,7 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
     Water: Agua,
     Cola: BebidaCola,
     Energy: BebidaEnergetica,
-    Lemon: BebidaLimon,
+    Limón: BebidaLimon,
     Orange: BebidaNaranja,
     Tonic: BebidaTonica,
     GinCola: GinEnergetica,
@@ -56,10 +58,14 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
     }
 
     switch (selectedOption.option) {
-      case 'mix':
+      case "mix":
         if (mix.alcohol.name && mix.soft.name) {
           // Format: {Alcohol}{Soft} (e.g., GinLimon, RonCola)
-          if (mix.alcohol.name === 'Gin' || mix.alcohol.name === 'Vodka' || mix.alcohol.name === 'Tequila') {
+          if (
+            mix.alcohol.name === "Gin" ||
+            mix.alcohol.name === "Vodka" ||
+            mix.alcohol.name === "Whisky"
+          ) {
             const videoName = `Gin${mix.soft.name}`;
             return videoMap[videoName] || GinLimon; // Fallback to default if not found
           } else {
@@ -69,15 +75,15 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
         }
         return GinLimon;
 
-      case 'soft':
+      case "soft":
         if (soft.drink.name) {
           // Format: Bebida{Soft} (e.g., BebidaCola, BebidaLimon)
-          const videoName = `Bebida${soft.drink.name}`;
+          const videoName = `${soft.drink.name}`;
           return videoMap[videoName] || BebidaCola; // Fallback to default if not found
         }
         return BebidaCola;
 
-      case 'water':
+      case "water":
         return Agua;
 
       default:
@@ -115,7 +121,6 @@ const SectionWrapper = styled.section`
   top: 0;
   left: 0;
 `;
-
 
 const VideoStyled = styled.video`
   width: 100%;

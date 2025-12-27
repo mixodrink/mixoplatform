@@ -8,6 +8,8 @@ import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
 
+import imageWater from 'assets/beso-ski.png';
+
 type Slide = [
   { id: number; selected: boolean },
   { id: number; selected: boolean },
@@ -79,10 +81,12 @@ const MainPage: React.FC = () => {
         handleSetInitialState={handleSetInitialState}
         isSlide={slide[1].selected}
       />
-      <WaterMenuComponent
+      {/* <WaterMenuComponent
         handleSetInitialState={handleSetInitialState}
         isSlide={slide[2].selected}
-      />
+      /> */}
+      {slide[2].selected || slide[1].selected || slide[0].selected ? null :
+        <img src={imageWater} style={{ width: '1000px', height: '550px', position: 'absolute', bottom: '4%', borderRadius: '50px', zIndex: '0' }} />}
     </SectionGlobalWrapper>
   );
 };

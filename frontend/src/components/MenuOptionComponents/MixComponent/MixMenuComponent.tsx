@@ -87,7 +87,7 @@ const obj = {
     title: "Whisky",
     image: { src: whiskey, alt: "whisky" },
     price: 10,
-  }
+  },
 };
 
 const obj2 = {
@@ -115,6 +115,11 @@ const obj2 = {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
     price: 7,
+  },
+  soda: {
+    title: "Soda",
+    image: { src: tonic, alt: "soda" },
+    price: 5,
   },
 };
 
