@@ -84,15 +84,17 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       mix: {
         type: "mix" as const,
         drink: [mix.alcohol.name, mix.soft.name].filter((d): d is string => d !== null),
-        doubleShot: getDoubleShot(),
+        doubleShot: getDoubleShot(), // Only for mix drinks
       },
       soft: {
         type: "soft" as const,
         drink: [soft.drink.name].filter((d): d is string => d !== null),
+        // doubleShot should never be true for soft drinks
       },
       water: {
         type: "water" as const,
         drink: [water.drink.name].filter((d): d is string => d !== null),
+        // doubleShot should never be true for water drinks
       },
     };
 

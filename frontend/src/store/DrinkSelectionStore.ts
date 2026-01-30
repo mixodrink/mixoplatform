@@ -56,31 +56,72 @@ export const useDrinkSelection = create(
       applyDoubleShotToCurrentMix: (enable: boolean) =>
         set((state) => {
           const current = state.mix.alcohol;
-          if (!current || current.name === null) return {} as any;
+          // Only apply if we have a valid mix with alcohol selected
+          if (!current || current.name === null || current.name === '') return state;
+          
+          // Additional safeguard: verify we actually have a mix (both alcohol and soft)
+          const hasMix = state.mix.alcohol.name && state.mix.soft.name;
+          if (!hasMix) {
+            // If no mix is selected, clear doubleShot from storage
+            try {
+              localStorage.removeItem('doubleShot');
+            } catch (e) {
+              // ignore
+            }
+            return state;
+          }
+          
           const newPrice = enable ? current.price + 2 : current.price - 2;
           return { mix: { ...state.mix, alcohol: { ...current, price: newPrice } } } as any;
         }),
 
       setSoftSelection: (drink) =>
-        set(() => ({
-          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
-          soft: { drink },
-          water: { drink: { name: null, price: 0 } },
-        })),
+        set(() => {
+          // Clear doubleShot when selecting non-mix drink
+          try {
+            localStorage.removeItem('doubleShot');
+            window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+          } catch (e) {
+            // ignore storage errors
+          }
+          return {
+            mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+            soft: { drink },
+            water: { drink: { name: null, price: 0 } },
+          };
+        }),
 
       setWaterSelection: (drink) =>
-        set(() => ({
-          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
-          soft: { drink: { name: null, price: 0 } },
-          water: { drink },
-        })),
+        set(() => {
+          // Clear doubleShot when selecting non-mix drink
+          try {
+            localStorage.removeItem('doubleShot');
+            window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+          } catch (e) {
+            // ignore storage errors
+          }
+          return {
+            mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+            soft: { drink: { name: null, price: 0 } },
+            water: { drink },
+          };
+        }),
 
       resetSelection: () =>
-        set(() => ({
-          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
-          soft: { drink: { name: null, price: 0 } },
-          water: { drink: { name: null, price: 0 } },
-        })),
+        set(() => {
+          // Always clear doubleShot when resetting selection
+          try {
+            localStorage.removeItem('doubleShot');
+            window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+          } catch (e) {
+            // ignore storage errors
+          }
+          return {
+            mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+            soft: { drink: { name: null, price: 0 } },
+            water: { drink: { name: null, price: 0 } },
+          };
+        }),
 
       MixIsSelected: () => {
         const { mix } = get();
