@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import paymentPos from 'assets/icons/water-payment.png';
@@ -6,15 +6,44 @@ import { useStepProgressStore } from 'store/ProgressStepsStore';
 
 interface Props {
   cardImageSrc: string;
+  waitTime?: number;
+  onTimeout?: () => void;
+  retryAttempt?: number;
 }
 
-const PaymentImagesComponent: React.FC<Props> = ({ cardImageSrc }) => {
+const PaymentImagesComponent: React.FC<Props> = ({ cardImageSrc, waitTime = 10, onTimeout, retryAttempt = 0 }) => {
   const { steps } = useStepProgressStore();
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    setProgress(0);
+    const startTime = Date.now();
+    const duration = waitTime * 1000;
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(newProgress);
+
+      if (newProgress >= 100) {
+        clearInterval(interval);
+        if (onTimeout) {
+          onTimeout();
+        }
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [waitTime, onTimeout, retryAttempt]);
+
   return (
     <PaymentImagesWrapper isSlide={steps[4].selected}>
       <PaymentPosImage src={paymentPos} alt="Payment POS" />
       <CreditCardImage src={cardImageSrc} alt="Credit Card" />
       <Text>Pay using contactless</Text>
+      <ProgressBarContainer>
+        <ProgressBar progress={progress} />
+      </ProgressBarContainer>
     </PaymentImagesWrapper>
   );
 };
@@ -67,12 +96,31 @@ const CreditCardImage = styled.img`
 const Text = styled.p`
   position: absolute;
   left: 2%;
-  top: 85%;
+  top: 110%;
   width: 100%;
   font-size: 80px;
   font-weight: bold;
   color: #ffffff;
   text-align: center;
+`;
+
+const ProgressBarContainer = styled.div`
+  position: absolute;
+  left: 10%;
+  bottom: -30%;
+  width: 80%;
+  height: 25px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+`;
+
+const ProgressBar = styled.div<{ progress: number }>`
+  height: 100%;
+  width: ${(props) => props.progress}%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  transition: width 0.05s linear;
+  border-radius: 6px;
 `;
 
 export default PaymentImagesComponent;

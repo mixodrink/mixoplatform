@@ -5,6 +5,7 @@ import {
   readPaymentCard,
   authorizePaymentSession,
   commitPaymentSession,
+  cancelPaymentSession,
   stopPayment,
 } from 'api/local/payment';
 
@@ -22,6 +23,8 @@ export interface PaymentState {
   currentStep: PaymentStep;
   isProcessing: boolean;
   error: string | null;
+  sessionId: string | null;
+  retryAttempt: number;
   stepData: {
     terminal?: any;
     start?: any;
@@ -36,40 +39,44 @@ export const usePaymentFlow = () => {
     currentStep: 'idle',
     isProcessing: false,
     error: null,
+    sessionId: null,
+    retryAttempt: 0,
     stepData: {},
   });
 
-  const updateStep = useCallback((step: PaymentStep, data?: any, error?: string) => {
+  const updateStep = useCallback((step: PaymentStep, data?: any, error?: string, sessionId?: string, retryAttempt?: number) => {
     setPaymentState(prev => ({
       ...prev,
       currentStep: step,
       isProcessing: step !== 'success' && step !== 'error' && step !== 'idle',
       error: error || null,
+      sessionId: sessionId !== undefined ? sessionId : prev.sessionId,
+      retryAttempt: retryAttempt !== undefined ? retryAttempt : prev.retryAttempt,
       stepData: data ? { ...prev.stepData, ...data } : prev.stepData,
     }));
   }, []);
 
-  const startPaymentFlow = useCallback(async (authorizedAmount: number) => {
+  const startPaymentFlow = useCallback(async (authorizedAmount: number, retryAttempt: number = 0) => {
+    let currentSessionId: string | null = null;
+    let isCardReadError = false;
+    
     try {
-      // Step 1: Check Terminal
-      updateStep('checking-terminal');
+      // Step 1: Check Terminal (sin mostrar UI)
       const terminalData = await checkPaymentTerminal();
-      updateStep('checking-terminal', { terminal: terminalData });
 
-      // Step 2: Start Terminal
-      updateStep('starting-terminal');
+      // Step 2: Start Terminal (sin mostrar UI)
       const startData = await startPaymentTerminal(authorizedAmount);
-      updateStep('starting-terminal', { start: startData });
 
-      // Step 3: Read Card
-      updateStep('reading-card');
+      // Step 3: Read Card - mostrar directamente la animación contactless
+      updateStep('reading-card', undefined, undefined, undefined, retryAttempt);
       const cardData = await readPaymentCard();
-      updateStep('reading-card', { card: cardData });
+      updateStep('reading-card', { card: cardData }, undefined, undefined, retryAttempt);
 
       // Step 4: Authorize
       updateStep('authorizing');
       const authData = await authorizePaymentSession();
-      updateStep('authorizing', { authorization: authData });
+      currentSessionId = authData.data.sessionId;
+      updateStep('authorizing', { authorization: authData }, undefined, currentSessionId ?? undefined);
 
       // Step 5: Commit
       updateStep('committing');
@@ -91,18 +98,34 @@ export const usePaymentFlow = () => {
       };
     } catch (error: any) {
       console.error('Payment flow error:', error);
-      updateStep('error', {}, error.message || 'Payment failed');
       
-      // Attempt to stop the terminal on error
+      // Detectar si el error fue en la lectura de tarjeta
+      isCardReadError = error.message?.includes('Read card') || 
+                        error.message?.includes('card') ||
+                        !currentSessionId;
+      
+      // Solo mostrar error si NO es un error de lectura de tarjeta
+      if (!isCardReadError) {
+        updateStep('error', {}, error.message || 'Payment failed');
+      }
+      
+      // Attempt to cancel session if it exists, otherwise just stop
       try {
-        await stopPayment();
+        if (currentSessionId) {
+          console.log('Attempting to cancel session:', currentSessionId);
+          await cancelPaymentSession(currentSessionId);
+        } else {
+          console.log('No session to cancel, stopping terminal');
+          await stopPayment();
+        }
       } catch (stopError) {
-        console.error('Failed to stop payment terminal:', stopError);
+        console.error('Failed to cleanup payment:', stopError);
       }
 
       return {
         success: false,
         error: error.message || 'Payment failed',
+        isCardReadError,
       };
     }
   }, [updateStep]);
@@ -112,19 +135,30 @@ export const usePaymentFlow = () => {
       currentStep: 'idle',
       isProcessing: false,
       error: null,
+      sessionId: null,
+      retryAttempt: 0,
       stepData: {},
     });
   }, []);
 
   const cancelPayment = useCallback(async () => {
+    const { sessionId } = paymentState;
+    
     try {
-      await stopPayment();
+      if (sessionId) {
+        console.log('Cancelling payment with session:', sessionId);
+        await cancelPaymentSession(sessionId);
+      } else {
+        console.log('Stopping payment without session');
+        await stopPayment();
+      }
       resetPayment();
     } catch (error) {
       console.error('Failed to cancel payment:', error);
+      // Reset anyway to allow user to retry
       resetPayment();
     }
-  }, [resetPayment]);
+  }, [paymentState, resetPayment]);
 
   return {
     paymentState,

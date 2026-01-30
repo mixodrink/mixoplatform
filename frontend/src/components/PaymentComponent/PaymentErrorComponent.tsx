@@ -5,14 +5,21 @@ interface PaymentErrorProps {
   variant: number;
   onRetry: () => void;
   onCancel: () => void;
+  errorMessage?: string;
 }
 
 const PaymentErrorComponent: React.FC<PaymentErrorProps> = ({ 
   variant, 
   onRetry, 
-  onCancel 
+  onCancel,
+  errorMessage 
 }) => {
   const [countdown, setCountdown] = useState(5);
+  
+  // Determinar si el error es por TPV no disponible
+  const isTPVUnavailable = errorMessage?.toLowerCase().includes('terminal') || 
+                           errorMessage?.toLowerCase().includes('not available') ||
+                           errorMessage?.toLowerCase().includes('unavailable');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,13 +39,18 @@ const PaymentErrorComponent: React.FC<PaymentErrorProps> = ({
   return (
     <ErrorWrapper variant={variant}>
       <ErrorIcon>❌</ErrorIcon>
-      <ErrorTitle>Payment Failed</ErrorTitle>
+      <ErrorTitle>{isTPVUnavailable ? 'TPV No Disponible' : 'Payment Failed'}</ErrorTitle>
       <ErrorMessage>
-        Retrying automatically in {countdown} seconds...
+        {isTPVUnavailable 
+          ? 'No se puede pagar. El terminal de pago no está disponible.'
+          : errorMessage || `Retrying automatically in ${countdown} seconds...`
+        }
       </ErrorMessage>
-      <CountdownBar>
-        <CountdownProgress countdown={countdown} />
-      </CountdownBar>
+      {!isTPVUnavailable && (
+        <CountdownBar>
+          <CountdownProgress countdown={countdown} />
+        </CountdownBar>
+      )}
       <ButtonContainer>
         <RetryButton onClick={onRetry}>
           Retry Now

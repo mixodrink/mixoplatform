@@ -6,7 +6,8 @@ import {
   readCard,
   authorizeSession,
   commitSession,
-  stopTerminal,
+  cancelSession,
+  safeStopTerminal,
 } from "../services/payment.service";
 
 interface PaymentError extends Error {
@@ -151,9 +152,9 @@ export const startPaymentTerminal = async (req: Request, res: Response): Promise
     });
   } catch (err: any) {
     logger.error("❌ Failed to start terminal", err);
-    // cleanup
+    // cleanup with safe retry
     try {
-      await stopTerminal("Error on startTerminal", 30);
+      await safeStopTerminal("Error on startTerminal");
     } catch {
       /* ignore */
     }
@@ -192,7 +193,7 @@ export const readPaymentCard = async (req: Request, res: Response): Promise<void
     }
 
     try {
-      await stopTerminal("Error on readCard", 30);
+      await safeStopTerminal("Error on readCard");
     } catch {
       /* ignore */
     }
@@ -226,7 +227,7 @@ export const authorizePaymentSession = async (req: Request, res: Response): Prom
   } catch (err: any) {
     logger.error("❌ Authorization failed", err);
     try {
-      await stopTerminal("Error on authorizeSession", 30);
+      await safeStopTerminal("Error on authorizeSession");
     } catch {
       /* ignore */
     }
@@ -261,7 +262,7 @@ export const commitPaymentSession = async (req: Request, res: Response): Promise
   } catch (err: any) {
     logger.error("❌ Commit failed", err);
     try {
-      await stopTerminal("Error on commitSession", 30);
+      await safeStopTerminal("Error on commitSession");
     } catch {
       /* ignore */
     }
@@ -305,7 +306,7 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
   } catch (err: any) {
     logger.error("❌ Payment flow failed", err);
     try {
-      await stopTerminal("Error in payment flow", 30);
+      await safeStopTerminal("Error in payment flow");
     } catch {
       /* ignore */
     }
@@ -318,10 +319,70 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
 
 export const stopPayment = async (req: Request, res: Response): Promise<void> => {
   try {
-    await stopTerminal();
-    res.json({ message: "Payment stopped successfully" });
+    const { sessionId } = req.body;
+    
+    // If there's an active session, cancel it first
+    if (sessionId) {
+      try {
+        logger.info(`🚫 Cancelling active session: ${sessionId}`);
+        await cancelSession(sessionId, "Pago Cancelado", 3);
+        logger.info("✅ Session cancelled successfully");
+      } catch (cancelErr: any) {
+        logger.warn("⚠️ Failed to cancel session, attempting to stop terminal anyway", cancelErr.message);
+      }
+    }
+    
+    // Always try to stop the terminal
+    await safeStopTerminal("Operación Cancelada");
+    
+    res.json({ 
+      success: true,
+      message: "Payment stopped successfully",
+      sessionCancelled: !!sessionId 
+    });
   } catch (err: any) {
     logger.error("❌ Stopping payment error", err);
-    res.status(500).json({ error: true, message: err.message || "Unexpected error" });
+    res.status(500).json({ 
+      error: true, 
+      message: err.message || "Failed to stop payment" 
+    });
+  }
+};
+
+// 🚫 CANCEL SESSION ENDPOINT
+export const cancelPaymentSession = async (req: Request, res: Response): Promise<void> => {
+  const { sessionId } = req.body;
+  
+  if (!sessionId) {
+    res.status(400).json({
+      error: true,
+      message: "Missing sessionId",
+    });
+    return;
+  }
+
+  try {
+    logger.info(`🚫 Cancelling session: ${sessionId}`);
+    await cancelSession(sessionId, "Pago Cancelado", 3);
+    
+    // Also stop the terminal after cancelling
+    await safeStopTerminal("Operación Cancelada");
+    
+    res.status(200).json({
+      success: true,
+      message: "Session cancelled successfully",
+    });
+  } catch (err: any) {
+    logger.error("❌ Cancel session failed", err);
+    
+    // Try to stop terminal anyway
+    try {
+      await safeStopTerminal("Error");
+    } catch {}
+    
+    res.status(500).json({
+      error: true,
+      message: err.message || "Could not cancel session.",
+    });
   }
 };

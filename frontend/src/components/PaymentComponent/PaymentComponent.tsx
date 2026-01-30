@@ -12,7 +12,7 @@ import { useMenuOptionSteps } from "store/MenuOptionStore";
 import { useDrinkSelection } from "store/DrinkSelectionStore";
 import { usePaymentFlow } from "hooks/usePaymentFlow";
 import { createDrink } from "api/local/create-drink";
-import { nodeRedLedWorker, nodeRedStartService } from "api/local/node-red";
+import { nodeRedStartService } from "api/local/node-red";
 import { ServiceType } from "models/models";
 import { createCloudService } from "utils/cloudServiceUtils";
 import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
@@ -45,18 +45,21 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     goBack(1);
   }, [paymentClose, goBack]);
 
-  const executePaymentFlow = useCallback(async () => {
+  const executePaymentFlow = useCallback(async (attemptNumber: number = 0) => {
     const selected = options.find((o) => o.selected);
     if (!selected) return { success: false, error: "No option selected" };
 
     try {
-      await nodeRedLedWorker({ mode: "enable" });
-      const drinkPrice = priceSum * 100;
-      const result = await startPaymentFlow(drinkPrice); // Drink Pirce
+      //  const drinkPrice = priceSum * 100;
+      const drinkPrice = 5;
+      const result = await startPaymentFlow(drinkPrice, attemptNumber); // Drink Pirce
 
       if (!result.success) {
-        await nodeRedLedWorker({ mode: "disable" });
-        return { success: false, error: result.error };
+        return { 
+          success: false, 
+          error: result.error,
+          isCardReadError: result.isCardReadError 
+        };
       }
 
       // Extract card data from payment flow response
@@ -102,7 +105,6 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       })();
 
       if (!newDrink) {
-        await nodeRedLedWorker({ mode: "disable" });
         return { success: false, error: "Invalid drink config" };
       }
 
@@ -111,7 +113,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       // Create cloud service data from the local drink
       const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "687f51714bc446b7970ac0b3",
+        machineId: "6848b4755ab63433867d81a0",
         type: newDrink.type,
         alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
         bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
@@ -132,61 +134,103 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       }
 
       await nodeRedStartService(newDrink);
-      await nodeRedLedWorker({ mode: "disable" });
       goForward(6);
       setRetryCount(0);
-      return { success: true };
+      return { success: true, isCardReadError: false };
     } catch (err) {
-      await nodeRedLedWorker({ mode: "disable" });
       return {
         success: false,
         error: err instanceof Error ? err.message : "Unknown error",
+        isCardReadError: false,
       };
     }
   }, [options, mix, soft, water, priceSum, startPaymentFlow, goForward]);
 
   const handlePaymentStart = useCallback(async () => {
     if (!STEP_4 || paymentState.isProcessing) return;
-    goForward(5);
+    
+    // Only advance step if we're not already processing
+    if (paymentState.currentStep === 'idle') {
+      goForward(5);
+    }
 
-    const result = await executePaymentFlow();
+    const result = await executePaymentFlow(0);
     if (result.success) return;
 
-    if (retryCount < 1) {
+    // Si falla la lectura de tarjeta, reintentamos sin mostrar error
+    if (result.isCardReadError && retryCount < 1) {
       setRetryCount((c) => c + 1);
+      console.log('Card read failed, retrying...');
+      // El reintento se maneja automáticamente con la barra de progreso
       setTimeout(async () => {
-        const retry = await executePaymentFlow();
-        if (!retry.success) handlePaymentError();
-      }, 1000);
-    } else {
-      handlePaymentError();
+        const retry = await executePaymentFlow(1);
+        if (!retry.success) {
+          console.log('Retry failed, closing payment silently');
+          // Cerrar sin mostrar mensaje de error
+          paymentClose();
+          goBack(1);
+          setRetryCount(0);
+        }
+      }, 500);
+    } else if (result.isCardReadError) {
+      console.log('Max retries reached, closing payment');
+      // Cerrar sin mostrar mensaje de error
+      paymentClose();
+      goBack(1);
+      setRetryCount(0);
     }
+    // Si no es error de lectura de tarjeta, el estado 'error' ya se mostró
   }, [
     STEP_4,
     paymentState.isProcessing,
+    paymentState.currentStep,
     executePaymentFlow,
     retryCount,
     goForward,
-    handlePaymentError,
+    paymentClose,
+    goBack,
   ]);
 
   const handlePaymentCancel = useCallback(async () => {
-    await cancelPayment();
-    await nodeRedLedWorker({ mode: "disable" });
-    handlePaymentError();
+    try {
+      await cancelPayment();
+    } catch (error) {
+      console.error('Error during payment cancellation:', error);
+    } finally {
+      handlePaymentError();
+    }
   }, [cancelPayment, handlePaymentError]);
 
+  const handleCardReadTimeout = useCallback(async () => {
+    console.log('Card read timeout, attempting retry...');
+    // El componente ya ha mostrado la barra completa, ahora reiniciamos
+  }, []);
+
   const handleRetryPayment = useCallback(async () => {
-    await cancelPayment();
-    setRetryCount(0);
-    setTimeout(handlePaymentStart, 500);
+    try {
+      // Cancel any existing payment state
+      await cancelPayment();
+      setRetryCount(0);
+      // Give a moment for cleanup before starting new payment
+      setTimeout(handlePaymentStart, 500);
+    } catch (error) {
+      console.error('Error during retry preparation:', error);
+      // Still try to start payment even if cancel failed
+      setRetryCount(0);
+      setTimeout(handlePaymentStart, 500);
+    }
   }, [cancelPayment, handlePaymentStart]);
 
   return (
     <>
       <PaymentOverlayContainer>
         {paymentState.currentStep === "reading-card" && (
-          <PaymentReadComponent cardImageSrc={card} />
+          <PaymentReadComponent 
+            cardImageSrc={card} 
+            waitTime={10}
+            onTimeout={handleCardReadTimeout}
+            retryAttempt={paymentState.retryAttempt}
+          />
         )}
         {(paymentState.currentStep === "authorizing" ||
           paymentState.currentStep === "committing") && (
@@ -203,6 +247,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
             variant={variant}
             onRetry={handleRetryPayment}
             onCancel={handlePaymentCancel}
+            errorMessage={paymentState.error || undefined}
           />
         )}
       </PaymentOverlayContainer>
@@ -226,7 +271,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
 const PaymentOverlayContainer = styled.div`
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 200;

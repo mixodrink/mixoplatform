@@ -43,8 +43,16 @@ export const commitPaymentSession = async (sessionId: string, authorizedAmount: 
   return response.data;
 };
 
-export const stopPayment = async () => {
-  const response = await api.post('/payment/stop');
+export const cancelPaymentSession = async (sessionId: string) => {
+  const response = await api.post('/payment/cancel', { sessionId });
+  if (response.error) {
+    throw new Error(response.error.message || 'Failed to cancel payment session');
+  }
+  return response.data;
+};
+
+export const stopPayment = async (sessionId?: string) => {
+  const response = await api.post('/payment/stop', { sessionId });
   if (response.error) {
     throw new Error(response.error.message || 'Failed to stop payment');
   }

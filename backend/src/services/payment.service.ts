@@ -17,11 +17,13 @@ const BASE_URL = `${PAYTER_URI}/terminals/${PAYTER_TERMINAL_SERIAL_NUMBER}`;
 
 export const payterClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
-  timeout: 15_000, // 15s per request
+  timeout: 60_000, // 60s per request for slow connections
   headers: {
     Authorization: `CPS apikey="${PAYTER_API_KEY}"`,
     Accept: "*/*",
   },
+  // Retry logic for network issues
+  validateStatus: (status) => status >= 200 && status < 500,
 });
 
 /** Utility to unwrap data or throw with a uniform message */
@@ -29,11 +31,21 @@ async function unwrap<T>(
   promise: Promise<{ data: T; status: number }>,
   step: string
 ): Promise<T> {
-  const res = await promise;
-  if (res.status !== 200) {
-    throw new Error(`${step} failed: HTTP ${res.status}`);
+  try {
+    const res = await promise;
+    if (res.status !== 200 && res.status !== 204) {
+      throw new Error(`${step} failed: HTTP ${res.status}`);
+    }
+    return res.data;
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error(`${step} timed out - please check your internet connection`);
+    }
+    if (error.response) {
+      throw new Error(`${step} failed: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
+    }
+    throw new Error(`${step} failed: ${error.message}`);
   }
-  return res.data;
 }
 
 // ——————————————————————
@@ -82,6 +94,19 @@ export async function commitSession(
   );
 }
 
+export async function cancelSession(
+  sessionId: string,
+  uiMessage = "Pago Cancelado",
+  uiMessageTimeout = 3
+): Promise<void> {
+  await unwrap(
+    payterClient.post(`sessions/${sessionId}/cancel`, null, {
+      params: { uiMessage, uiMessageTimeout },
+    }),
+    "Cancel session"
+  );
+}
+
 export async function stopTerminal(
   uiMessage = "Stopped",
   uiMessageTimeout = 30
@@ -90,4 +115,24 @@ export async function stopTerminal(
     payterClient.post("stop", null, { params: { uiMessage, uiMessageTimeout } }),
     "Stop terminal"
   );
+}
+
+// Helper function to safely stop terminal with retries
+export async function safeStopTerminal(
+  uiMessage = "Stopped",
+  retries = 3
+): Promise<void> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await stopTerminal(uiMessage, 3);
+      return;
+    } catch (error: any) {
+      if (i === retries - 1) {
+        // Log but don't throw on final retry
+        console.error('Failed to stop terminal after retries:', error.message);
+      }
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
 }

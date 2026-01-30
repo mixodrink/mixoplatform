@@ -5,7 +5,8 @@ import {
   startPaymentTerminal,
   readPaymentCard,
   authorizePaymentSession,
-  commitPaymentSession
+  commitPaymentSession,
+  cancelPaymentSession
 } from 'controllers/payment.controller';
 import { Router } from 'express';
 
@@ -17,6 +18,7 @@ paymentRouter.post('/start-terminal', startPaymentTerminal);
 paymentRouter.get('/read-card', readPaymentCard);
 paymentRouter.post('/authorize', authorizePaymentSession);
 paymentRouter.post('/commit', commitPaymentSession);
+paymentRouter.post('/cancel', cancelPaymentSession);
 
 // Original endpoints
 paymentRouter.post('/start', startPayment); // Full flow (if still needed)
