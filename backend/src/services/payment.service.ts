@@ -30,7 +30,9 @@ async function unwrap<T>(
   step: string
 ): Promise<T> {
   const res = await promise;
-  if (res.status !== 200) {
+  // Some Payter endpoints (e.g. start/stop) can return 204 No Content on success.
+  // Treat any 2xx response as successful.
+  if (res.status < 200 || res.status >= 300) {
     throw new Error(`${step} failed: HTTP ${res.status}`);
   }
   return res.data;
@@ -47,7 +49,13 @@ export async function checkTerminal(): Promise<{ online: boolean; state: string 
 export async function startTerminal(authorizedAmount: number): Promise<void> {
   // returns empty body on success
   await unwrap(
-    payterClient.post("start", null, { params: { authorizedAmount } }),
+    payterClient.post("start", null, {
+      params: {
+        authorizedAmount,
+        hideAmount: false,
+        uiMessage: "Approach Card Price:" + (authorizedAmount / 100).toFixed(2) + "€",
+      },
+    }),
     "Start terminal"
   );
 }

@@ -3,8 +3,7 @@ import { Drink } from 'models/models';
 
 // POST /node-red/leds
 export const nodeRedLedWorker = async (data: { mode: 'enable' | 'disable' }) => {
-  const response = await api.post('/service/nodeRedLedWorker', { mode: data.mode });
-  return response.data;
+  return "";
 };
 
 // POST /node-red/service

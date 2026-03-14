@@ -63,7 +63,7 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
             const videoName = `Gin${mix.soft.name}`;
             return videoMap[videoName] || GinLimon; // Fallback to default if not found
           } else {
-            const videoName = `Ron${mix.soft.name}`;
+            const videoName = `Rum${mix.soft.name}`;
             return videoMap[videoName] || GinLimon; // Fallback to default if not found
           }
         }

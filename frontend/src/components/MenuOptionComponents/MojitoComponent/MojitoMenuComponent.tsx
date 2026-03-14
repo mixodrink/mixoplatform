@@ -92,7 +92,7 @@ const obj = {
   },
 };
 
-const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
+const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
   const { steps, goForward, getCurrentStep } = useStepProgressStore();
   const { soft, SoftIsSelected } = useDrinkSelection();
@@ -160,8 +160,8 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         slide={isSlide}
         onTransitionEnd={handleOnTransitionEnd}
       >
-        <TitleH1 $selected={selected}>Soda</TitleH1>
-        <SubTitleH2 $selected={selected}>Fresh</SubTitleH2>
+        <TitleH1 $selected={selected}>Mojito</TitleH1>
+        <SubTitleH2 $selected={selected}>Flavour</SubTitleH2>
 
         {selected && (
           <>
@@ -228,13 +228,13 @@ const SectionWrapper = styled.section.withConfig({
 }) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 41)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
-  background-color: #5f31d4;
+  background-color: #00fc7a;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
   border: 20px solid #d8c9ff;
   top: ${(state) => (state.selected ? 0 : 34.5)}%;
-  right: ${(state) => (state.slide ? 1500 : state.selected ? -3 : 40)}px;
+  right: ${(state) => (state.slide ? 1500 : state.selected ? -3 : 550)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -393,4 +393,4 @@ const BlurredCircle = styled.div`
   animation: ${flicker} 2s infinite alternate ease-in-out;
 `;
 
-export default SoftMenuComponent;
+export default MojitoMenuComponent;

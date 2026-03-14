@@ -105,7 +105,7 @@ const WaterMenuComponent: React.FC<Props> = ({
         onTransitionEnd={handleOnTransitionEnd}
       >
         <TitleH1 selected={selected}>Water</TitleH1>
-        <SubTitleH2 selected={selected}>Super Fresh!</SubTitleH2>
+        <SubTitleH2 selected={selected}>Super Fresh</SubTitleH2>
 
         {selected && (
           <>

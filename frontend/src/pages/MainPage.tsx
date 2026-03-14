@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import MixMenuComponent from 'components/MenuOptionComponents/MixComponent/MixMenuComponent';
 import SoftMenuComponent from 'components/MenuOptionComponents/SoftComponent/SoftMenuComponent';
 import WaterMenuComponent from 'components/MenuOptionComponents/WaterComponent/WaterMenuComponent';
+import MojitoMenuComponent from 'components/MenuOptionComponents/MojitoComponent/MojitoMenuComponent';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
@@ -75,6 +76,7 @@ const MainPage: React.FC = () => {
   return (
     <SectionGlobalWrapper>
       <MixMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide[0].selected} />
+      <MojitoMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide[1].selected} />
       <SoftMenuComponent
         handleSetInitialState={handleSetInitialState}
         isSlide={slide[1].selected}

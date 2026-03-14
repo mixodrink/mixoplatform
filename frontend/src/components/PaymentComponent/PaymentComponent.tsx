@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
 import PayButtonComponent from "./PayButtonComponent";
 import PaymentProcessingComponent from "./PaymentProcessingComponent";
@@ -12,7 +12,7 @@ import { useMenuOptionSteps } from "store/MenuOptionStore";
 import { useDrinkSelection } from "store/DrinkSelectionStore";
 import { usePaymentFlow } from "hooks/usePaymentFlow";
 import { createDrink } from "api/local/create-drink";
-import { nodeRedLedWorker, nodeRedStartService } from "api/local/node-red";
+import { nodeRedStartService } from "api/local/node-red";
 import { ServiceType } from "models/models";
 import { createCloudService } from "utils/cloudServiceUtils";
 import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
@@ -35,6 +35,10 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   const { mix, soft, water } = useDrinkSelection();
   const { paymentState, startPaymentFlow, cancelPayment } = usePaymentFlow();
   const [retryCount, setRetryCount] = useState(0);
+  // Ref para guardar el timeout del retry
+  const retryTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  // Flag para saber si se canceló
+  const isCancelledRef = React.useRef(false);
 
   const STEP_PAYMENT_PAID = steps[5].selected;
   const STEP_4 = steps[3].selected;
@@ -50,13 +54,12 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     if (!selected) return { success: false, error: "No option selected" };
 
       try {
-        await nodeRedLedWorker({ mode: "enable" });
         // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
-        const drinkPrice = Math.round(priceSum * 100);
+        // const drinkPrice = Math.round(priceSum * 100);
+        const drinkPrice = 0.10;
         const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
 
       if (!result.success) {
-        await nodeRedLedWorker({ mode: "disable" });
         return { success: false, error: result.error };
       }
 
@@ -113,7 +116,6 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       })();
 
       if (!newDrink) {
-        await nodeRedLedWorker({ mode: "disable" });
         return { success: false, error: "Invalid drink config" };
       }
 
@@ -143,12 +145,10 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       }
 
       await nodeRedStartService(newDrink);
-      await nodeRedLedWorker({ mode: "disable" });
       goForward(6);
       setRetryCount(0);
       return { success: true };
     } catch (err) {
-      await nodeRedLedWorker({ mode: "disable" });
       return {
         success: false,
         error: err instanceof Error ? err.message : "Unknown error",
@@ -158,16 +158,36 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
   const handlePaymentStart = useCallback(async () => {
     if (!STEP_4 || paymentState.isProcessing) return;
+    
+    // Reset de flag de cancelación
+    isCancelledRef.current = false;
     goForward(5);
 
     const result = await executePaymentFlow();
+    
+    // Verificar si se canceló durante el flujo
+    if (isCancelledRef.current) {
+      console.log('Payment cancelled, skipping retry');
+      return;
+    }
+    
     if (result.success) return;
 
     if (retryCount < 1) {
       setRetryCount((c) => c + 1);
-      setTimeout(async () => {
+      
+      // Guardar el timeout para poder cancelarlo
+      retryTimeoutRef.current = setTimeout(async () => {
+        // Verificar nuevamente si se canceló antes de reintentar
+        if (isCancelledRef.current) {
+          console.log('Retry cancelled');
+          return;
+        }
+        
         const retry = await executePaymentFlow();
-        if (!retry.success) handlePaymentError();
+        if (!retry.success && !isCancelledRef.current) {
+          handlePaymentError();
+        }
       }, 1000);
     } else {
       handlePaymentError();
@@ -182,16 +202,45 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   ]);
 
   const handlePaymentCancel = useCallback(async () => {
+    // Marcar como cancelado INMEDIATAMENTE
+    isCancelledRef.current = true;
+    
+    // Cancelar cualquier retry pendiente
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+    
     await cancelPayment();
-    await nodeRedLedWorker({ mode: "disable" });
     handlePaymentError();
   }, [cancelPayment, handlePaymentError]);
 
   const handleRetryPayment = useCallback(async () => {
+    // Cancelar cualquier timeout pendiente
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+    
     await cancelPayment();
     setRetryCount(0);
+    isCancelledRef.current = false;
     setTimeout(handlePaymentStart, 500);
   }, [cancelPayment, handlePaymentStart]);
+
+  // Cleanup: cancelar timeouts cuando el componente se desmonte
+  useEffect(() => {
+    return () => {
+      // Marcar como cancelado
+      isCancelledRef.current = true;
+      
+      // Limpiar timeout pendiente
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <>

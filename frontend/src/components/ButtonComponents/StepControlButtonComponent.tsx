@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import arrow from 'assets/icons/arrow.png';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
+import { useDrinkSelection } from 'store/DrinkSelectionStore';
 
 interface Props {
   animateArrowBack: boolean;
@@ -38,6 +39,20 @@ const StepControlButtonComponent: React.FC<Props> = ({
 
   const handleGoBack = () => {
     const currentStepNumber = steps.findIndex((step) => step.selected);
+    
+    // Reset doubleShot when going back
+    try {
+      const currentDoubleShot = localStorage.getItem('doubleShot') === 'true';
+      if (currentDoubleShot) {
+        localStorage.setItem('doubleShot', 'false');
+        window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+        const apply = useDrinkSelection.getState().applyDoubleShotToCurrentMix;
+        if (typeof apply === 'function') apply(false);
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+    
     if (currentStepNumber === 1) {
       goBack(1);
       handleClose();

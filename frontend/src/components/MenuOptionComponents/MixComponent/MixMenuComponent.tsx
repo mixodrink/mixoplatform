@@ -71,22 +71,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 4,
+    price: 6,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 4,
+    price: 6,
   },
   whiskey: {
     title: "Tequila",
     image: { src: Tequila, alt: "Tequila" },
-    price: 4,
+    price: 6,
   },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
-    price: 4,
+    price: 6,
   },
 };
 
@@ -94,27 +94,27 @@ const obj2 = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 6,
+    price: 4,
   },
   lemon: {
     title: "Lemon",
     image: { src: lemon, alt: "Lemon" },
-    price: 6,
+    price: 4,
   },
   tonic: {
     title: "Tonic",
     image: { src: tonic, alt: "Tonix" },
-    price: 6,
+    price: 4,
   },
   orange: {
     title: "Lime",
     image: { src: orange, alt: "Lime" },
-    price: 6,
+    price: 4,
   },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 8,
+    price: 5,
   },
 };
 
@@ -272,7 +272,7 @@ const MixMenuComponent: React.FC<Props> = ({
         onTransitionStart={handleOnTransitionStart}
       >
         <TitleH1 selected={selected}>Cocktail</TitleH1>
-        <SubTitleH2 selected={selected}>Create your Drink!</SubTitleH2>
+        <SubTitleH2 selected={selected}>Create your Drink</SubTitleH2>
 
         {selected && (
           <>
