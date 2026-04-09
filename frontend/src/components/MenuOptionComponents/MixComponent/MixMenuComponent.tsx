@@ -94,27 +94,27 @@ const obj2 = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 4,
+    price: 6,
   },
   lemon: {
     title: "Lemon",
     image: { src: lemon, alt: "Lemon" },
-    price: 4,
+    price: 6,
   },
   tonic: {
     title: "Tonic",
     image: { src: tonic, alt: "Tonix" },
-    price: 4,
+    price: 6,
   },
   orange: {
     title: "Lime",
     image: { src: orange, alt: "Lime" },
-    price: 4,
+    price: 6,
   },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 5,
+    price: 7,
   },
 };
 
@@ -141,6 +141,8 @@ const MixMenuComponent: React.FC<Props> = ({
     useState<boolean>(false);
   const [currentSoftIsSelected, setCurrentSoftIsSelected] =
     useState<boolean>(false);
+
+  const isAnyOptionSelected = options.some((option) => option.selected);
 
   const handleStepProgress = () => {
     setSelectedOption("mix");
@@ -259,10 +261,7 @@ const MixMenuComponent: React.FC<Props> = ({
     <>
       <SectionWrapper
         onClick={
-          options[0].selected ||
-          options[1].selected ||
-          options[2].selected ||
-          transitionStart
+          isAnyOptionSelected || transitionStart
             ? () => {}
             : () => handleStepProgress()
         }
@@ -355,10 +354,7 @@ const MixMenuComponent: React.FC<Props> = ({
       </SectionWrapper>
       <ImageSectionWrapper
         onClick={
-          options[0].selected ||
-          options[1].selected ||
-          options[2].selected ||
-          transitionStart
+          isAnyOptionSelected || transitionStart
             ? () => {}
             : () => handleStepProgress()
         }
@@ -375,10 +371,7 @@ const MixMenuComponent: React.FC<Props> = ({
       </ImageSectionWrapper>
       <ImageSectionWrapper
         onClick={
-          options[0].selected ||
-          options[1].selected ||
-          options[2].selected ||
-          transitionStart
+          isAnyOptionSelected || transitionStart
             ? () => {}
             : () => handleStepProgress()
         }

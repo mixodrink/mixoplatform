@@ -1,23 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
-import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
-import StepControlButtonComponentSoft from 'components/ButtonComponents/StepControlButtonComponentSoft';
 
 import tropicalOne from 'assets/plants/tropical-one.png';
 import tropicalTwo from 'assets/plants/tropical-two.png';
 import tropicalThree from 'assets/plants/tropical-three.png';
 import tropicalFour from 'assets/plants/tropical-four.png';
 
-import cola from 'assets/soft/cola.png';
 import lemon from 'assets/soft//lemon.png';
-import tonic from 'assets/soft/tonic.png';
-import orange from 'assets/soft/orange.png';
-import energy from 'assets/soft/energy.png';
 
 interface Props {
   isSlide: boolean;
@@ -64,50 +58,31 @@ interface PlantImageProps {
   rotate: number;
 }
 
-const obj = {
-  cola: {
-    title: 'Cola',
-    image: { src: cola, alt: 'cola' },
-    price: 5,
-  },
-  lemon: {
-    title: 'Lemon',
-    image: { src: lemon, alt: 'Lemon' },
-    price: 5,
-  },
-  tonic: {
-    title: 'Tonic',
-    image: { src: tonic, alt: 'Tonix' },
-    price: 5,
-  },
-  orange: {
-    title: 'Lime',
-    image: { src: orange, alt: 'Lime' },
-    price: 5,
-  },
-  energy: {
-    title: 'Energy',
-    image: { src: energy, alt: 'Energy' },
-    price: 7,
-  },
-};
-
 const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) => {
   const { options, setSelectedOption } = useMenuOptionSteps();
-  const { steps, goForward, getCurrentStep } = useStepProgressStore();
-  const { soft, SoftIsSelected } = useDrinkSelection();
+  const { steps, goForward } = useStepProgressStore();
+  const { mix, setMojitoSelection } = useDrinkSelection();
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionStart, setTransitionStart] = useState<boolean>(false);
-  const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
-  const [floatingImage, setFloatingImage] = useState<string>(cola);
-  const [selectedStep, setSelectedStep] = useState<number>(1);
-  const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
-  const [softIsTransition, setSoftIsTransition] = useState(false);
+  const [floatingImage] = useState<string>(lemon);
+  const selectedStep = useStepProgressStore((s) => s.getCurrentStep());
+  const isAnyOptionSelected = options.some((option) => option.selected);
+  const isMojitoSelected = !!(mix.alcohol.name && mix.soft.name);
 
   const handleStepProgress = () => {
-    setSelectedOption('soft');
+    setTransitionStart(true);
+    setSelectedOption('mojito');
+    setMojitoSelection();
+
+    try {
+      localStorage.setItem('doubleShot', 'false');
+      window.dispatchEvent(new CustomEvent('doubleShotChange', { detail: false }));
+    } catch (_error) {
+      // ignore storage errors
+    }
+
     setSelected(true);
-    goForward(3);
+    goForward(4);
   };
 
   const handleClose = () => {
@@ -116,43 +91,13 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
   };
 
   const handleOnTransitionEnd = () => {
-    setTransitionEnd(true);
     setTransitionStart(false);
   };
-
-  const handleOnTransitionStart = () => {
-    setTransitionStart(true);
-    setTransitionEnd(false);
-  };
-
-  useEffect(() => {
-    const selectedDrink = Object.values(obj).filter((drink) => drink.title === soft.drink.name)[0];
-    if (selectedDrink) {
-      setFloatingImage(selectedDrink.image.src);
-    } else {
-      setFloatingImage(cola);
-    }
-
-    const res2 = SoftIsSelected();
-    setCurrentSoftIsSelected(res2);
-    if ((res2 && steps[3].selected) || (res2 && steps[4].selected)) {
-      setSoftIsTransition(true);
-    } else {
-      setSoftIsTransition(false);
-    }
-  }, [steps, soft, SoftIsSelected]);
-
-  const selectedStepFromStore = useStepProgressStore((s) => s.getCurrentStep());
-
-  useEffect(() => {
-    setSelectedStep(selectedStepFromStore);
-  }, [selectedStepFromStore]);
-
   return (
     <>
       <SectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
+          isAnyOptionSelected || transitionStart
             ? () => { }
             : () => handleStepProgress()
         }
@@ -161,7 +106,7 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
         onTransitionEnd={handleOnTransitionEnd}
       >
         <TitleH1 $selected={selected}>Mojito</TitleH1>
-        <SubTitleH2 $selected={selected}>Flavour</SubTitleH2>
+        <SubTitleH2 $selected={selected}>Rum & Lime</SubTitleH2>
 
         {selected && (
           <>
@@ -170,16 +115,9 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
               transitionStart={transitionStart}
               style={{ borderColor: '#d8c9ff' }}
             />
-            <SoftGridComponent
-              type={'soft'}
-              selected={selected}
-              obj={obj}
-              transitionEnd={transitionEnd && steps[2].selected}
-              slideIn={softIsTransition}
-              slideOut={true}
-            />
             <SectionServiceName animatePosition={steps[3].selected}>
-              <HeaderTitle>{soft?.drink.name}</HeaderTitle>
+              <HeaderTitle>{mix?.alcohol.name}</HeaderTitle>
+              <HeaderTitle>{mix?.soft.name}</HeaderTitle>
             </SectionServiceName>
             <PlantImageWrapper animationFadeIn={selectedStep}>
               <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
@@ -191,22 +129,16 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={2}
-              priceSum={soft?.drink.price}
+              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0)}
               paymentClose={handleClose}
-            />
-            <StepControlButtonComponentSoft
-              clickableState={transitionEnd}
-              handleClose={handleClose}
-              animateArrowBack={currentSoftIsSelected}
-              animateArrowForward={currentSoftIsSelected}
             />
           </>
         )}
       </SectionWrapper>
       <ImageSectionWrapper
         animationState={selectedStep}
-        top={45}
-        right={1.5}
+        top={49}
+        right={50}
         deg={6}
         slide={selected}
         isMenu={selectedStep === 1}
@@ -216,7 +148,7 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
           src={floatingImage}
           alt="Floating Image"
           animationState={selectedStep}
-          isBright={currentSoftIsSelected}
+          isBright={isMojitoSelected}
         />
       </ImageSectionWrapper>
     </>
@@ -254,7 +186,7 @@ const SubTitleH2 = styled.h2<TitleProps>`
   line-height: 10rem;
   margin: 0;
   position: absolute;
-  top: 145px;
+  top: 130px;
   left: 40px;
   color: #fff;
   overflow: hidden;
@@ -272,7 +204,7 @@ const ImageSectionWrapper = styled.section.withConfig({
   props.animationState === 6 ? -100 :
     props.slide
       ? props.animationState === 1 || props.paymentState
-        ? props.right
+        ? 4
         : props.animationState === 4
           ? 31
           : props.right
@@ -293,8 +225,8 @@ const Image = styled.img.withConfig({
       : props.animationState === 1
         ? 'brightness(1)'
         : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 220 : 350)}px;
-  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 700)}px;
+  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 170 : 350)}px;
+  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 320 : 700)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

@@ -56,6 +56,7 @@ const WaterMenuComponent: React.FC<Props> = ({
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
   const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [isTransition, setIsTransition] = useState<boolean>(false);
+  const isAnyOptionSelected = options.some((option) => option.selected);
 
   const handleStepProgress = () => {
     setSelectedOption("water");
@@ -76,7 +77,7 @@ const WaterMenuComponent: React.FC<Props> = ({
 
   useEffect(() => {
     const res = WaterIsSelected();
-    if (options[0].selected || options[1].selected) {
+    if (options.some((option) => option.selected && option.option !== 'water')) {
       setIsTransition(true);
     } else {
       setIsTransition(res);
@@ -93,10 +94,7 @@ const WaterMenuComponent: React.FC<Props> = ({
     <>
       <SectionWrapper
         onClick={
-          options[0].selected ||
-          options[1].selected ||
-          options[2].selected ||
-          transitionStart
+          isAnyOptionSelected || transitionStart
             ? () => {}
             : () => handleStepProgress()
         }

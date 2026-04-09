@@ -151,12 +151,8 @@ export const startPaymentTerminal = async (req: Request, res: Response): Promise
     });
   } catch (err: any) {
     logger.error("❌ Failed to start terminal", err);
-    // cleanup
-    try {
-      await stopTerminal("Error on startTerminal", 30);
-    } catch {
-      /* ignore */
-    }
+    // cleanup rápido, no bloqueante
+    stopTerminal("Error on startTerminal", 1).catch(() => {/* ignore */});
     res.status(422).json({
       error: true,
       step: "start-terminal",
@@ -191,11 +187,8 @@ export const readPaymentCard = async (req: Request, res: Response): Promise<void
       logger.error("API Setup Error:", err.message);
     }
 
-    try {
-      await stopTerminal("Error on readCard", 30);
-    } catch {
-      /* ignore */
-    }
+    // cleanup rápido, no bloqueante
+    stopTerminal("", 1).catch(() => {/* ignore */});
 
     res.status(422).json({
       error: true,
@@ -225,11 +218,8 @@ export const authorizePaymentSession = async (req: Request, res: Response): Prom
     });
   } catch (err: any) {
     logger.error("❌ Authorization failed", err);
-    try {
-      await stopTerminal("Error on authorizeSession", 30);
-    } catch {
-      /* ignore */
-    }
+    // cleanup rápido, no bloqueante
+    stopTerminal("", 1).catch(() => {/* ignore */});
     res.status(422).json({
       error: true,
       step: "authorize-session",
@@ -260,11 +250,8 @@ export const commitPaymentSession = async (req: Request, res: Response): Promise
     });
   } catch (err: any) {
     logger.error("❌ Commit failed", err);
-    try {
-      await stopTerminal("Error on commitSession", 30);
-    } catch {
-      /* ignore */
-    }
+    // cleanup rápido, no bloqueante
+    stopTerminal("", 1).catch(() => {/* ignore */});
     res.status(500).json({
       error: true,
       step: "commit-session",
@@ -304,11 +291,8 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
     });
   } catch (err: any) {
     logger.error("❌ Payment flow failed", err);
-    try {
-      await stopTerminal("Error in payment flow", 30);
-    } catch {
-      /* ignore */
-    }
+    // cleanup rápido, no bloqueante
+    stopTerminal("", 1).catch(() => {/* ignore */});
     res.status(500).json({
       error: true,
       message: err.message || "Payment flow failed.",
@@ -318,9 +302,11 @@ export const startPayment = async (req: Request, res: Response): Promise<void> =
 
 export const stopPayment = async (req: Request, res: Response): Promise<void> => {
   try {
-    await stopTerminal();
+    // Usar mensaje vacío y timeout de 1s para que la pantalla se limpie rápido
+    await stopTerminal("", 1);
     res.json({ message: "Payment stopped successfully" });
   } catch (err: any) {
+    // stopTerminal ya no lanza errores, pero por si acaso
     logger.error("❌ Stopping payment error", err);
     res.status(500).json({ error: true, message: err.message || "Unexpected error" });
   }

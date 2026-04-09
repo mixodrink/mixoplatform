@@ -103,6 +103,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   const [selectedStep, setSelectedStep] = useState<number>(1);
   const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
   const [softIsTransition, setSoftIsTransition] = useState(false);
+  const isAnyOptionSelected = options.some((option) => option.selected);
 
   const handleStepProgress = () => {
     setSelectedOption('soft');
@@ -152,7 +153,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
     <>
       <SectionWrapper
         onClick={
-          options[0].selected || options[1].selected || options[2].selected || transitionStart
+          isAnyOptionSelected || transitionStart
             ? () => { }
             : () => handleStepProgress()
         }
@@ -254,7 +255,7 @@ const SubTitleH2 = styled.h2<TitleProps>`
   line-height: 10rem;
   margin: 0;
   position: absolute;
-  top: 145px;
+  top: 130px;
   left: 40px;
   color: #fff;
   overflow: hidden;

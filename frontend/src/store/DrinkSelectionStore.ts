@@ -16,6 +16,7 @@ interface DrinkSelectionState {
     alcohol: { name: string; price: number },
     soft: { name: string; price: number }
   ) => void;
+  setMojitoSelection: () => void;
   setSoftSelection: (drink: { name: string; price: number }) => void;
   setWaterSelection: (drink: { name: string; price: number }) => void;
   resetSelection: () => void;
@@ -51,6 +52,16 @@ export const useDrinkSelection = create(
             water: { drink: { name: null, price: 0 } },
           };
         }),
+
+      setMojitoSelection: () =>
+        set(() => ({
+          mix: {
+            alcohol: { name: 'Rum', price: 6 },
+            soft: { name: 'Lime', price: 6 },
+          },
+          soft: { drink: { name: null, price: 0 } },
+          water: { drink: { name: null, price: 0 } },
+        })),
 
       // apply or remove double shot surcharge to current selected mix alcohol price
       applyDoubleShotToCurrentMix: (enable: boolean) =>

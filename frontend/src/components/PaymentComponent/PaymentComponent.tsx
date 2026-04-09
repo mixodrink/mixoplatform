@@ -13,7 +13,6 @@ import { useDrinkSelection } from "store/DrinkSelectionStore";
 import { usePaymentFlow } from "hooks/usePaymentFlow";
 import { createDrink } from "api/local/create-drink";
 import { nodeRedStartService } from "api/local/node-red";
-import { ServiceType } from "models/models";
 import { createCloudService } from "utils/cloudServiceUtils";
 import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
 
@@ -55,8 +54,8 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       try {
         // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
-        // const drinkPrice = Math.round(priceSum * 100);
-        const drinkPrice = 0.10;
+        const drinkPrice = Math.round(priceSum * 100);
+        //const drinkPrice = 0.10;
         const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
 
       if (!result.success) {
@@ -83,8 +82,10 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         doubleShotFlag = false;
       }
 
+      const isMixLikeOption = selected.option === "mix" || selected.option === "mojito";
+
       let newDrink = (() => {
-        if (selected.option === "mix") {
+        if (isMixLikeOption) {
           return {
             ...base,
             type: "mix",
@@ -93,7 +94,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
             ),
             // use priceSum passed from UI/store which already includes double-shot
             price: priceSum,
-            doubleShot: doubleShotFlag,
+            doubleShot: selected.option === "mix" ? doubleShotFlag : false,
           };
         }
         if (selected.option === "soft") {

@@ -17,7 +17,7 @@ const BASE_URL = `${PAYTER_URI}/terminals/${PAYTER_TERMINAL_SERIAL_NUMBER}`;
 
 export const payterClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
-  timeout: 15_000, // 15s per request
+  timeout: 10_000, // 10s timeout general
   headers: {
     Authorization: `CPS apikey="${PAYTER_API_KEY}"`,
     Accept: "*/*",
@@ -91,11 +91,25 @@ export async function commitSession(
 }
 
 export async function stopTerminal(
-  uiMessage = "Stopped",
-  uiMessageTimeout = 30
+  uiMessage = "",
+  uiMessageTimeout = 1
 ): Promise<void> {
-  await unwrap(
-    payterClient.post("stop", null, { params: { uiMessage, uiMessageTimeout } }),
-    "Stop terminal"
-  );
+  try {
+    // Timeout corto para stop - si no responde rápido, asumir que se detuvo
+    await Promise.race([
+      unwrap(
+        payterClient.post("stop", null, { 
+          params: { uiMessage, uiMessageTimeout },
+          timeout: 5_000 // 5s timeout específico para stop
+        }),
+        "Stop terminal"
+      ),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Stop timeout')), 5_000)
+      )
+    ]);
+  } catch (error: any) {
+    // Si falla o timeout, no lanzar error - el terminal probablemente se detuvo
+    console.warn(`⚠️ Stop terminal warning: ${error.message}`);
+  }
 }

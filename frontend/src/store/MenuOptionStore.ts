@@ -18,6 +18,7 @@ export const useMenuOptionSteps = create<MenuOptionsState>()(
     (set, get) => ({
       options: [
         { option: 'mix', selected: false },
+        { option: 'mojito', selected: false },
         { option: 'soft', selected: false },
         { option: 'water', selected: false },
       ],
@@ -35,6 +36,7 @@ export const useMenuOptionSteps = create<MenuOptionsState>()(
         set(() => ({
           options: [
             { option: 'mix', selected: false },
+            { option: 'mojito', selected: false },
             { option: 'soft', selected: false },
             { option: 'water', selected: false },
           ],

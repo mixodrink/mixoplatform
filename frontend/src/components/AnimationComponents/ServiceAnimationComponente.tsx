@@ -47,6 +47,11 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
     RonTonic: RonLimon,
   };
 
+  const getSoftVideoSuffix = (softName: string) => {
+    if (softName === 'Lime') return 'Orange';
+    return softName;
+  };
+
   // Determine the video source based on selected drink
   const videoSrc = useMemo(() => {
     const selectedOption = getSelectedOption();
@@ -57,13 +62,15 @@ const ServiceAnimationComponent: React.FC<AnimationProps> = ({ handleClose }) =>
 
     switch (selectedOption.option) {
       case 'mix':
+      case 'mojito':
         if (mix.alcohol.name && mix.soft.name) {
-          // Format: {Alcohol}{Soft} (e.g., GinLimon, RonCola)
+          // Format: {Alcohol}{Soft} (e.g., GinLemon, RonCola)
+          const softSuffix = getSoftVideoSuffix(mix.soft.name);
           if (mix.alcohol.name === 'Gin' || mix.alcohol.name === 'Vodka' || mix.alcohol.name === 'Tequila') {
-            const videoName = `Gin${mix.soft.name}`;
+            const videoName = `Gin${softSuffix}`;
             return videoMap[videoName] || GinLimon; // Fallback to default if not found
           } else {
-            const videoName = `Rum${mix.soft.name}`;
+            const videoName = `Ron${softSuffix}`;
             return videoMap[videoName] || GinLimon; // Fallback to default if not found
           }
         }

@@ -9,61 +9,49 @@ import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
 
-type Slide = [
-  { id: number; selected: boolean },
-  { id: number; selected: boolean },
-  { id: number; selected: boolean }
-];
+type MenuOptionKey = 'mix' | 'mojito' | 'soft' | 'water';
+
+type Slide = Record<MenuOptionKey, boolean>;
+
+const defaultSlideState: Slide = {
+  mix: false,
+  mojito: false,
+  soft: false,
+  water: false,
+};
+
+const optionToSlideOutMap: Record<MenuOptionKey, Slide> = {
+  mix: { mix: false, mojito: true, soft: true, water: true },
+  mojito: { mix: true, mojito: false, soft: true, water: true },
+  soft: { mix: true, mojito: true, soft: false, water: true },
+  water: { mix: true, mojito: true, soft: true, water: false },
+};
 
 const MainPage: React.FC = () => {
   const { options, getSelectedOption, setMenuInitialState } = useMenuOptionSteps();
   const { setInitialState } = useStepProgressStore();
   const { resetSelection } = useDrinkSelection();
-  const [slide, setSlide] = React.useState<Slide>([
-    { id: 1, selected: false },
-    { id: 2, selected: false },
-    { id: 3, selected: false },
-  ]);
+  const [slide, setSlide] = React.useState<Slide>(defaultSlideState);
 
   useEffect(() => {
     const res = getSelectedOption();
-    if (res) {
-      if (res.option === 'mix') {
-        setSlide([
-          { id: 1, selected: false },
-          { id: 2, selected: true },
-          { id: 3, selected: true },
-        ]);
-      } else if (res.option === 'soft') {
-        setSlide([
-          { id: 1, selected: true },
-          { id: 2, selected: false },
-          { id: 3, selected: true },
-        ]);
-      } else if (res.option === 'water') {
-        setSlide([
-          { id: 1, selected: true },
-          { id: 2, selected: true },
-          { id: 3, selected: false },
-        ]);
-      }
+    if (!res) {
+      setSlide(defaultSlideState);
+      return;
     }
-  }, [options]);
+
+    if (res.option in optionToSlideOutMap) {
+      const selectedOption = res.option as MenuOptionKey;
+      setSlide(optionToSlideOutMap[selectedOption]);
+    }
+  }, [options, getSelectedOption]);
 
   useEffect(() => {
-    setSlide([
-      { id: 1, selected: false },
-      { id: 2, selected: false },
-      { id: 3, selected: false },
-    ]);
+    setSlide(defaultSlideState);
   }, []);
 
   const handleSetInitialState = () => {
-    setSlide([
-      { id: 1, selected: false },
-      { id: 2, selected: false },
-      { id: 3, selected: false },
-    ]);
+    setSlide(defaultSlideState);
     setInitialState();
     setMenuInitialState();
     resetSelection();
@@ -75,15 +63,15 @@ const MainPage: React.FC = () => {
 
   return (
     <SectionGlobalWrapper>
-      <MixMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide[0].selected} />
-      <MojitoMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide[1].selected} />
+      <MixMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mix} />
+      <MojitoMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mojito} />
       <SoftMenuComponent
         handleSetInitialState={handleSetInitialState}
-        isSlide={slide[1].selected}
+        isSlide={slide.soft}
       />
       <WaterMenuComponent
         handleSetInitialState={handleSetInitialState}
-        isSlide={slide[2].selected}
+        isSlide={slide.water}
       />
     </SectionGlobalWrapper>
   );
