@@ -498,7 +498,7 @@ const ImageAlc = styled.img.withConfig({
         state.currentStep === 5
       ? !state.type
         ? 4.5
-        : 70
+        : 65
       : state.currentStep === 6
       ? 70
       : 19}%;
@@ -508,7 +508,7 @@ const ImageAlc = styled.img.withConfig({
       : state.currentStep === 4 && state.animationSelected
       ? 25
       : state.type || state.currentStep === 1
-      ? 1
+      ? -3
       : 1}%;
   filter: ${(state) =>
     state.isBright
@@ -519,11 +519,11 @@ const ImageAlc = styled.img.withConfig({
   rotate: 9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 200
-      : 340}px;
+      ? 300
+      : 540}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 550
+      ? 650
       : 950}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
