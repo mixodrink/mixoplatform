@@ -1,4 +1,6 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios from 'axios';
+
+const cloudBaseUrl = (import.meta.env.VITE_EXPRESS_PROD_ENDPOINT || '').replace(/\/+$/, '');
 
 /* 
  AWS Cloud actions section of the code
@@ -9,8 +11,8 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
  * @param {PostServiceEC2Cloud} data - Data to post to AWS Cloud
  * @returns {Promise<PostServiceEC2Cloud>} - Response from AWS Cloud
 **/
-const instanceCloudCreateService: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_EXPRESS_PROD_ENDPOINT + '/service/createService',
+const instanceCloudCreateService = axios.create({
+  baseURL: `${cloudBaseUrl}/service/createService`,
 });
 
 export interface PostServiceEC2Cloud {
@@ -39,7 +41,7 @@ export const postActionCloudServiceConstructor = async (data: PostServiceEC2Clou
       token = validToken;
     }
 
-    const response: AxiosResponse<PostServiceEC2Cloud> = await instanceCloudCreateService.post('/', data, {
+    const response = await instanceCloudCreateService.post<PostServiceEC2Cloud>('/', data, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     return response.data;
@@ -59,8 +61,8 @@ export const postActionCloudServiceConstructor = async (data: PostServiceEC2Clou
  * @returns {Promise<PostEC2CloudLogin>} - Response from AWS Cloud
 **/
 
-const instanceCloudLogin: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_EXPRESS_PROD_ENDPOINT + '/auth/login',
+const instanceCloudLogin = axios.create({
+  baseURL: `${cloudBaseUrl}/auth/login`,
 });
 
 export interface PostEC2CloudLogin {
@@ -76,7 +78,7 @@ export interface PostEC2CloudLoginResponse {
 
 export const postActionCloudLoginConstructor = async (data: PostEC2CloudLogin): Promise<PostEC2CloudLoginResponse> => {
   try {
-    const response: AxiosResponse<PostEC2CloudLoginResponse> = await instanceCloudLogin.post('/', data);
+    const response = await instanceCloudLogin.post<PostEC2CloudLoginResponse>('/', data);
     return response.data;
   } catch (error: any) {
     throw new Error(error);
@@ -89,8 +91,8 @@ export const postActionCloudLoginConstructor = async (data: PostEC2CloudLogin): 
  * @returns {Promise<PostEC2CloudLogin>} - Response from AWS Cloud
 **/
 
-const instanceCloudRefreshToken: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_EXPRESS_PROD_ENDPOINT + '/auth/refresh',
+const instanceCloudRefreshToken = axios.create({
+  baseURL: `${cloudBaseUrl}/auth/refresh`,
 });
 
 export interface PostEC2CloudLRefreshToken {
@@ -101,7 +103,7 @@ export interface PostEC2CloudLRefreshToken {
 
 export const postActionCloudRefreshTokenConstructor = async (data: PostEC2CloudLRefreshToken): Promise<PostEC2CloudLRefreshToken> => {
   try {
-    const response: AxiosResponse<PostEC2CloudLRefreshToken> = await instanceCloudRefreshToken.post('/', data);
+    const response = await instanceCloudRefreshToken.post<PostEC2CloudLRefreshToken>('/', data);
     return response.data;
   } catch (error: any) {
     throw new Error(error);

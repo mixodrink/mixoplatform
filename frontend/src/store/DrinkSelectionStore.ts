@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+const DOUBLE_SHOT_SURCHARGE = 4;
+
 interface DrinkSelectionState {
   mix: {
     alcohol: { name: string | null; price: number };
@@ -36,12 +38,15 @@ export const useDrinkSelection = create(
 
       setMixSelection: (alcohol, soft) =>
         set(() => {
-          // if doubleShot is enabled in localStorage, add 2 to alcohol price
+          // If doubleShot is enabled in localStorage, apply the configured surcharge.
           let alcoholWithDouble = { ...alcohol };
           try {
             const ds = localStorage.getItem('doubleShot') === 'true';
             if (ds) {
-              alcoholWithDouble = { ...alcohol, price: alcohol.price + 2 };
+              alcoholWithDouble = {
+                ...alcohol,
+                price: alcohol.price + DOUBLE_SHOT_SURCHARGE,
+              };
             }
           } catch (e) {
             // ignore storage errors
@@ -68,7 +73,9 @@ export const useDrinkSelection = create(
         set((state) => {
           const current = state.mix.alcohol;
           if (!current || current.name === null) return {} as any;
-          const newPrice = enable ? current.price + 2 : current.price - 2;
+          const newPrice = enable
+            ? current.price + DOUBLE_SHOT_SURCHARGE
+            : current.price - DOUBLE_SHOT_SURCHARGE;
           return { mix: { ...state.mix, alcohol: { ...current, price: newPrice } } } as any;
         }),
 

@@ -71,22 +71,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 6,
+    price: 9,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 6,
+    price: 9,
   },
   whiskey: {
     title: "Tequila",
     image: { src: Tequila, alt: "Tequila" },
-    price: 6,
+    price: 9,
   },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
-    price: 6,
+    price: 9,
   },
 };
 
@@ -94,27 +94,22 @@ const obj2 = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 6,
+    price: 9,
   },
   lemon: {
     title: "Lemon",
     image: { src: lemon, alt: "Lemon" },
-    price: 6,
+    price: 9,
   },
   tonic: {
     title: "Tonic",
     image: { src: tonic, alt: "Tonix" },
-    price: 6,
-  },
-  orange: {
-    title: "Lime",
-    image: { src: orange, alt: "Lime" },
-    price: 6,
+    price: 9,
   },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 7,
+    price: 9,
   },
 };
 
@@ -223,25 +218,6 @@ const MixMenuComponent: React.FC<Props> = ({
     setCurrentSelectedOption(res?.option === "mix");
   }, [steps, getSelectedOption, currentSelectedOption]);
 
-  // track doubleShot from localStorage so price displayed in PaymentComponent includes it
-  const [doubleShotLocal, setDoubleShotLocal] = useState<boolean>(false);
-
-  useEffect(() => {
-    try {
-      setDoubleShotLocal(localStorage.getItem('doubleShot') === 'true');
-    } catch (e) {
-      setDoubleShotLocal(false);
-    }
-
-    const onStorage = (ev: StorageEvent) => {
-      if (ev.key === 'doubleShot') {
-        setDoubleShotLocal(ev.newValue === 'true');
-      }
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
-
   useEffect(() => {
     const res = MixIsSelected();
     setCurrentMixIsSelected(res);
@@ -333,7 +309,7 @@ const MixMenuComponent: React.FC<Props> = ({
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={1}
-              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0) + (doubleShotLocal ? 2 : 0)}
+              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0)}
               paymentClose={handleClose}
             />
             <StepControlButtonComponent

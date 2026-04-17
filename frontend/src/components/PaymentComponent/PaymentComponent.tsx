@@ -11,7 +11,6 @@ import { useStepProgressStore } from "store/ProgressStepsStore";
 import { useMenuOptionSteps } from "store/MenuOptionStore";
 import { useDrinkSelection } from "store/DrinkSelectionStore";
 import { usePaymentFlow } from "hooks/usePaymentFlow";
-import { createDrink } from "api/local/create-drink";
 import { nodeRedStartService } from "api/local/node-red";
 import { createCloudService } from "utils/cloudServiceUtils";
 import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
@@ -34,6 +33,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   const { mix, soft, water } = useDrinkSelection();
   const { paymentState, startPaymentFlow, cancelPayment } = usePaymentFlow();
   const [retryCount, setRetryCount] = useState(0);
+  const cloudMachineId = import.meta.env.VITE_CLOUD_MACHINE_ID;
   // Ref para guardar el timeout del retry
   const retryTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   // Flag para saber si se canceló
@@ -51,11 +51,14 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   const executePaymentFlow = useCallback(async () => {
     const selected = options.find((o) => o.selected);
     if (!selected) return { success: false, error: "No option selected" };
+    if (!cloudMachineId) {
+      return { success: false, error: "Missing VITE_CLOUD_MACHINE_ID" };
+    }
 
       try {
         // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
-        const drinkPrice = Math.round(priceSum * 100);
-        //const drinkPrice = 0.10;
+        // const drinkPrice = Math.round(priceSum * 100);
+        const drinkPrice = 5;
         const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
 
       if (!result.success) {
@@ -68,7 +71,6 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       const cardNumber = cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
 
       const base = {
-        machineId: "650a0ab291e870d4bd7e5c85",
         paymentType: "Card",
         cardId,
         cardNumber,
@@ -120,12 +122,9 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         return { success: false, error: "Invalid drink config" };
       }
 
-      // Create the drink locally
-      await createDrink(newDrink);
-
-      // Create cloud service data from the local drink
+      // Create cloud service data from the payment result
       const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "6848b4755ab63433867d81a0",
+        machineId: cloudMachineId,
         type: newDrink.type,
         alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
         bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
@@ -141,8 +140,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         await createCloudService(cloudServiceData);
         console.log('Cloud service created successfully');
       } catch (cloudError) {
-        console.warn('Failed to create cloud service (continuing with local service):', cloudError);
-        // Don't fail the entire process if cloud fails, just log the warning
+        console.warn('Failed to create cloud service (continuing with service start):', cloudError);
       }
 
       await nodeRedStartService(newDrink);
@@ -155,7 +153,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         error: err instanceof Error ? err.message : "Unknown error",
       };
     }
-  }, [options, mix, soft, water, priceSum, startPaymentFlow, goForward]);
+  }, [cloudMachineId, options, mix, soft, water, priceSum, startPaymentFlow, goForward]);
 
   const handlePaymentStart = useCallback(async () => {
     if (!STEP_4 || paymentState.isProcessing) return;

@@ -1,5 +1,9 @@
 import api from 'api/api-base';
-import { Drink } from 'models/models';
+
+interface NodeRedServicePayload {
+  type: string;
+  drink: string[];
+}
 
 // POST /node-red/leds
 export const nodeRedLedWorker = async (data: { mode: 'enable' | 'disable' }) => {
@@ -7,7 +11,7 @@ export const nodeRedLedWorker = async (data: { mode: 'enable' | 'disable' }) => 
 };
 
 // POST /node-red/service
-export const nodeRedStartService = async (drink: Drink) => {
+export const nodeRedStartService = async (drink: NodeRedServicePayload) => {
   const response = await api.post('/service/nodeRedStartService', drink);
   return response.data;
 };
