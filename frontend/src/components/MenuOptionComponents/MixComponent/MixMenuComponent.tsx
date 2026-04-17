@@ -71,22 +71,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 6,
+    price: 7,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 6,
+    price: 7,
   },
   whiskey: {
-    title: "Tequila",
-    image: { src: Tequila, alt: "Tequila" },
-    price: 6,
+    title: "Whisky",
+    image: { src: whiskey, alt: "Whisky" },
+    price: 7,
   },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
-    price: 6,
+    price: 7,
   },
 };
 
@@ -106,15 +106,10 @@ const obj2 = {
     image: { src: tonic, alt: "Tonix" },
     price: 6,
   },
-  orange: {
-    title: "Lime",
-    image: { src: orange, alt: "Lime" },
-    price: 6,
-  },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 7,
+    price: 6,
   },
 };
 

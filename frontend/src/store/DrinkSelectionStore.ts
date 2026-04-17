@@ -41,7 +41,7 @@ export const useDrinkSelection = create(
           try {
             const ds = localStorage.getItem('doubleShot') === 'true';
             if (ds) {
-              alcoholWithDouble = { ...alcohol, price: alcohol.price + 2 };
+              alcoholWithDouble = { ...alcohol, price: alcohol.price + 4 };
             }
           } catch (e) {
             // ignore storage errors
