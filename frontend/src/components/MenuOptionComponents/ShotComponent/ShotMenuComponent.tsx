@@ -101,7 +101,7 @@ const ShotMenuComponent: React.FC<Props> = ({
   const [currentStep, setCurrentStep] = useState<number>(1 || null);
   const [currentSelectedOption, setCurrentSelectedOption] =
     useState<boolean>(false);
-  const [alcImageSource, setAlcImageSource] = useState(vodka);
+  const [alcImageSource, setAlcImageSource] = useState(whiskey);
   const [currentShotIsSelected, setCurrentShotIsSelected] =
     useState<boolean>(false);
 
@@ -140,7 +140,7 @@ const ShotMenuComponent: React.FC<Props> = ({
     if (selectedDrink) {
       setAlcImageSource(selectedDrink.image.src);
     } else {
-      setAlcImageSource(vodka);
+      setAlcImageSource(whiskey);
     }
   }, [shot]);
 
@@ -312,21 +312,25 @@ const ImageAlc = styled.img.withConfig({
   position: absolute;
   top: ${(state) =>
     state.currentStep === 1
-      ? 83
+      ? state.type
+        ? 80
+        : 77.5
       : state.currentStep === 2 ||
         state.currentStep === 3 ||
         state.currentStep === 5
-      ? !state.type
+      ? state.type
         ? 67
-        : 70
+        : 67
       : state.currentStep === 6
       ? 70
       : 19}%;
   right: ${(state) =>
-    state.currentStep === 6
+    state.animationSlide
+      ? 1500
+      : state.currentStep === 6
       ? -100
       : state.currentStep === 4 && state.animationSelected
-      ? 10
+      ? 15
       : state.type || state.currentStep === 1
       ? -2.8
       : -1}%;
@@ -339,11 +343,15 @@ const ImageAlc = styled.img.withConfig({
   rotate: 9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 290
+      ? state.type
+        ? 300
+        : 210
       : 540}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 525
+      ? state.type
+        ? 600
+        : 425
       : 950}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;

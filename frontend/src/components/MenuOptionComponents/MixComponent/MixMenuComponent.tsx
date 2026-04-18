@@ -460,12 +460,14 @@ const ImageSoft = styled.img.withConfig({
         state.currentStep === 5
       ? !state.type
         ? 18
-        : 83
+        : 84
       : state.currentStep === 6
       ? 83
       : 42}%;
   right: ${(state) =>
-    state.currentStep === 6
+    state.animationSlide
+      ? -1500
+      : state.currentStep === 6
       ? -100
       : state.currentStep === 4 && state.animationSelected
       ? 49
@@ -481,11 +483,15 @@ const ImageSoft = styled.img.withConfig({
   rotate: -9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 150
+      ? state.type
+        ? 150
+        : 120
       : 270}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 300
+      ? state.type
+        ? 300
+        : 240
       : 520}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
@@ -503,21 +509,24 @@ const ImageAlc = styled.img.withConfig({
   position: absolute;
   top: ${(state) =>
     state.currentStep === 1
-      ? 4.5
+      ? 4
+
       : state.currentStep === 2 ||
         state.currentStep === 3 ||
         state.currentStep === 5
       ? !state.type
         ? 4.5
-        : 65
+        : 68
       : state.currentStep === 6
       ? 70
       : 19}%;
   right: ${(state) =>
-    state.currentStep === 6
+    state.animationSlide
+      ? -1500
+      : state.currentStep === 6
       ? -100
       : state.currentStep === 4 && state.animationSelected
-      ? 10
+      ? 15
       : state.type || state.currentStep === 1
       ? -3
       : 1}%;
@@ -530,11 +539,15 @@ const ImageAlc = styled.img.withConfig({
   rotate: 9deg;
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 300
+      ? state.type
+        ? 300
+        : 280
       : 540}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 650
+      ? state.type
+        ? 590
+        : 540
       : 950}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
