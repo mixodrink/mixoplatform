@@ -485,13 +485,13 @@ const ImageSoft = styled.img.withConfig({
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type
         ? 150
-        : 120
+        : 140
       : 270}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type
         ? 300
-        : 240
+        : 280
       : 520}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
