@@ -12,7 +12,7 @@ import PaymentComponent from "components/PaymentComponent/PaymentComponent";
 import gin from "assets/alcohol/gin.png";
 import vodka from "assets/alcohol/vodka.png";
 import whiskey from "assets/alcohol/whiskey.png";
-import Tequila from "assets/alcohol/tequila.png";
+import tequila from "assets/alcohol/tequila.png";
 import rum from "assets/alcohol/rum.png";
 
 import tropicalOne from "assets/plants/tropical-one.png";
@@ -73,9 +73,9 @@ const obj = {
     image: { src: vodka, alt: "vodka" },
     price: 4,
   },
-  whiskey: {
-    title: "Whisky",
-    image: { src: whiskey, alt: "Whisky" },
+  tequila: {
+    title: "Tequila",
+    image: { src: tequila, alt: "Tequila" },
     price: 4,
   },
   rum: {
@@ -101,7 +101,7 @@ const ShotMenuComponent: React.FC<Props> = ({
   const [currentStep, setCurrentStep] = useState<number>(1 || null);
   const [currentSelectedOption, setCurrentSelectedOption] =
     useState<boolean>(false);
-  const [alcImageSource, setAlcImageSource] = useState(whiskey);
+  const [alcImageSource, setAlcImageSource] = useState(tequila);
   const [currentShotIsSelected, setCurrentShotIsSelected] =
     useState<boolean>(false);
 
@@ -140,7 +140,7 @@ const ShotMenuComponent: React.FC<Props> = ({
     if (selectedDrink) {
       setAlcImageSource(selectedDrink.image.src);
     } else {
-      setAlcImageSource(whiskey);
+      setAlcImageSource(tequila);
     }
   }, [shot]);
 

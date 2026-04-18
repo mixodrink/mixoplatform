@@ -79,11 +79,11 @@ const obj = {
     image: { src: vodka, alt: "vodka" },
     price: 9,
   },
-  // Tequila: {
-  //   title: "Tequila",
-  //   image: { src: Tequila, alt: "Tequila" },
-  //   price: 9,
-  // },
+  Tequila: {
+    title: "Tequila",
+    image: { src: Tequila, alt: "Tequila" },
+    price: 9,
+  },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
@@ -497,7 +497,7 @@ const ImageAlc = styled.img.withConfig({
         state.currentStep === 5
       ? !state.type
         ? 4.5
-        : 68
+        : 62
       : state.currentStep === 6
       ? 70
       : 19}%;
@@ -509,7 +509,7 @@ const ImageAlc = styled.img.withConfig({
       : state.currentStep === 4 && state.animationSelected
       ? 15
       : state.type || state.currentStep === 1
-      ? -3
+      ? 0
       : 1}%;
   filter: ${(state) =>
     state.isBright
@@ -521,13 +521,13 @@ const ImageAlc = styled.img.withConfig({
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type
-        ? 300
-        : 280
+        ? 240
+        : 180
       : 540}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type
-        ? 590
+        ? 690
         : 540
       : 950}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
