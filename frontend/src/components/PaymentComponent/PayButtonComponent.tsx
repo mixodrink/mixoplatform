@@ -164,6 +164,18 @@ const animationBorderWater = keyframes`
   }
 `;
 
+const animationBorderShot = keyframes`
+  0% {
+    border-color: #ffb380
+  }
+  50% {
+    border-color: #ff6622;
+  }
+  100% {
+    border-color: #ffb380;
+  }
+`;
+
 const Container = styled.div.withConfig({
   shouldForwardProp: (prop) => !['animateShow', 'variant', 'disabled'].includes(prop),
 })<SectionWrapperProps>`
@@ -197,6 +209,8 @@ const ToggleBox = styled.div.withConfig({
       ? '#8150ff'
       : props.variant === 3
       ? '#6fd6ff'
+      : props.variant === 4
+      ? '#ff8c42'
       : null};
   border: 12px solid
     ${(props: any) => {
@@ -211,6 +225,8 @@ const ToggleBox = styled.div.withConfig({
         ? '#d6c6ff'
         : props.variant === 3
         ? '#a7e6ff'
+        : props.variant === 4
+        ? '#ffb380'
         : '#ffffff';
     }};
   display: flex;
@@ -232,6 +248,10 @@ const ToggleBox = styled.div.withConfig({
       return css`
         ${animationBorderWater} 2s infinite
       `;
+    if (props.variant === 4)
+      return css`
+        ${animationBorderShot} 2s infinite
+      `;
     return 'none';
   }};
 `;
@@ -251,6 +271,8 @@ const SectionWrapper = styled.div.withConfig({
       ? '#8150ff'
       : props.variant === 3
       ? '#6fd6ff'
+      : props.variant === 4
+      ? '#ff8c42'
       : null};
   border: 20px solid
     ${(props) =>
@@ -262,6 +284,8 @@ const SectionWrapper = styled.div.withConfig({
         ? '#d6c6ff'
         : props.variant === 3
         ? '#a7e6ff'
+        : props.variant === 4
+        ? '#ffb380'
         : null};
   display: flex;
   flex-direction: column;
@@ -282,6 +306,10 @@ const SectionWrapper = styled.div.withConfig({
     if (props.variant === 3)
       return css`
         ${animationBorderWater} 2s infinite
+      `;
+    if (props.variant === 4)
+      return css`
+        ${animationBorderShot} 2s infinite
       `;
     return 'none';
   }};

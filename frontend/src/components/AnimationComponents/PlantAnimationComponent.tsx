@@ -30,7 +30,7 @@ const PlantAnimationComponent: React.FC<Props> = ({ imageSelected }) => {
         <PlantImage src={tropicalTwo} alt="" top={-3} right={6} rotate={25} />
         <PlantImage src={tropicalOne} alt="" top={-8} right={6} rotate={2} />
         <PlantImage src={tropicalThree} alt="" top={-6} right={52} rotate={-90} />
-        <PlantImage src={tropicalFour} alt="" top={-16} right={40} rotate={-70} />
+        <PlantImage src={tropicalFour} alt="" top={-16} right={15} rotate={-70} />
         <BlurredCircle />
       </PlantImageWrapper>
     </>

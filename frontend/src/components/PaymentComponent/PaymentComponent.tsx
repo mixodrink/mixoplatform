@@ -30,7 +30,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 }) => {
   const { goForward, goBack, steps } = useStepProgressStore();
   const { options } = useMenuOptionSteps();
-  const { mix, soft, water } = useDrinkSelection();
+  const { mix, soft, water, shot } = useDrinkSelection();
   const { paymentState, startPaymentFlow, cancelPayment } = usePaymentFlow();
   const [retryCount, setRetryCount] = useState(0);
   const cloudMachineId = import.meta.env.VITE_CLOUD_MACHINE_ID;
@@ -71,6 +71,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       const cardNumber = cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
 
       const base = {
+        machineId: cloudMachineId,
         paymentType: "Card",
         cardId,
         cardNumber,
@@ -115,6 +116,14 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
             price: priceSum,
           };
         }
+        if (selected.option === "shot") {
+          return {
+            ...base,
+            type: "shot",
+            drink: [shot.drink.name].filter((d): d is string => d !== null),
+            price: priceSum,
+          };
+        }
         return null;
       })();
 
@@ -126,8 +135,8 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       const cloudServiceData: PostServiceEC2Cloud = {
         machineId: cloudMachineId,
         type: newDrink.type,
-        alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
-        bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
+        alcohol: newDrink.type === "mix" || newDrink.type === "shot" ? newDrink.drink[0] : undefined ,
+        bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.type === "mix" ? newDrink.drink[1] : undefined,
         price: newDrink.price,
         paymentType: newDrink.paymentType,
         cardId: newDrink.cardId,

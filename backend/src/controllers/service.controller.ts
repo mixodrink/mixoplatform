@@ -92,6 +92,14 @@ export const nodeRedStartService = async (
       };
     }
 
+    if (req.body.type === "shot") {
+      data = {
+        type: "shot",
+        alcohol: req.body.drink[0] ? req.body.drink[0] : null,
+        mix: null
+      };
+    }
+
     const response = await axios.post("http://localhost:1880/start", data, { headers });
 
     res.status(response.status).json(response.data);
