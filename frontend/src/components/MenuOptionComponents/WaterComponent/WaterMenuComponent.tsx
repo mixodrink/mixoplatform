@@ -167,19 +167,19 @@ const WaterMenuComponent: React.FC<Props> = ({
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 })<SectionWrapperProps>`
-  width: ${(state) => (state.selected ? 96.4 : 89)}%;
+  width: ${(state) => (state.selected ? 96.4 : 41)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #40c2f6;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   position: absolute;
-  bottom: ${(state) => (state.selected ? 0 : 40)}px;
+  top: ${(state) => (state.selected ? 0 : 69)}%;
   border: 20px solid #b3e9ff;
-  left: ${(state) => (state.slide ? 300 : state.selected ? 0.3 : 4)}%;
+  left: ${(state) => (state.slide ? 1500 : state.selected ? -3 : 40)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const TitleH1 = styled.h1<TitleProps>`
-  font-size: 11rem;
+  font-size: 7rem;
   line-height: 10rem;
   margin: 0;
   color: #fff;

@@ -3,6 +3,7 @@ export enum ServiceType {
   MIX,
   WATER,
   BIB,
+  SHOT,
 }
 export enum PaymentType {
   CARD,

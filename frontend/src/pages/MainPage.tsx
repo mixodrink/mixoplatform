@@ -5,11 +5,12 @@ import MixMenuComponent from 'components/MenuOptionComponents/MixComponent/MixMe
 import SoftMenuComponent from 'components/MenuOptionComponents/SoftComponent/SoftMenuComponent';
 import WaterMenuComponent from 'components/MenuOptionComponents/WaterComponent/WaterMenuComponent';
 import MojitoMenuComponent from 'components/MenuOptionComponents/MojitoComponent/MojitoMenuComponent';
+import ShotMenuComponent from 'components/MenuOptionComponents/ShotComponent/ShotMenuComponent';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
 
-type MenuOptionKey = 'mix' | 'mojito' | 'soft' | 'water';
+type MenuOptionKey = 'mix' | 'mojito' | 'soft' | 'water' | 'shot';
 
 type Slide = Record<MenuOptionKey, boolean>;
 
@@ -18,13 +19,15 @@ const defaultSlideState: Slide = {
   mojito: false,
   soft: false,
   water: false,
+  shot: false,
 };
 
 const optionToSlideOutMap: Record<MenuOptionKey, Slide> = {
-  mix: { mix: false, mojito: true, soft: true, water: true },
-  mojito: { mix: true, mojito: false, soft: true, water: true },
-  soft: { mix: true, mojito: true, soft: false, water: true },
-  water: { mix: true, mojito: true, soft: true, water: false },
+  mix: { mix: false, mojito: true, soft: true, water: true, shot: true },
+  mojito: { mix: true, mojito: false, soft: true, water: true, shot: true },
+  soft: { mix: true, mojito: true, soft: false, water: true, shot: true },
+  water: { mix: true, mojito: true, soft: true, water: false, shot: true },
+  shot: { mix: true, mojito: true, soft: true, water: true, shot: false },
 };
 
 const MainPage: React.FC = () => {
@@ -73,6 +76,10 @@ const MainPage: React.FC = () => {
         handleSetInitialState={handleSetInitialState}
         isSlide={slide.water}
       />
+      <ShotMenuComponent
+        handleSetInitialState={handleSetInitialState}
+        isSlide={slide.shot}
+      />
     </SectionGlobalWrapper>
   );
 };
@@ -85,6 +92,7 @@ const SectionGlobalWrapper = styled.section`
   gap: 2.5rem;
   width: 100%;
   height: 95%;
+  position: relative;
 `;
 
 export default MainPage;
