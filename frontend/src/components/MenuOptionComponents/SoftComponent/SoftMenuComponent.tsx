@@ -68,22 +68,27 @@ const obj = {
   cola: {
     title: 'Cola',
     image: { src: cola, alt: 'cola' },
-    price: 4.5,
+    price: 5,
   },
   lemon: {
     title: 'Lemon',
     image: { src: lemon, alt: 'Lemon' },
-    price: 4.5,
+    price: 5,
   },
   tonic: {
     title: 'Tonic',
     image: { src: tonic, alt: 'Tonix' },
-    price: 4.5,
+    price: 5,
   },
   energy: {
     title: 'Energy',
     image: { src: energy, alt: 'Energy' },
-    price: 5.5,
+    price: 5,
+  },
+  lime: {
+    title: 'Lime',
+    image: { src: tonic, alt: 'tonic' },
+    price: 5,
   },
 };
 
@@ -222,14 +227,14 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 }) <SectionWrapperProps>`
-  width: ${(state) => (state.selected ? 96.4 : 41)}%;
+  width: ${(state) => (state.selected ? 96.4 : 89)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #5f31d4;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
   border: 20px solid #d8c9ff;
-  top: ${(state) => (state.selected ? 0 : 34.5)}%;
+  top: ${(state) => (state.selected ? 0 : 35.5)}%;
   right: ${(state) => (state.slide ? 1500 : state.selected ? -3 : 40)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;

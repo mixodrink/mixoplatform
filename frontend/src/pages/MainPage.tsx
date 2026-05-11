@@ -67,7 +67,7 @@ const MainPage: React.FC = () => {
   return (
     <SectionGlobalWrapper>
       <MixMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mix} />
-      <MojitoMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mojito} />
+      {/* <MojitoMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mojito} /> */}
       <SoftMenuComponent
         handleSetInitialState={handleSetInitialState}
         isSlide={slide.soft}

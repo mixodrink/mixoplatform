@@ -72,22 +72,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 9,
+    price: 6,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
     price: 9,
   },
-  Tequila: {
-    title: "Tequila",
-    image: { src: Tequila, alt: "Tequila" },
-    price: 9,
+  whiskey: {
+    title: "Whiskey",
+    image: { src: whiskey, alt: "whiskey" },
+    price: 6,
   },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
-    price: 9,
+    price: 6,
   },
 };
 
@@ -95,26 +95,26 @@ const obj2 = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 9,
+    price: 6,
   },
   lemon: {
     title: "Lemon",
     image: { src: lemon, alt: "Lemon" },
-    price: 9,
+    price: 6,
   },
   tonic: {
     title: "Tonic",
     image: { src: tonic, alt: "Tonix" },
-    price: 9,
+    price: 6,
   },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 9,
+    price: 6,
   },
   water: {
-    title: "Water",
-    image: { src: water, alt: "Water" },
+    title: "Lime",
+    image: { src: tonic, alt: "tonic" },
     price: 6,
   },
   soda: {
@@ -444,7 +444,7 @@ const ImageSoft = styled.img.withConfig({
         : 84
       : state.currentStep === 6
       ? 83
-      : 42}%;
+      : 45}%;
   right: ${(state) =>
     state.animationSlide
       ? -1500
@@ -473,7 +473,7 @@ const ImageSoft = styled.img.withConfig({
       ? state.type
         ? 300
         : 280
-      : 520}px;
+      : 480}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -523,7 +523,7 @@ const ImageAlc = styled.img.withConfig({
       ? state.type
         ? 240
         : 180
-      : 540}px;
+      : 400}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type
