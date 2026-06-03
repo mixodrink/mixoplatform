@@ -168,7 +168,7 @@ const Container = styled.div.withConfig({
   shouldForwardProp: (prop) => !['animateShow', 'variant', 'disabled'].includes(prop),
 })<SectionWrapperProps>`
   position: absolute;
-  bottom: 2.5%;
+  bottom: 5%;
   right: 5.5%;
   width: 85%;
   height: 14%;
@@ -264,10 +264,10 @@ const SectionWrapper = styled.div.withConfig({
         ? '#a7e6ff'
         : null};
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 26px;
   cursor: ${(props: any) => (props.disabled ? 'not-allowed' : 'pointer')};
   animation: ${(props: any) => {
     if (props.disabled) return 'none';
@@ -290,7 +290,7 @@ const SectionWrapper = styled.div.withConfig({
 const SectionTitle = styled.h1`
   font-size: 8rem;
   color: #fff;
-  margin: 0;
+  margin: -10px 0 0 0;
   text-align: center;
   line-height: 1;
 `;
@@ -298,7 +298,7 @@ const SectionTitle = styled.h1`
 const SectionText = styled.p`
   font-size: 8rem;
   color: #fff;
-  margin: 0;
+  margin: -10px 0 0 0;
   text-align: center;
   line-height: 1;
 `;

@@ -159,7 +159,7 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 }) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 41)}%;
-  height: ${(state) => (state.selected ? 98 : 29)}%;
+  height: ${(state) => (state.selected ? 90 : 25)}%;
   background-color: #00fc7a;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
@@ -225,8 +225,8 @@ const Image = styled.img.withConfig({
       : props.animationState === 1
         ? 'brightness(1)'
         : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 170 : 350)}px;
-  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 320 : 700)}px;
+  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 120 : 300)}px;
+  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 250 : 600)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

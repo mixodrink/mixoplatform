@@ -9,6 +9,8 @@ import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
 
+import logoShoko from 'assets/custom/logo-shoko.png';
+
 type MenuOptionKey = 'mix' | 'mojito' | 'soft' | 'water';
 
 type Slide = Record<MenuOptionKey, boolean>;

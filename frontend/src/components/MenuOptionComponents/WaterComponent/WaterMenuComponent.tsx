@@ -95,7 +95,7 @@ const WaterMenuComponent: React.FC<Props> = ({
       <SectionWrapper
         onClick={
           isAnyOptionSelected || transitionStart
-            ? () => {}
+            ? () => { }
             : () => handleStepProgress()
         }
         selected={selected}
@@ -156,6 +156,11 @@ const WaterMenuComponent: React.FC<Props> = ({
         )}
       </SectionWrapper>
       <WaterOptionComponent
+        onClick={
+          isAnyOptionSelected || transitionStart
+            ? () => { }
+            : () => handleStepProgress()
+        }
         animationSlideIn={selected}
         animationSlideOut={isTransition}
         animationBackSlideOut={steps?.[4]?.selected || false}
@@ -166,15 +171,15 @@ const WaterMenuComponent: React.FC<Props> = ({
 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
-})<SectionWrapperProps>`
-  width: ${(state) => (state.selected ? 96.4 : 89)}%;
-  height: ${(state) => (state.selected ? 98 : 29)}%;
+}) <SectionWrapperProps>`
+  width: ${(state) => (state.selected ? 94 : 89)}%;
+  height: ${(state) => (state.selected ? 85 : 20)}%;
   background-color: #40c2f6;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   position: absolute;
-  bottom: ${(state) => (state.selected ? 0 : 40)}px;
+  bottom: ${(state) => (state.selected ? 220 : 290)}px;
   border: 20px solid #b3e9ff;
-  left: ${(state) => (state.slide ? 300 : state.selected ? 0.3 : 4)}%;
+  left: ${(state) => (state.slide ? 300 : state.selected ? 1 : 4)}%;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -212,7 +217,7 @@ const fadeIn = keyframes`
 
 const PlantImageWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["animationFadeIn"].includes(prop),
-})<PlantImageWrapperProps>`
+}) <PlantImageWrapperProps>`
   position: absolute;
   top: 47%;
   right: 0;
@@ -243,7 +248,7 @@ const rotate = keyframes`
 
 const PlantImage = styled.img.withConfig({
   shouldForwardProp: (prop) => !["top", "right", "rotate"].includes(prop),
-})<PlantImageProps>`
+}) <PlantImageProps>`
   position: absolute;
   top: ${(props) => props.top}%;
   right: ${(props) => props.right}%;
@@ -275,7 +280,7 @@ const BlurredCircle = styled.div`
 
 const SectionServiceName = styled.section.withConfig({
   shouldForwardProp: (prop) => !["animatePosition"].includes(prop),
-})<SectionServiceNameProps>`
+}) <SectionServiceNameProps>`
   position: absolute;
   bottom: ${(props) => (props.animatePosition ? 21 : 5)}%;
   left: ${(props) => (props.animatePosition ? 40 : 13.5)}%;

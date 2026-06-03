@@ -394,7 +394,7 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 })<SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
-  height: ${(state) => (state.selected ? 98 : 29)}%;
+  height: ${(state) => (state.selected ? 90 : 29)}%;
   background-color: #fd660e;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
@@ -454,10 +454,10 @@ const ImageSoft = styled.img.withConfig({
         state.currentStep === 5
       ? !state.type
         ? 18
-        : 83
+        : 77
       : state.currentStep === 6
       ? 83
-      : 42}%;
+      : 40}%;
   right: ${(state) =>
     state.currentStep === 6
       ? -100
@@ -476,11 +476,11 @@ const ImageSoft = styled.img.withConfig({
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? 150
-      : 270}px;
+      : 220}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? 300
-      : 520}px;
+      : 460}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -503,7 +503,7 @@ const ImageAlc = styled.img.withConfig({
         state.currentStep === 5
       ? !state.type
         ? 4.5
-        : 70
+        : 64
       : state.currentStep === 6
       ? 70
       : 19}%;
@@ -525,11 +525,11 @@ const ImageAlc = styled.img.withConfig({
   width: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? 200
-      : 340}px;
+      : 300}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? 550
-      : 950}px;
+      : 850}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
