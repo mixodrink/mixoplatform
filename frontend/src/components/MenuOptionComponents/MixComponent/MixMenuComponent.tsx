@@ -106,11 +106,11 @@ const obj2 = {
     image: { src: tonic, alt: "Tonix" },
     price: 6,
   },
-  orange: {
-    title: "Lime",
-    image: { src: orange, alt: "Lime" },
-    price: 6,
-  },
+  // orange: {
+  //   title: "Lime",
+  //   image: { src: orange, alt: "Lime" },
+  //   price: 6,
+  // },
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },

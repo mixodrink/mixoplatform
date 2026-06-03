@@ -70,25 +70,19 @@ const obj = {
     image: { src: cola, alt: 'cola' },
     price: 5,
   },
-  lemon: {
-    title: 'Lemon',
-    image: { src: lemon, alt: 'Lemon' },
-    price: 5,
-  },
+   lemon: {
+     title: 'Lemon',
+     image: { src: lemon, alt: 'Lemon' },
+     price: 5,
+   },
   tonic: {
     title: 'Tonic',
     image: { src: tonic, alt: 'Tonix' },
     price: 5,
-  },
-  orange: {
-    title: 'Lime',
-    image: { src: orange, alt: 'Lime' },
-    price: 5,
-  },
-  energy: {
-    title: 'Energy',
-    image: { src: energy, alt: 'Energy' },
-    price: 7,
+  },energy: {
+     title: 'Energy',
+     image: { src: energy, alt: 'Energy' },
+     price: 6,
   },
 };
 
