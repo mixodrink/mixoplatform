@@ -19,6 +19,7 @@ const MixItemComponent: React.FC<OptionItemProps> = ({
         src={drink.image.src}
         alt={drink.image.alt}
         animationSelected={animationSelected}
+        isGin={drink.image.alt === 'gin'}
       />
       <DrinkTitle>{drink.title}</DrinkTitle>
     </OptionContainer>
@@ -63,9 +64,9 @@ const BackgroundBox = styled.div.withConfig({
 `;
 
 const DrinkImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
-})`
-  width: 150px;
+  shouldForwardProp: (prop) => !['animationSelected', 'isGin'].includes(prop),
+})<{ animationSelected: boolean; isGin?: boolean }>`
+  width: ${({ isGin }) => (isGin ? 300 : 150)}px;
   height: 450px;
   margin-bottom: 0px;
   z-index: 1;

@@ -10,11 +10,11 @@ import CloseButtonComponent from "components/ButtonComponents/CloseButtonCompone
 import PaymentComponent from "components/PaymentComponent/PaymentComponent";
 import StepControlButtonComponent from "components/ButtonComponents/StepControlButtonComponent";
 
-import gin from "assets/alcohol/gin.png";
+import gin from "assets/alcohol/beegin.png";
 import vodka from "assets/alcohol/vodka.png";
 import whiskey from "assets/alcohol/whiskey.png";
 import Tequila from "assets/alcohol/tequila.png";
-import rum from "assets/alcohol/rum.png";
+import rum from "assets/alcohol/rumbar.png";
 import cola from "assets/soft/cola.png";
 import lemon from "assets/soft//lemon.png";
 import tonic from "assets/soft/tonic.png";
@@ -52,6 +52,7 @@ interface ImageProps {
   animationSlide: boolean;
   isBright: boolean;
   type: boolean;
+  isGin?: boolean;
 }
 
 interface PlantImageProps {
@@ -367,6 +368,7 @@ const MixMenuComponent: React.FC<Props> = ({
           animationSlide={isSlide}
           isBright={currentMixIsSelected}
           type={currentSelectedOption}
+          isGin={alcImageSource === gin}
         />
       </ImageSectionWrapper>
       <ImageSectionWrapper
@@ -492,6 +494,7 @@ const ImageAlc = styled.img.withConfig({
       "animationSlide",
       "type",
       "isBright",
+      "isGin",
     ].includes(prop),
 })<ImageProps>`
   position: absolute;
@@ -523,9 +526,9 @@ const ImageAlc = styled.img.withConfig({
       : "brightness(0.5)"};
   rotate: 9deg;
   width: ${(state) =>
-    state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
+    (state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? 200
-      : 340}px;
+      : 340) * (state.isGin ? 1.4 : 1)}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? 550
