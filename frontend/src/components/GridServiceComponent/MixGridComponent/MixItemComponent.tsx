@@ -19,6 +19,7 @@ const MixItemComponent: React.FC<OptionItemProps> = ({
         src={drink.image.src}
         alt={drink.image.alt}
         animationSelected={animationSelected}
+        isGin={drink.image.alt === 'gin'}
       />
       <DrinkTitle>{drink.title}</DrinkTitle>
     </OptionContainer>
@@ -29,13 +30,13 @@ export default MixItemComponent;
 
 const rotate = keyframes`
   0% {
-    transform: rotate(5deg);
+    rotate: 5deg;
   }
   50% {
-    transform: rotate(-5deg);
+    rotate: -5deg;
   }
   100% {
-    transform: rotate(5deg);
+    rotate: 5deg;
   }
 `;
 
@@ -63,13 +64,14 @@ const BackgroundBox = styled.div.withConfig({
 `;
 
 const DrinkImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
-})`
+  shouldForwardProp: (prop) => !['animationSelected', 'isGin'].includes(prop),
+})<{ animationSelected: boolean; isGin?: boolean }>`
   width: 150px;
   height: 450px;
   margin-bottom: 0px;
   z-index: 1;
   filter: drop-shadow(0px 20px 15px rgba(0, 0, 0, 0.372));
+  transform: ${({ isGin }) => (isGin ? 'scaleX(2.1)' : 'none')};
   ${({ animationSelected }) =>
     animationSelected &&
     css`
