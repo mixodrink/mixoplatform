@@ -396,13 +396,14 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 })<SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 89)}%;
-  height: ${(state) => (state.selected ? 90 : 29)}%;
+  height: ${(state) => (state.selected ? 90 : 30)}%;
   background-color: #fd660e;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
+  box-sizing: border-box;
   border: 20px solid #ffc09b;
-  top: ${(state) => (state.selected ? -1 : 40)}px;
+  top: ${(state) => (state.selected ? -1 : 2)}%;
   left: ${(state) => (state.slide ? 1500 : state.selected ? 2 : 43)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;

@@ -200,7 +200,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
       </SectionWrapper>
       <ImageSectionWrapper
         animationState={selectedStep}
-        top={45}
+        top={40}
         right={1.5}
         deg={6}
         slide={selected}
@@ -221,20 +221,21 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 }) <SectionWrapperProps>`
-  width: ${(state) => (state.selected ? 96.4 : 41)}%;
-  height: ${(state) => (state.selected ? 90 : 25)}%;
+  width: ${(state) => (state.selected ? 96.4 : 89)}%;
+  height: ${(state) => (state.selected ? 90 : 30)}%;
   background-color: #5f31d4;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
   position: absolute;
+  box-sizing: border-box;
   border: 20px solid #d8c9ff;
-  top: ${(state) => (state.selected ? 0 : 34.5)}%;
-  right: ${(state) => (state.slide ? 1500 : state.selected ? -3 : 40)}px;
+  top: ${(state) => (state.selected ? 0 : 35)}%;
+  left: ${(state) => (state.slide ? 1500 : state.selected ? 2 : 43)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const TitleH1 = styled.h1<TitleProps>`
-  font-size: 7rem;
+  font-size: 11rem;
   line-height: 10rem;
   margin: 0;
   position: absolute;
@@ -288,8 +289,8 @@ const Image = styled.img.withConfig({
       : props.animationState === 1
         ? 'brightness(1)'
         : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 180 : 320)}px;
-  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 330 : 600)}px;
+  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 222 : 320)}px;
+  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 408 : 600)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

@@ -173,11 +173,12 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 }) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 94 : 89)}%;
-  height: ${(state) => (state.selected ? 85 : 20)}%;
+  height: ${(state) => (state.selected ? 85 : 30)}%;
   background-color: #40c2f6;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   position: absolute;
-  bottom: ${(state) => (state.selected ? 220 : 290)}px;
+  box-sizing: border-box;
+  bottom: ${(state) => (state.selected ? '220px' : '2%')};
   border: 20px solid #b3e9ff;
   left: ${(state) => (state.slide ? 300 : state.selected ? 1 : 4)}%;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);

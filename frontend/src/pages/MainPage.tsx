@@ -4,29 +4,26 @@ import styled from 'styled-components';
 import MixMenuComponent from 'components/MenuOptionComponents/MixComponent/MixMenuComponent';
 import SoftMenuComponent from 'components/MenuOptionComponents/SoftComponent/SoftMenuComponent';
 import WaterMenuComponent from 'components/MenuOptionComponents/WaterComponent/WaterMenuComponent';
-import MojitoMenuComponent from 'components/MenuOptionComponents/MojitoComponent/MojitoMenuComponent';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
 
 import logoShoko from 'assets/custom/logo-shoko.png';
 
-type MenuOptionKey = 'mix' | 'mojito' | 'soft' | 'water';
+type MenuOptionKey = 'mix' | 'soft' | 'water';
 
 type Slide = Record<MenuOptionKey, boolean>;
 
 const defaultSlideState: Slide = {
   mix: false,
-  mojito: false,
   soft: false,
   water: false,
 };
 
 const optionToSlideOutMap: Record<MenuOptionKey, Slide> = {
-  mix: { mix: false, mojito: true, soft: true, water: true },
-  mojito: { mix: true, mojito: false, soft: true, water: true },
-  soft: { mix: true, mojito: true, soft: false, water: true },
-  water: { mix: true, mojito: true, soft: true, water: false },
+  mix: { mix: false, soft: true, water: true },
+  soft: { mix: true, soft: false, water: true },
+  water: { mix: true, soft: true, water: false },
 };
 
 const MainPage: React.FC = () => {
@@ -66,7 +63,6 @@ const MainPage: React.FC = () => {
   return (
     <SectionGlobalWrapper>
       <MixMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mix} />
-      <MojitoMenuComponent handleSetInitialState={handleSetInitialState} isSlide={slide.mojito} />
       <SoftMenuComponent
         handleSetInitialState={handleSetInitialState}
         isSlide={slide.soft}
@@ -86,7 +82,7 @@ const SectionGlobalWrapper = styled.section`
   align-items: center;
   gap: 2.5rem;
   width: 100%;
-  height: 95%;
+  height: 100%;
 `;
 
 export default MainPage;
