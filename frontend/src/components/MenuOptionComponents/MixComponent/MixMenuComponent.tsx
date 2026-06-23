@@ -335,7 +335,7 @@ const MixMenuComponent: React.FC<Props> = ({
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={1}
-              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0) + (doubleShotLocal ? 2 : 0)}
+              priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0) + (doubleShotLocal ? 5 : 0)}
               paymentClose={handleClose}
             />
             <StepControlButtonComponent

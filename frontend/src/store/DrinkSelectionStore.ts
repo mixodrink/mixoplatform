@@ -36,12 +36,12 @@ export const useDrinkSelection = create(
 
       setMixSelection: (alcohol, soft) =>
         set(() => {
-          // if doubleShot is enabled in localStorage, add 2 to alcohol price
+          // if doubleShot is enabled in localStorage, add 5 to alcohol price
           let alcoholWithDouble = { ...alcohol };
           try {
             const ds = localStorage.getItem('doubleShot') === 'true';
             if (ds) {
-              alcoholWithDouble = { ...alcohol, price: alcohol.price + 2 };
+              alcoholWithDouble = { ...alcohol, price: alcohol.price + 5 };
             }
           } catch (e) {
             // ignore storage errors
@@ -68,7 +68,7 @@ export const useDrinkSelection = create(
         set((state) => {
           const current = state.mix.alcohol;
           if (!current || current.name === null) return {} as any;
-          const newPrice = enable ? current.price + 2 : current.price - 2;
+          const newPrice = enable ? current.price + 5 : current.price - 5;
           return { mix: { ...state.mix, alcohol: { ...current, price: newPrice } } } as any;
         }),
 
