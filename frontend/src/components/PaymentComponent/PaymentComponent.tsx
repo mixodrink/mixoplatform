@@ -125,7 +125,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       // Create cloud service data from the local drink
       const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "6848b4755ab63433867d81a0",
+        machineId: "662d0650564844eb53b404ce",
         type: newDrink.type,
         alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
         bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],

@@ -20,6 +20,7 @@ const MixItemComponent: React.FC<OptionItemProps> = ({
         alt={drink.image.alt}
         animationSelected={animationSelected}
         isGin={drink.image.alt === 'gin'}
+        isTequila={drink.image.alt === 'Tequila'}
       />
       <DrinkTitle>{drink.title}</DrinkTitle>
     </OptionContainer>
@@ -64,14 +65,15 @@ const BackgroundBox = styled.div.withConfig({
 `;
 
 const DrinkImage = styled.img.withConfig({
-  shouldForwardProp: (prop) => !['animationSelected', 'isGin'].includes(prop),
-})<{ animationSelected: boolean; isGin?: boolean }>`
-  width: 150px;
-  height: 450px;
-  margin-bottom: 0px;
+  shouldForwardProp: (prop) => !['animationSelected', 'isGin', 'isTequila'].includes(prop),
+})<{ animationSelected: boolean; isGin?: boolean; isTequila?: boolean }>`
+  width: ${({ isGin, isTequila }) => (isGin ? 216 : isTequila ? 200 : 150)}px;
+  height: ${({ isGin }) => (isGin ? 540 : 450)}px;
+  margin-bottom: ${({ isGin }) => (isGin ? -90 : 0)}px;
   z-index: 1;
   filter: drop-shadow(0px 20px 15px rgba(0, 0, 0, 0.372));
-  transform: ${({ isGin }) => (isGin ? 'scaleX(2.1)' : 'none')};
+  transform: ${({ isGin, isTequila }) =>
+    isGin ? 'scaleX(2.31) translateY(-60px)' : isTequila ? 'scaleX(2.5)' : 'none'};
   ${({ animationSelected }) =>
     animationSelected &&
     css`

@@ -10,11 +10,11 @@ import CloseButtonComponent from "components/ButtonComponents/CloseButtonCompone
 import PaymentComponent from "components/PaymentComponent/PaymentComponent";
 import StepControlButtonComponent from "components/ButtonComponents/StepControlButtonComponent";
 
-import gin from "assets/alcohol/beegin.png";
-import vodka from "assets/alcohol/vodka.png";
+import gin from "assets/alcohol/gin1880.png";
+import vodka from "assets/alcohol/vodgoose.png";
 import whiskey from "assets/alcohol/whiskey.png";
-import Tequila from "assets/alcohol/tequila.png";
-import rum from "assets/alcohol/rumbar.png";
+import Tequila from "assets/alcohol/wiswlabel.png";
+import rum from "assets/alcohol/ron-santa.png";
 import cola from "assets/soft/cola.png";
 import lemon from "assets/soft//lemon.png";
 import tonic from "assets/soft/tonic.png";
@@ -53,6 +53,7 @@ interface ImageProps {
   isBright: boolean;
   type: boolean;
   isGin?: boolean;
+  isTequila?: boolean;
 }
 
 interface PlantImageProps {
@@ -72,22 +73,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 6,
+    price: 5,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 6,
+    price: 5,
   },
   whiskey: {
-    title: "Tequila",
+    title: "Whiskey",
     image: { src: Tequila, alt: "Tequila" },
-    price: 6,
+    price: 5,
   },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
-    price: 6,
+    price: 5,
   },
 };
 
@@ -95,17 +96,17 @@ const obj2 = {
   cola: {
     title: "Cola",
     image: { src: cola, alt: "cola" },
-    price: 6,
+    price: 4,
   },
   lemon: {
     title: "Lemon",
     image: { src: lemon, alt: "Lemon" },
-    price: 6,
+    price: 4,
   },
   tonic: {
     title: "Tonic",
     image: { src: tonic, alt: "Tonix" },
-    price: 6,
+    price: 4,
   },
   // orange: {
   //   title: "Lime",
@@ -115,7 +116,7 @@ const obj2 = {
   energy: {
     title: "Energy",
     image: { src: energy, alt: "Energy" },
-    price: 7,
+    price: 5,
   },
 };
 
@@ -369,6 +370,7 @@ const MixMenuComponent: React.FC<Props> = ({
           isBright={currentMixIsSelected}
           type={currentSelectedOption}
           isGin={alcImageSource === gin}
+          isTequila={alcImageSource === Tequila}
         />
       </ImageSectionWrapper>
       <ImageSectionWrapper
@@ -496,6 +498,7 @@ const ImageAlc = styled.img.withConfig({
       "type",
       "isBright",
       "isGin",
+      "isTequila",
     ].includes(prop),
 })<ImageProps>`
   position: absolute;
@@ -527,13 +530,15 @@ const ImageAlc = styled.img.withConfig({
       : "brightness(0.5)"};
   rotate: 9deg;
   width: ${(state) =>
-    state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 200
-      : 300}px;
+    state.isGin
+      ? state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6 ? 264 : 396
+      : state.isTequila
+      ? state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6 ? 545 : 817
+      : state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6 ? 200 : 300}px;
   height: ${(state) =>
-    state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
-      ? 550
-      : 850}px;
+    state.isGin
+      ? state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6 ? 726 : 1122
+      : state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6 ? 550 : 850}px;
   transform: ${(state) => (state.isGin ? "scaleX(1.8)" : "none")};
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;

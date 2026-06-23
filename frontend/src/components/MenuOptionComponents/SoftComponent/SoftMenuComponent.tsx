@@ -68,21 +68,21 @@ const obj = {
   cola: {
     title: 'Cola',
     image: { src: cola, alt: 'cola' },
-    price: 5,
+    price: 4,
   },
    lemon: {
      title: 'Lemon',
      image: { src: lemon, alt: 'Lemon' },
-     price: 5,
+     price: 4,
    },
   tonic: {
     title: 'Tonic',
     image: { src: tonic, alt: 'Tonix' },
-    price: 5,
+    price: 4,
   },energy: {
      title: 'Energy',
      image: { src: energy, alt: 'Energy' },
-     price: 6,
+     price: 4,
   },
 };
 

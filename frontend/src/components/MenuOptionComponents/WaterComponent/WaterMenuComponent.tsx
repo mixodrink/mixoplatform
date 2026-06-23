@@ -60,7 +60,7 @@ const WaterMenuComponent: React.FC<Props> = ({
 
   const handleStepProgress = () => {
     setSelectedOption("water");
-    setWaterSelection({ name: "Water", price: 4 });
+    setWaterSelection({ name: "Water", price: 3 });
     setSelected(true);
     goForward(4);
   };
