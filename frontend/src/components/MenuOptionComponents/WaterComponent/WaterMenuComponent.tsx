@@ -56,6 +56,7 @@ const WaterMenuComponent: React.FC<Props> = ({
   const [transitionEnd, setTransitionEnd] = React.useState<boolean>(false);
   const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [isTransition, setIsTransition] = useState<boolean>(false);
+  const [hideImages, setHideImages] = useState<boolean>(false);
   const isAnyOptionSelected = options.some((option) => option.selected);
 
   const handleStepProgress = () => {
@@ -149,22 +150,26 @@ const WaterMenuComponent: React.FC<Props> = ({
             <PaymentComponent
               animateShow={steps?.[3]?.selected || false}
               variant={3}
+              bgColor="#40c2f6"
               priceSum={water?.drink.price}
               paymentClose={handleClose}
+              onGlassScreenChange={setHideImages}
             />
           </>
         )}
       </SectionWrapper>
-      <WaterOptionComponent
-        onClick={
-          isAnyOptionSelected || transitionStart
-            ? () => { }
-            : () => handleStepProgress()
-        }
-        animationSlideIn={selected}
-        animationSlideOut={isTransition}
-        animationBackSlideOut={steps?.[4]?.selected || false}
-      />
+      <div style={{ opacity: hideImages ? 0 : 1, pointerEvents: hideImages ? 'none' : 'auto', transition: '0.4s ease' }}>
+        <WaterOptionComponent
+          onClick={
+            isAnyOptionSelected || transitionStart
+              ? () => { }
+              : () => handleStepProgress()
+          }
+          animationSlideIn={selected}
+          animationSlideOut={isTransition}
+          animationBackSlideOut={steps?.[4]?.selected || false}
+        />
+      </div>
     </>
   );
 };
@@ -173,11 +178,11 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 }) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 94 : 89)}%;
-  height: ${(state) => (state.selected ? 85 : 20)}%;
+  height: ${(state) => (state.selected ? 85 : 29)}%;
   background-color: #40c2f6;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   position: absolute;
-  bottom: ${(state) => (state.selected ? 220 : 290)}px;
+  bottom: ${(state) => (state.selected ? 220 : 35)}px;
   border: 20px solid #b3e9ff;
   left: ${(state) => (state.slide ? 300 : state.selected ? 1 : 4)}%;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);

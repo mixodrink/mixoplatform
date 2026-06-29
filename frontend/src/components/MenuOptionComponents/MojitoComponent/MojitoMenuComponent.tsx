@@ -65,6 +65,7 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
   const [selected, setSelected] = React.useState<boolean>(false);
   const [transitionStart, setTransitionStart] = useState<boolean>(false);
   const [floatingImage] = useState<string>(lemon);
+  const [hideImages, setHideImages] = useState<boolean>(false);
   const selectedStep = useStepProgressStore((s) => s.getCurrentStep());
   const isAnyOptionSelected = options.some((option) => option.selected);
   const isMojitoSelected = !!(mix.alcohol.name && mix.soft.name);
@@ -129,8 +130,10 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={2}
+              bgColor="#00fc7a"
               priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0)}
               paymentClose={handleClose}
+              onGlassScreenChange={setHideImages}
             />
           </>
         )}
@@ -143,6 +146,7 @@ const MojitoMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }
         slide={selected}
         isMenu={selectedStep === 1}
         paymentState={steps[4].selected}
+        style={{ opacity: hideImages ? 0 : 1, pointerEvents: hideImages ? 'none' : 'auto', transition: '0.4s ease' }}
       >
         <Image
           src={floatingImage}

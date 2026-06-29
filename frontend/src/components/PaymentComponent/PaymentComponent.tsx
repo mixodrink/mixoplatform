@@ -4,6 +4,7 @@ import PayButtonComponent from "./PayButtonComponent";
 import PaymentProcessingComponent from "./PaymentProcessingComponent";
 import PaymentSuccessComponent from "./PaymentSuccessComponent";
 import PaymentErrorComponent from "./PaymentErrorComponent";
+import PlaceYourGlassComponent from "./PlaceYourGlassComponent";
 import card from "assets/icons/credit-mix.png";
 import PaymentReadComponent from "components/PaymentComponent/PaymentReadComponent";
 import ServiceVideoComponent from "components/AnimationComponents/ServiceAnimationComponente";
@@ -19,20 +20,25 @@ import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
 interface OptionItemProps {
   animateShow: boolean;
   variant: number;
+  bgColor: string;
   priceSum: number;
   paymentClose: () => void;
+  onGlassScreenChange?: (showing: boolean) => void;
 }
 
 const PaymentComponent: React.FC<OptionItemProps> = ({
   animateShow,
   variant,
+  bgColor,
   priceSum,
   paymentClose,
+  onGlassScreenChange,
 }) => {
   const { goForward, goBack, steps } = useStepProgressStore();
   const { options } = useMenuOptionSteps();
   const { mix, soft, water } = useDrinkSelection();
   const { paymentState, startPaymentFlow, cancelPayment } = usePaymentFlow();
+  const [showGlassScreen, setShowGlassScreen] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   // Ref para guardar el timeout del retry
   const retryTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -44,6 +50,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
   const handlePaymentError = useCallback(() => {
     setRetryCount(0);
+    setShowGlassScreen(false);
     paymentClose();
     goBack(1);
   }, [paymentClose, goBack]);
@@ -157,6 +164,11 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     }
   }, [options, mix, soft, water, priceSum, startPaymentFlow, goForward]);
 
+  const handleShowGlassScreen = useCallback(() => {
+    if (!STEP_4 || paymentState.isProcessing) return;
+    setShowGlassScreen(true);
+  }, [STEP_4, paymentState.isProcessing]);
+
   const handlePaymentStart = useCallback(async () => {
     if (!STEP_4 || paymentState.isProcessing) return;
     
@@ -234,7 +246,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     return () => {
       // Marcar como cancelado
       isCancelledRef.current = true;
-      
+
       // Limpiar timeout pendiente
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
@@ -243,8 +255,23 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    onGlassScreenChange?.(showGlassScreen);
+  }, [showGlassScreen, onGlassScreenChange]);
+
   return (
     <>
+      {showGlassScreen && !paymentState.isProcessing && paymentState.currentStep === "idle" && (
+        <PlaceYourGlassComponent
+          variant={variant}
+          bgColor={bgColor}
+          onContinue={() => {
+            setShowGlassScreen(false);
+            handlePaymentStart();
+          }}
+        />
+      )}
+
       <PaymentOverlayContainer>
         {paymentState.currentStep === "reading-card" && (
           <PaymentReadComponent cardImageSrc={card} />
@@ -273,7 +300,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         price={priceSum}
         animateShow={animateShow}
         variant={variant}
-        onPaymentClick={handlePaymentStart}
+        onPaymentClick={handleShowGlassScreen}
         disabled={
           paymentState.isProcessing || paymentState.currentStep === "error"
         }

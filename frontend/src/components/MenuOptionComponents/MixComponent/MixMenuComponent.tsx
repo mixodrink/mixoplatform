@@ -136,6 +136,7 @@ const MixMenuComponent: React.FC<Props> = ({
   const [currentStep, setCurrentStep] = useState<number>(1 || null);
   const [currentSelectedOption, setCurrentSelectedOption] =
     useState<boolean>(false);
+  const [hideImages, setHideImages] = useState<boolean>(false);
   const [softImageSource, setSoftImageSource] = useState(lemon);
   const [alcImageSource, setAlcImageSource] = useState(vodka);
   const [currentMixIsSelected, setCurrentMixIsSelected] =
@@ -334,8 +335,10 @@ const MixMenuComponent: React.FC<Props> = ({
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={1}
+              bgColor="#fd660e"
               priceSum={(mix?.alcohol.price ?? 0) + (mix?.soft.price ?? 0) + (doubleShotLocal ? 2 : 0)}
               paymentClose={handleClose}
+              onGlassScreenChange={setHideImages}
             />
             <StepControlButtonComponent
               clickableState={transitionEnd}
@@ -359,6 +362,7 @@ const MixMenuComponent: React.FC<Props> = ({
             ? () => {}
             : () => handleStepProgress()
         }
+        style={{ opacity: hideImages ? 0 : 1, pointerEvents: hideImages ? 'none' : 'auto', transition: '0.4s ease' }}
       >
         <ImageAlc
           src={alcImageSource}
@@ -377,6 +381,7 @@ const MixMenuComponent: React.FC<Props> = ({
             ? () => {}
             : () => handleStepProgress()
         }
+        style={{ opacity: hideImages ? 0 : 1, pointerEvents: hideImages ? 'none' : 'auto', transition: '0.4s ease' }}
       >
         <ImageSoft
           src={softImageSource}

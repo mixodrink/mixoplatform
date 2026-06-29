@@ -97,6 +97,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   const [selectedStep, setSelectedStep] = useState<number>(1);
   const [currentSoftIsSelected, setCurrentSoftIsSelected] = useState(false);
   const [softIsTransition, setSoftIsTransition] = useState(false);
+  const [hideImages, setHideImages] = useState<boolean>(false);
   const isAnyOptionSelected = options.some((option) => option.selected);
 
   const handleStepProgress = () => {
@@ -186,8 +187,10 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
             <PaymentComponent
               animateShow={steps[3].selected}
               variant={2}
+              bgColor="#5f31d4"
               priceSum={soft?.drink.price}
               paymentClose={handleClose}
+              onGlassScreenChange={setHideImages}
             />
             <StepControlButtonComponentSoft
               clickableState={transitionEnd}
@@ -206,6 +209,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         slide={selected}
         isMenu={selectedStep === 1}
         paymentState={steps[4].selected}
+        style={{ opacity: hideImages ? 0 : 1, pointerEvents: hideImages ? 'none' : 'auto', transition: '0.4s ease' }}
       >
         <Image
           src={floatingImage}
@@ -221,8 +225,8 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 }) <SectionWrapperProps>`
-  width: ${(state) => (state.selected ? 96.4 : 41)}%;
-  height: ${(state) => (state.selected ? 90 : 25)}%;
+  width: ${(state) => (state.selected ? 96.4 : 88.4)}%;
+  height: ${(state) => (state.selected ? 90 : 29)}%;
   background-color: #5f31d4;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
@@ -234,7 +238,7 @@ const SectionWrapper = styled.section.withConfig({
 `;
 
 const TitleH1 = styled.h1<TitleProps>`
-  font-size: 7rem;
+  font-size: 11rem;
   line-height: 10rem;
   margin: 0;
   position: absolute;
@@ -249,7 +253,7 @@ const SubTitleH2 = styled.h2<TitleProps>`
   line-height: 10rem;
   margin: 0;
   position: absolute;
-  top: 130px;
+  top: 145px;
   left: 40px;
   color: #fff;
   overflow: hidden;
@@ -288,8 +292,8 @@ const Image = styled.img.withConfig({
       : props.animationState === 1
         ? 'brightness(1)'
         : 'brightness(0.5)'};
-  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 180 : 320)}px;
-  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 330 : 600)}px;
+  width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 240 : 320)}px;
+  height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 600)}px;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 

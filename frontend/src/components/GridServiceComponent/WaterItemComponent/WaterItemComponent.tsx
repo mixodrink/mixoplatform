@@ -45,7 +45,7 @@ const DrinkImage = styled.img.withConfig({
   rotate: 9deg;
   position: absolute;
   filter: drop-shadow(0px 20px 15px rgba(0, 0, 0, 0.372));
-  bottom: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 10 : 37) : 15)}%;
+  bottom: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 10 : 37) : 2)}%;
   right: ${(props) =>
     props.animationSlideIn
       ? props.animationBackSlideOut
