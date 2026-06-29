@@ -68,7 +68,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       const cardNumber = cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
 
       const base = {
-        machineId: "650a0ab291e870d4bd7e5c85",
+        machineId: "6a42109ff00daafbb1250674",
         paymentType: "Card",
         cardId,
         cardNumber,
@@ -125,7 +125,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       // Create cloud service data from the local drink
       const cloudServiceData: PostServiceEC2Cloud = {
-        machineId: "6848b4755ab63433867d81a0",
+        machineId: "6a42109ff00daafbb1250674",
         type: newDrink.type,
         alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
         bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
