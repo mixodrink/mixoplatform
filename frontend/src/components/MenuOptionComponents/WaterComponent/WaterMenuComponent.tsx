@@ -4,10 +4,12 @@ import styled, { keyframes, css } from "styled-components";
 import { useMenuOptionSteps } from "store/MenuOptionStore";
 import { useStepProgressStore } from "store/ProgressStepsStore";
 import { useDrinkSelection } from "store/DrinkSelectionStore";
+import { nodeRedServing } from "api/local/node-red";
 
 import CloseButtonComponent from "components/ButtonComponents/CloseButtonComponent";
 import WaterOptionComponent from "components/GridServiceComponent/WaterItemComponent/WaterItemComponent";
 import PaymentComponent from "components/PaymentComponent/PaymentComponent";
+import PlaceYourGlassComponent from "components/PaymentComponent/PlaceYourGlassComponent";
 
 import waterImage from "assets/soft/water.png";
 
@@ -63,12 +65,26 @@ const WaterMenuComponent: React.FC<Props> = ({
     setSelectedOption("water");
     setWaterSelection({ name: "Water", price: 4 });
     setSelected(true);
-    goForward(4);
+    
+    // Enviar acción de apertura a Node-RED
+    nodeRedServing({ action: 'open' }).catch(err => 
+      console.error('Error sending open action to Node-RED:', err)
+    );
+    
+    goForward(3);
   };
 
   const handleClose = () => {
     handleSetInitialState();
     setSelected(false);
+  };
+
+  const handleContinue = () => {
+    // Enviar acción de cierre a Node-RED
+    nodeRedServing({ action: 'close' }).catch(err => 
+      console.error('Error sending close action to Node-RED:', err)
+    );
+    goForward(4);
   };
 
   const handleOnTransitionEnd = () => {
@@ -113,6 +129,14 @@ const WaterMenuComponent: React.FC<Props> = ({
               transitionStart={transitionStart}
               style={{ borderColor: "#c3eeff" }}
             />
+            {steps[2].selected && (
+              <PlaceYourGlassComponent 
+                onContinue={handleContinue}
+                onClose={handleClose}
+                borderColor="#c3eeff"
+                variant={3}
+              />
+            )}
             <SectionServiceName animatePosition={steps?.[3]?.selected || false}>
               <HeaderTitle>{water.drink.name}</HeaderTitle>
             </SectionServiceName>
@@ -153,6 +177,7 @@ const WaterMenuComponent: React.FC<Props> = ({
               bgColor="#40c2f6"
               priceSum={water?.drink.price}
               paymentClose={handleClose}
+              skipGlassScreen={true}
               onGlassScreenChange={setHideImages}
             />
           </>
@@ -178,11 +203,11 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 }) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 94 : 89)}%;
-  height: ${(state) => (state.selected ? 85 : 29)}%;
+  height: ${(state) => (state.selected ? 96 : 29)}%;
   background-color: #40c2f6;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   position: absolute;
-  bottom: ${(state) => (state.selected ? 220 : 35)}px;
+  bottom: ${(state) => (state.selected ? 20 : 35)}px;
   border: 20px solid #b3e9ff;
   left: ${(state) => (state.slide ? 300 : state.selected ? 1 : 4)}%;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -232,6 +257,7 @@ const PlantImageWrapper = styled.section.withConfig({
   opacity: 0;
   display: ${(props) => (props.animationFadeIn === 4 ? "block" : "none")};
   transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
   ${({ animationFadeIn }) =>
     animationFadeIn === 4 &&
     css`

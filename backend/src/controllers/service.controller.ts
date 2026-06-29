@@ -66,31 +66,37 @@ export const nodeRedStartService = async (
       Accept: '*/*',
     };
 
-    let data;
+    let data: {
+      type: string;
+      alcohol: any;
+      mix?: any;
+      doubleShot?: boolean;
+    };
 
     if (req.body.type === "mix") {
       data = {
         type: "mix",
         alcohol: req.body.drink[0] ? req.body.drink[0] : null,
-        mix: req.body.drink[1] ? req.body.drink[1] : null,
         doubleShot: req.body.doubleShot === true,
       };
-    }
-
-    if (req.body.type === "soft") {
+      // Only add mix field if there's a second ingredient
+      if (req.body.drink[1]) {
+        data.mix = req.body.drink[1];
+      }
+    } else if (req.body.type === "soft") {
       data = {
         type: "soft",
         alcohol: null,
         mix: req.body.drink[0] ? req.body.drink[0] : null,
       };
-    }
-
-    if (req.body.type === "water") {
+    } else if (req.body.type === "water") {
       data = {
         type: "water",
         alcohol: null,
         mix: req.body.drink[0] ? req.body.drink[0] : null
       };
+    } else {
+      throw new Error(`Unknown drink type: ${req.body.type}`);
     }
 
     const response = await axios.post("http://localhost:1880/start", data, { headers });
@@ -98,6 +104,29 @@ export const nodeRedStartService = async (
     res.status(response.status).json(response.data);
   } catch (err: any) {
     console.error('Error en nodeRedStartService:', err.message);
+    next(err);
+  }
+};
+
+export const nodeRedServing = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const headers = {
+      Accept: '*/*',
+    };
+
+    const data = {
+      action: req.body.action, // "open" or "close"
+    };
+
+    const response = await axios.post("http://localhost:1880/serving", data, { headers });
+
+    res.status(response.status).json(response.data);
+  } catch (err: any) {
+    console.error('Error en nodeRedServing:', err.message);
     next(err);
   }
 };

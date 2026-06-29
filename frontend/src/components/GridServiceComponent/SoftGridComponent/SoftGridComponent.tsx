@@ -4,6 +4,7 @@ import SoftItemComponent from './SoftItemComponent';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
 import { OptionListInterface } from 'interfaces/OptionListInterface';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
+import { nodeRedServing } from 'api/local/node-red';
 
 interface Drink {
   title: string;
@@ -42,7 +43,13 @@ const SoftGridComponent: React.FC<OptionListInterface> = ({
     } else {
       setSoftSelection({ name: drink.title, price: drink.price });
     }
-    goForward(4);
+    
+    // Enviar acción de apertura a Node-RED
+    nodeRedServing({ action: 'open' }).catch(err => 
+      console.error('Error sending open action to Node-RED:', err)
+    );
+    
+    goForward(3);
   };
 
   useEffect(() => {

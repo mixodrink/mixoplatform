@@ -3,9 +3,11 @@ import styled, { keyframes, css } from 'styled-components';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from 'store/DrinkSelectionStore';
+import { nodeRedServing } from 'api/local/node-red';
 import SoftGridComponent from 'components/GridServiceComponent/SoftGridComponent/SoftGridComponent';
 import CloseButtonComponent from 'components/ButtonComponents/CloseButtonComponent';
 import PaymentComponent from 'components/PaymentComponent/PaymentComponent';
+import PlaceYourGlassComponent from 'components/PaymentComponent/PlaceYourGlassComponent';
 import StepControlButtonComponentSoft from 'components/ButtonComponents/StepControlButtonComponentSoft';
 
 import tropicalOne from 'assets/plants/tropical-one.png';
@@ -103,12 +105,20 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
   const handleStepProgress = () => {
     setSelectedOption('soft');
     setSelected(true);
-    goForward(3);
+    goForward(2);
   };
 
   const handleClose = () => {
     handleSetInitialState();
     setSelected(false);
+  };
+
+  const handleContinue = () => {
+    // Enviar acción de cierre a Node-RED
+    nodeRedServing({ action: 'close' }).catch(err => 
+      console.error('Error sending close action to Node-RED:', err)
+    );
+    goForward(4);
   };
 
   const handleOnTransitionEnd = () => {
@@ -166,14 +176,24 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               transitionStart={transitionStart}
               style={{ borderColor: '#d8c9ff' }}
             />
-            <SoftGridComponent
-              type={'soft'}
-              selected={selected}
-              obj={obj}
-              transitionEnd={transitionEnd && steps[2].selected}
-              slideIn={softIsTransition}
-              slideOut={true}
-            />
+            {steps[1].selected && (
+              <SoftGridComponent
+                type={'soft'}
+                selected={selected}
+                obj={obj}
+                transitionEnd={transitionEnd}
+                slideIn={softIsTransition}
+                slideOut={true}
+              />
+            )}
+            {steps[2].selected && (
+              <PlaceYourGlassComponent 
+                onContinue={handleContinue}
+                onClose={handleClose}
+                borderColor="#d8c9ff"
+                variant={2}
+              />
+            )}
             <SectionServiceName animatePosition={steps[3].selected}>
               <HeaderTitle>{soft?.drink.name}</HeaderTitle>
             </SectionServiceName>
@@ -190,6 +210,7 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
               bgColor="#5f31d4"
               priceSum={soft?.drink.price}
               paymentClose={handleClose}
+              skipGlassScreen={true}
               onGlassScreenChange={setHideImages}
             />
             <StepControlButtonComponentSoft
@@ -202,19 +223,23 @@ const SoftMenuComponent: React.FC<Props> = ({ isSlide, handleSetInitialState }) 
         )}
       </SectionWrapper>
       <ImageSectionWrapper
-        animationState={selectedStep}
+        animationState={selected ? selectedStep : 1}
         top={45}
         right={1.5}
         deg={6}
         slide={selected}
         isMenu={selectedStep === 1}
         paymentState={steps[4].selected}
-        style={{ opacity: hideImages ? 0 : 1, pointerEvents: hideImages ? 'none' : 'auto', transition: '0.4s ease' }}
+        style={{ 
+          opacity: hideImages ? 0 : 1, 
+          pointerEvents: hideImages ? 'none' : 'auto', 
+          transition: '0.4s ease'
+        }}
       >
         <Image
           src={floatingImage}
           alt="Floating Image"
-          animationState={selectedStep}
+          animationState={selected ? selectedStep : 1}
           isBright={currentSoftIsSelected}
         />
       </ImageSectionWrapper>
@@ -226,7 +251,7 @@ const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !['selected', 'slide'].includes(prop),
 }) <SectionWrapperProps>`
   width: ${(state) => (state.selected ? 96.4 : 88.4)}%;
-  height: ${(state) => (state.selected ? 90 : 29)}%;
+  height: ${(state) => (state.selected ? 96 : 29)}%;
   background-color: #5f31d4;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;
   clip-path: inset(0 0 0 0);
@@ -279,7 +304,7 @@ const ImageSectionWrapper = styled.section.withConfig({
         ? props.right
         : 300}%;
   rotate: ${(props) => props.deg}deg;
-  transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: 3.5s ease-in-out;
 `;
 
 // Image styling
@@ -294,7 +319,7 @@ const Image = styled.img.withConfig({
         : 'brightness(0.5)'};
   width: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 240 : 320)}px;
   height: ${(props) => (props.animationState <= 3 || props.animationState === 5 ? 400 : 600)}px;
-  transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: 2s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const SectionServiceName = styled.section.withConfig({
@@ -340,10 +365,11 @@ const PlantImageWrapper = styled.section.withConfig({
   opacity: 0;
   display: ${(props) => (props.animationFadeIn === 4 ? 'block' : 'none')};
   transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
   ${({ animationFadeIn }) =>
     animationFadeIn === 4 &&
     css`
-      animation: 2s ${fadeIn} 0.5s forwards;
+      animation: 3s ${fadeIn} 0.5s forwards;
     `}
 `;
 
@@ -368,7 +394,7 @@ const PlantImage = styled.img.withConfig({
   rotate: ${(props) => props.rotate}deg;
   width: 400px;
   height: 400px;
-  animation: ${rotate} 2s ease-in-out infinite;
+  animation: ${rotate} 5s ease-in-out infinite;
 `;
 
 const flicker = keyframes`
@@ -389,7 +415,7 @@ const BlurredCircle = styled.div`
   border-radius: 50%;
   filter: blur(100px);
   z-index: -1;
-  animation: ${flicker} 2s infinite alternate ease-in-out;
+  animation: ${flicker} 6s infinite alternate ease-in-out;
 `;
 
 export default SoftMenuComponent;

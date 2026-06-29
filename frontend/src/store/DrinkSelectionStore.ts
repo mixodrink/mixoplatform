@@ -12,6 +12,10 @@ interface DrinkSelectionState {
   water: {
     drink: { name: string | null; price: number };
   };
+  cocktail: {
+    name: string | null;
+    price: number;
+  };
   setMixSelection: (
     alcohol: { name: string; price: number },
     soft: { name: string; price: number }
@@ -19,11 +23,13 @@ interface DrinkSelectionState {
   setMojitoSelection: () => void;
   setSoftSelection: (drink: { name: string; price: number }) => void;
   setWaterSelection: (drink: { name: string; price: number }) => void;
+  setCocktailSelection: (name: string, price: number) => void;
   resetSelection: () => void;
   MixIsSelected: () => boolean;
   SoftMixIsSelected: () => boolean;
   SoftIsSelected: () => boolean;
   WaterIsSelected: () => boolean;
+  CocktailIsSelected: () => boolean;
   applyDoubleShotToCurrentMix: (enable: boolean) => void;
 }
 
@@ -33,6 +39,7 @@ export const useDrinkSelection = create(
       mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
       soft: { drink: { name: null, price: 0 } },
       water: { drink: { name: null, price: 0 } },
+      cocktail: { name: null, price: 0 },
 
       setMixSelection: (alcohol, soft) =>
         set(() => {
@@ -50,6 +57,7 @@ export const useDrinkSelection = create(
             mix: { alcohol: alcoholWithDouble, soft },
             soft: { drink: { name: null, price: 0 } },
             water: { drink: { name: null, price: 0 } },
+            cocktail: { name: null, price: 0 },
           };
         }),
 
@@ -77,6 +85,7 @@ export const useDrinkSelection = create(
           mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
           soft: { drink },
           water: { drink: { name: null, price: 0 } },
+          cocktail: { name: null, price: 0 },
         })),
 
       setWaterSelection: (drink) =>
@@ -84,6 +93,15 @@ export const useDrinkSelection = create(
           mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
           soft: { drink: { name: null, price: 0 } },
           water: { drink },
+          cocktail: { name: null, price: 0 },
+        })),
+
+      setCocktailSelection: (name, price) =>
+        set(() => ({
+          mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
+          soft: { drink: { name: null, price: 0 } },
+          water: { drink: { name: null, price: 0 } },
+          cocktail: { name, price },
         })),
 
       resetSelection: () =>
@@ -91,6 +109,7 @@ export const useDrinkSelection = create(
           mix: { alcohol: { name: null, price: 0 }, soft: { name: null, price: 0 } },
           soft: { drink: { name: null, price: 0 } },
           water: { drink: { name: null, price: 0 } },
+          cocktail: { name: null, price: 0 },
         })),
 
       MixIsSelected: () => {
@@ -113,6 +132,11 @@ export const useDrinkSelection = create(
       WaterIsSelected: () => {
         const { water } = get();
         return water.drink.name !== null;
+      },
+
+      CocktailIsSelected: () => {
+        const { cocktail } = get();
+        return cocktail.name !== null;
       },
     }),
     {

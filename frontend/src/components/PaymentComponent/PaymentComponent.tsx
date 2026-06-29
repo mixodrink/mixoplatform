@@ -13,7 +13,7 @@ import { useMenuOptionSteps } from "store/MenuOptionStore";
 import { useDrinkSelection } from "store/DrinkSelectionStore";
 import { usePaymentFlow } from "hooks/usePaymentFlow";
 import { createDrink } from "api/local/create-drink";
-import { nodeRedStartService } from "api/local/node-red";
+import { nodeRedStartService, nodeRedServing } from "api/local/node-red";
 import { createCloudService } from "utils/cloudServiceUtils";
 import { PostServiceEC2Cloud } from "api/cloud/api-cloud";
 
@@ -24,6 +24,7 @@ interface OptionItemProps {
   priceSum: number;
   paymentClose: () => void;
   onGlassScreenChange?: (showing: boolean) => void;
+  skipGlassScreen?: boolean; // Skip the glass screen (already shown in previous step)
 }
 
 const PaymentComponent: React.FC<OptionItemProps> = ({
@@ -33,10 +34,11 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
   priceSum,
   paymentClose,
   onGlassScreenChange,
+  skipGlassScreen = false,
 }) => {
   const { goForward, goBack, steps } = useStepProgressStore();
   const { options } = useMenuOptionSteps();
-  const { mix, soft, water } = useDrinkSelection();
+  const { mix, soft, water, cocktail } = useDrinkSelection();
   const { paymentState, startPaymentFlow, cancelPayment } = usePaymentFlow();
   const [showGlassScreen, setShowGlassScreen] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -93,6 +95,17 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
 
       let newDrink = (() => {
         if (isMixLikeOption) {
+          // Check if it's a cocktail (single name in cocktail state)
+          if (cocktail.name) {
+            return {
+              ...base,
+              type: "mix",
+              drink: [cocktail.name],
+              price: priceSum,
+              doubleShot: false, // Cocktails don't have double shot
+            };
+          }
+          // Traditional mix (alcohol + soft)
           return {
             ...base,
             type: "mix",
@@ -134,7 +147,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       const cloudServiceData: PostServiceEC2Cloud = {
         machineId: "6a42109ff00daafbb1250674",
         type: newDrink.type,
-        alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined ,
+        alcohol: newDrink.type === "mix" ? newDrink.drink[0] : undefined,
         bib: newDrink.type === "soft" || newDrink.type === "water" ? newDrink.drink[0] : newDrink.drink[1],
         price: newDrink.price,
         paymentType: newDrink.paymentType,
@@ -162,12 +175,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         error: err instanceof Error ? err.message : "Unknown error",
       };
     }
-  }, [options, mix, soft, water, priceSum, startPaymentFlow, goForward]);
-
-  const handleShowGlassScreen = useCallback(() => {
-    if (!STEP_4 || paymentState.isProcessing) return;
-    setShowGlassScreen(true);
-  }, [STEP_4, paymentState.isProcessing]);
+  }, [options, mix, soft, water, cocktail, priceSum, startPaymentFlow, goForward]);
 
   const handlePaymentStart = useCallback(async () => {
     if (!STEP_4 || paymentState.isProcessing) return;
@@ -213,6 +221,17 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
     goForward,
     handlePaymentError,
   ]);
+
+  const handleShowGlassScreen = useCallback(() => {
+    if (!STEP_4 || paymentState.isProcessing) return;
+    
+    // If glass screen should be skipped (already shown in previous step), go directly to payment
+    if (skipGlassScreen) {
+      handlePaymentStart();
+    } else {
+      setShowGlassScreen(true);
+    }
+  }, [STEP_4, paymentState.isProcessing, skipGlassScreen, handlePaymentStart]);
 
   const handlePaymentCancel = useCallback(async () => {
     // Marcar como cancelado INMEDIATAMENTE
@@ -267,6 +286,15 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
           bgColor={bgColor}
           onContinue={() => {
             setShowGlassScreen(false);
+            
+            // Enviar acción de cierre a Node-RED para Soft/Water
+            // (Cocktail ya lo maneja en su handleContinue)
+            if (!skipGlassScreen) {
+              nodeRedServing({ action: 'close' }).catch(err =>
+                console.error('Error sending close action to Node-RED:', err)
+              );
+            }
+            
             handlePaymentStart();
           }}
         />
@@ -295,7 +323,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         )}
       </PaymentOverlayContainer>
 
-      {/* showDoubleShot only when selected option is 'mix' (alcohol) */}
+      {/* showDoubleShot only when selected option is 'mix' (alcohol) AND not a cocktail */}
       <PayButtonComponent
         price={priceSum}
         animateShow={animateShow}
@@ -304,7 +332,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
         disabled={
           paymentState.isProcessing || paymentState.currentStep === "error"
         }
-        showDoubleShot={options.find((o) => o.selected)?.option === 'mix'}
+        showDoubleShot={false}
       />
 
       {STEP_PAYMENT_PAID && (

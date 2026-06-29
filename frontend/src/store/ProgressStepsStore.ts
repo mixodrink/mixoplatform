@@ -7,15 +7,15 @@ type State = Step[];
 const initialState: State = [
   // Menu
   { id: 1, selected: true },
-  // Alcohol
+  // Cocktail Selection
   { id: 2, selected: false },
-  // Soft
+  // Place Your Glass
   { id: 3, selected: false },
-  //Payment
+  // Payment
   { id: 4, selected: false },
-  //Drink Animation
+  // Payment Processing
   { id: 5, selected: false },
-  //Service Animation
+  // Service Animation
   { id: 6, selected: false },
 ];
 
