@@ -68,7 +68,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       const cardNumber = cardData?.maskedPan || cardData?.cardNumber || "UNKNOWN_CARD_NUMBER";
 
       const base = {
-        machineId: "6a42109ff00daafbb1250674",
+        machineId: "650a0ab291e870d4bd7e5c85",
         paymentType: "Card",
         cardId,
         cardNumber,
