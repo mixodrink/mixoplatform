@@ -76,10 +76,10 @@ const MainPage: React.FC = () => {
         handleSetInitialState={handleSetInitialState}
         isSlide={slide.water}
       />
-      {/* <ShotMenuComponent
+      <ShotMenuComponent
         handleSetInitialState={handleSetInitialState}
         isSlide={slide.shot}
-      /> */}
+      />
     </SectionGlobalWrapper>
   );
 };

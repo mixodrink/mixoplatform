@@ -115,12 +115,12 @@ const obj2 = {
   water: {
     title: "Water",
     image: { src: water, alt: "Water" },
-    price: 6,
+    price: 9,
   },
   soda: {
     title: "Soda",
-    image: { src: orange, alt: "Soda" },
-    price: 6,
+    image: { src: tonic, alt: "Soda" },
+    price: 9,
   },
 };
 
@@ -507,7 +507,7 @@ const ImageAlc = styled.img.withConfig({
       : state.currentStep === 6
       ? -100
       : state.currentStep === 4 && state.animationSelected
-      ? 15
+      ? 20
       : state.type || state.currentStep === 1
       ? 0
       : 1}%;
@@ -523,7 +523,7 @@ const ImageAlc = styled.img.withConfig({
       ? state.type
         ? 240
         : 180
-      : 540}px;
+      : 350}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type

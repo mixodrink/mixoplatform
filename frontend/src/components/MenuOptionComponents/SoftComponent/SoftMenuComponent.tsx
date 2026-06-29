@@ -18,6 +18,7 @@ import lemon from 'assets/soft//lemon.png';
 import tonic from 'assets/soft/tonic.png';
 import orange from 'assets/soft/orange.png';
 import energy from 'assets/soft/energy.png';
+import water from 'assets/soft/water.png';
 
 interface Props {
   isSlide: boolean;
@@ -83,6 +84,11 @@ const obj = {
   energy: {
     title: 'Energy',
     image: { src: energy, alt: 'Energy' },
+    price: 5.5,
+  },
+  soda: {
+    title: 'Soda',
+    image: { src: tonic, alt: 'Soda' },
     price: 5.5,
   },
 };
@@ -265,16 +271,16 @@ const ImageSectionWrapper = styled.section.withConfig({
   top: ${(props) =>
     props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
   right: ${(props) =>
-  props.animationState === 6 ? -100 :
-    props.slide
-      ? props.animationState === 1 || props.paymentState
-        ? props.right
-        : props.animationState === 4
-          ? 31
-          : props.right
-      : props.isMenu
-        ? props.right
-        : 300}%;
+    props.animationState === 6 ? -100 :
+      props.slide
+        ? props.animationState === 1 || props.paymentState
+          ? props.right
+          : props.animationState === 4
+            ? 31
+            : props.right
+        : props.isMenu
+          ? props.right
+          : 300}%;
   rotate: ${(props) => props.deg}deg;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;

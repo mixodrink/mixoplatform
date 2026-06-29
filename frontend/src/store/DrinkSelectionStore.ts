@@ -68,8 +68,8 @@ export const useDrinkSelection = create(
       setMojitoSelection: () =>
         set(() => ({
           mix: {
-            alcohol: { name: 'Rum', price: 6 },
-            soft: { name: 'Lime', price: 6 },
+            alcohol: { name: 'Rum', price: 7.5 },
+            soft: { name: 'Lime', price: 7.5 },
           },
           soft: { drink: { name: null, price: 0 } },
           water: { drink: { name: null, price: 0 } },

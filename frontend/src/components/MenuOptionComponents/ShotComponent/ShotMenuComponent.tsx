@@ -66,22 +66,22 @@ const obj = {
   gin: {
     title: "Gin",
     image: { src: gin, alt: "gin" },
-    price: 4,
+    price: 10,
   },
   vodka: {
     title: "Vodka",
     image: { src: vodka, alt: "vodka" },
-    price: 4,
+    price: 10,
   },
   tequila: {
     title: "Tequila",
     image: { src: tequila, alt: "Tequila" },
-    price: 4,
+    price: 10,
   },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },
-    price: 4,
+    price: 10,
   }
 };
 
@@ -330,7 +330,7 @@ const ImageAlc = styled.img.withConfig({
       : state.currentStep === 6
       ? -100
       : state.currentStep === 4 && state.animationSelected
-      ? 15
+      ? 28
       : state.type || state.currentStep === 1
       ? -2.8
       : -1}%;
@@ -346,7 +346,7 @@ const ImageAlc = styled.img.withConfig({
       ? state.type
         ? 300
         : 210
-      : 540}px;
+      : 350}px;
   height: ${(state) =>
     state.currentStep <= 3 || state.currentStep === 5 || state.currentStep === 6
       ? state.type

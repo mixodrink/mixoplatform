@@ -167,7 +167,7 @@ const WaterMenuComponent: React.FC<Props> = ({
 const SectionWrapper = styled.section.withConfig({
   shouldForwardProp: (prop) => !["selected", "slide"].includes(prop),
 })<SectionWrapperProps>`
-  width: ${(state) => (state.selected ? 96.4 : 89.5)}%;
+  width: ${(state) => (state.selected ? 96.4 : 41)}%;
   height: ${(state) => (state.selected ? 98 : 29)}%;
   background-color: #40c2f6;
   border-radius: ${(state) => (state.selected ? 4 : 3)}rem;

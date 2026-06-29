@@ -65,7 +65,7 @@ const BackgroundBox = styled.div.withConfig({
 const DrinkImage = styled.img.withConfig({
   shouldForwardProp: (prop) => !['animationSelected'].includes(prop),
 })`
-  width: 190px;
+  width: 170px;
   height: 450px;
   margin-bottom: 0px;
   z-index: 1;
