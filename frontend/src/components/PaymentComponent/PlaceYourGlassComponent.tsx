@@ -37,10 +37,12 @@ const Overlay = styled.div`
 `;
 
 const Title = styled.h1`
+  position: absolute;
+  bottom: calc(5% + 14% + 2rem);
   font-size: 4.5rem;
   font-weight: 300;
   color: #fff;
-  margin: 0 0 8rem 0;
+  margin: 0;
   text-align: center;
   line-height: 1.3;
   max-width: 85%;

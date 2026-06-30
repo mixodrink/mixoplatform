@@ -109,13 +109,10 @@ const MixMenuComponent: React.FC<Props> = ({
     setSelected(false);
   };
 
-  const handleContinue = async () => {
-    // Notify Node-RED to close serving
-    try {
-      await nodeRedServing({ action: 'close' });
-    } catch (error) {
+  const handleContinue = () => {
+    nodeRedServing({ action: 'close' }).catch((error) => {
       console.error('Error closing serving:', error);
-    }
+    });
     goForward(4);
   };
 
@@ -293,7 +290,7 @@ const ImageSectionWrapper = styled.section.withConfig({
   position: absolute;
   top: ${
     (props) =>
-      props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78
+      props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : props.animationState === 3 ? 30 : 78
   }%;
   right: ${
     (props) =>
@@ -304,6 +301,8 @@ const ImageSectionWrapper = styled.section.withConfig({
           ? props.right
           : props.animationState === 4
           ? 31
+          : props.animationState === 3
+          ? 28
           : props.right
         : props.isMenu
         ? props.right

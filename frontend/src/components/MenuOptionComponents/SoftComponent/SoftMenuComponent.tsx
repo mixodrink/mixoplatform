@@ -291,7 +291,7 @@ const ImageSectionWrapper = styled.section.withConfig({
 }) <ImageSectionWrapperProps>`
   position: absolute;
   top: ${(props) =>
-    props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : 78}%;
+    props.animationState === 1 ? props.top : props.animationState === 4 ? 30 : props.animationState === 3 ? 30 : 78}%;
   right: ${(props) =>
   props.animationState === 6 ? -100 :
     props.slide
@@ -299,7 +299,9 @@ const ImageSectionWrapper = styled.section.withConfig({
         ? props.right
         : props.animationState === 4
           ? 31
-          : props.right
+          : props.animationState === 3
+            ? 28
+            : props.right
       : props.isMenu
         ? props.right
         : 300}%;

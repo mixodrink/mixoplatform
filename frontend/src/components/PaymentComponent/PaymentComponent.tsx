@@ -283,18 +283,16 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       {showGlassScreen && !paymentState.isProcessing && paymentState.currentStep === "idle" && (
         <PlaceYourGlassComponent
           variant={variant}
-          bgColor={bgColor}
+          borderColor={bgColor}
+          onClose={() => {
+            setShowGlassScreen(false);
+            paymentClose();
+          }}
           onContinue={() => {
             setShowGlassScreen(false);
-            
-            // Enviar acción de cierre a Node-RED para Soft/Water
-            // (Cocktail ya lo maneja en su handleContinue)
-            if (!skipGlassScreen) {
-              nodeRedServing({ action: 'close' }).catch(err =>
-                console.error('Error sending close action to Node-RED:', err)
-              );
-            }
-            
+            nodeRedServing({ action: 'close' }).catch(err =>
+              console.error('Error sending close action to Node-RED:', err)
+            );
             handlePaymentStart();
           }}
         />

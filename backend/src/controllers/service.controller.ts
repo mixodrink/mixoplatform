@@ -122,7 +122,7 @@ export const nodeRedServing = async (
       action: req.body.action, // "open" or "close"
     };
 
-    const response = await axios.post("http://localhost:1880/serving", data, { headers });
+    const response = await axios.post("http://localhost:1880/serving", data, { headers, timeout: 3000 });
 
     res.status(response.status).json(response.data);
   } catch (err: any) {
