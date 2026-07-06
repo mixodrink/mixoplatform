@@ -79,11 +79,11 @@ const obj = {
     image: { src: vodka, alt: "vodka" },
     price: 6,
   },
-  whiskey: {
-    title: "Tequila",
-    image: { src: Tequila, alt: "Tequila" },
-    price: 6,
-  },
+  // whiskey: {
+  //   title: "Tequila",
+  //   image: { src: Tequila, alt: "Tequila" },
+  //   price: 6,
+  // },
   rum: {
     title: "Rum",
     image: { src: rum, alt: "rum" },

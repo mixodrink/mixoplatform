@@ -38,14 +38,14 @@ const DrinkImage = styled.img.withConfig({
   shouldForwardProp: (prop) =>
     !['animationSlideIn', 'animationSlideOut', 'animationBackSlideOut'].includes(prop),
 })<DrinkImageProps>`
-  width: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 240 : 370) : 260)}px;
+  width: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 240 : 370) : 180)}px;
   height: ${(props) =>
-    props.animationSlideIn ? (props.animationBackSlideOut ? 395 : 650) : 395}px;
+    props.animationSlideIn ? (props.animationBackSlideOut ? 395 : 650) : 273}px;
   margin-bottom: 0px;
   rotate: 9deg;
   position: absolute;
   filter: drop-shadow(0px 20px 15px rgba(0, 0, 0, 0.372));
-  bottom: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 10 : 37) : 15)}%;
+  bottom: ${(props) => (props.animationSlideIn ? (props.animationBackSlideOut ? 10 : 37) : 9)}%;
   right: ${(props) =>
     props.animationSlideIn
       ? props.animationBackSlideOut
@@ -53,7 +53,7 @@ const DrinkImage = styled.img.withConfig({
         : 29
       : props.animationSlideOut
       ? -100
-      : 2}%;
+      : 48}%;
   z-index: 1;
   transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
 `;
