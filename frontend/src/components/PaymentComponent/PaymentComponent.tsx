@@ -55,7 +55,7 @@ const PaymentComponent: React.FC<OptionItemProps> = ({
       try {
         // priceSum already reflects any double-shot surcharge (store / UI logic applies it).
         const drinkPrice = Math.round(priceSum * 100);
-        //const drinkPrice = 0.10;
+        //const drinkPrice = 10;
         const result = await startPaymentFlow(drinkPrice); // Drink Price in cents
 
       if (!result.success) {

@@ -14,7 +14,7 @@ import gin from "assets/alcohol/beegin.png";
 import vodka from "assets/alcohol/vodka.png";
 import whiskey from "assets/alcohol/whiskey.png";
 import Tequila from "assets/alcohol/tequila.png";
-import rum from "assets/alcohol/rumbar.png";
+import rum from "assets/alcohol/rum.png";
 import cola from "assets/soft/cola.png";
 import lemon from "assets/soft//lemon.png";
 import tonic from "assets/soft/tonic.png";
