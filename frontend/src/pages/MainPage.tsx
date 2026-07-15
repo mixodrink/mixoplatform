@@ -5,6 +5,7 @@ import MixMenuComponent from 'components/MenuOptionComponents/MixComponent/MixMe
 import SoftMenuComponent from 'components/MenuOptionComponents/SoftComponent/SoftMenuComponent';
 import WaterMenuComponent from 'components/MenuOptionComponents/WaterComponent/WaterMenuComponent';
 import MojitoMenuComponent from 'components/MenuOptionComponents/MojitoComponent/MojitoMenuComponent';
+import InstagramQRComponent from 'components/InstagramComponent/InstagramQRComponent';
 import { useMenuOptionSteps } from 'store/MenuOptionStore';
 import { useStepProgressStore } from 'store/ProgressStepsStore';
 import { useDrinkSelection } from '../store/DrinkSelectionStore';
@@ -73,6 +74,7 @@ const MainPage: React.FC = () => {
         handleSetInitialState={handleSetInitialState}
         isSlide={slide.water}
       />
+      <InstagramQRComponent isSlide={Object.values(slide).some(Boolean)} />
     </SectionGlobalWrapper>
   );
 };
